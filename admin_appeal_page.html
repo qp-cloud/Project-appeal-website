@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complaint Summary with Filters</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="logo">
+      <img src="img\logo.png" alt="Logo">
+      <span>เทศบาลอำเภอบ้านโป่ง</span>
+    </div>
+    <div class="nav-links">
+      <button class="nav-button">สรุปเรื่องราวร้องทุกข์</button>
+      <button class="nav-button">หน้าแรก</button>
+    </div>
+  </nav>
+
+  <!-- Table Section -->
+  <section class="table-section">
+    <h2>เรื่องร้องเรียน</h2>
+
+    <!-- Search input -->
+    <input type="text" id="search" placeholder="ค้นหาชื่อเรื่อง" onkeyup="searchTable()">
+    
+    <!-- Filter Dropdowns -->
+    <div class="filters">
+      <label for="departmentFilter">Filter by Department:</label>
+      <select id="departmentFilter" onchange="filterTable()">
+        <option value="">All Departments</option>
+        <option value="กองช่าง">กองช่าง</option>
+        <option value="กองสาธารณะสุข">กองสาธารณะสุข</option>
+        <option value="เทศบาล">เทศบาล</option>
+      </select>
+
+      <label for="levelFilter">Filter by Level:</label>
+      <select id="levelFilter" onchange="filterTable()">
+        <option value="">All Levels</option>
+        <option value="ปกติ">ปกติ</option>
+        <option value="เร่งด่วน">เร่งด่วน</option>
+        <option value="ร้ายแรง">ร้ายแรง</option>
+      </select>
+    </div>
+
+    <table id="complaintTable">
+      <thead>
+        <tr>
+          <th>ไอดี</th>
+          <th>หัวข้อ</th>
+          <th>หน่วยงาน</th>
+          <th>ระดับ</th>
+          <th>วันที่</th>
+          <th>สถานะ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Rows will be inserted dynamically using JavaScript -->
+      </tbody>
+    </table>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>
