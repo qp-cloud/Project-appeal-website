@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>เทศบาลอำเภอบ้านโป่ง</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-image: url('https://s3-alpha-sig.figma.com/img/464b/ce5f/77b6e95107ebcb5c341a97c542fe001e?Expires=1731283200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=fzwsdraZbCoovDW4S4Edi49T2BNv8zqZSNX4av2fCd5tTqFPZZSxU9hNwByDLch21L0nDemHJHsn1Von8nKIngRu49I6IFlW2pWGJG21C-DL5x~xBdouoEjzDS9yv5nRNCFmJokapH4kDIxWJrLr5nm2G34i1mLxjLgyTYZLrA-R1y4p-bWV4GxphSvhdl8xfNxqUxk9EjdKUYaEg~H9O4MRJY6oUttH7hnWfESHfc4iitc9zYSk8zsHlpirFF~bJhOeX29qyIwJtjkpStcyNNwGn2GHi432HzVW1SkV6Lt-ivMfa6Ubq2G7BWxyIuJjNI3tj8eswJXq0FmGqmgCTw__');
+      background-size: cover;
+    }
+    .header {
+      background: #ffffff;
+      color: #000;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 5px solid #2a7cff;
+      border-radius: 15px;
+      width: 90%;
+      margin: 20px auto;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .header img {
+      height: 100px;
+    }
+    .header-nav a {
+      color: #000;
+      text-decoration: none;
+      margin: 0 10px;
+      font-weight: bold;
+    }
+    .header-nav a:last-child {
+      color: #2a7cff;
+      background-color: #fff;
+      padding: 5px 15px;
+      border: 1px solid #2a7cff;
+      border-radius: 5px;
+    }
+    .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 110px 20px;
+    
+      color: #333;
+    }
+    .left-section {
+      flex: 1;
+      text-align: left;
+      margin-left: 50px;
+    }
+    .right-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-right: 50px;
+      position: relative;
+    }
+    .title {
+      font-size: 56px; /* เพิ่มขนาดตัวหนังสือให้ใหญ่ขึ้น */
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .slogan {
+      font-size: 36px; /* ขนาดตัวหนังสือใหญ่ขึ้น */
+      line-height: 1.6;
+      margin: 20px 0;
+    }
+    .slogan .highlight-blue {
+      color: #1e3fac;
+      font-weight: bold;
+      font-size: 42px; /* เพิ่มขนาดตัวหนังสือสีฟ้าให้ใหญ่กว่า */
+    }
+    .slogan .highlight-bold {
+      font-weight: bold;
+    }
+    .button-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+    .button-container a {
+      display: inline-block;
+      width: 180px;
+      padding: 12px 0;
+      margin: 10px 0;
+      color: #fff;
+      font-size: 20px;
+      text-decoration: none;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .button-login {
+      background-color: #2a7cff;
+    }
+    .button-register {
+      background-color: #33cc33;
+    }
+    .report-section {
+      background-color: #ffdd99;
+      color: #000;
+      padding: 15px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      margin-top: 20px;
+      width: 100%;
+      text-align: center;
+    }
+    .footer {
+      background-color: #ffffff;
+      padding: 25px;
+      font-size: 14px;
+      color: #666;
+      text-align: center;
+    }
+    .footer p {
+      margin: 5px 0;
+    }
+    .admin-button {
+      background-color: #ff66cc;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      font-size: 14px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <img src="logo.png" alt="Ban Pong Municipality Logo">
+    <div class="header-nav">
+      <a href="#">เข้าสู่ระบบ</a>
+      <a href="#">ติดต่อเรา</a>
+      <a href="#">หน้าแรก</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="left-section">
+      <div class="title">เทศบาลอำเภอบ้านโป่ง</div>
+      <div class="slogan">
+        "บริการ <span class="highlight-blue">ครอบคลุม</span><br>
+        ชุมชน <span class="highlight-blue">เข้มแข็ง</span><br>
+        บ้านเมือง <span class="highlight-blue">น่าอยู่</span><br>
+        <span class="highlight-blue">สู่คุณภาพ</span>
+        ชีวิตที่ดี"
+      </div>
+    </div>
+
+    <div class="right-section">
+      <div class="button-container">
+        <a href="#" class="button-login">เข้าสู่ระบบ</a>
+        <a href="#" class="button-register">ลงทะเบียน</a>
+      </div>
+      <div class="report-section">
+        รายงานสถิติการรับแจ้งเรื่องร้องเรียน/แจ้งเบาะแส การทุจริตและประพฤติมิชอบ
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>เทศบาลเมืองบ้านโป่ง BANPONG MUNICIPALITY</p>
+    <p>ถนนบ้านดอนตูม จังหวัดราชบุรี 70110</p>
+    <p>โทรศัพท์ : 0-3222-1001, 0-3221-1114 | โทรสาร : 0-3222-1975</p>
+    <p>Email : admin@banpong.go.th</p>
+    <button class="admin-button">เข้าสู่ระบบ Admin</button>
+  </div>
+
+</body>
+</html>
