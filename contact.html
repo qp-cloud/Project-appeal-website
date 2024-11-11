@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banpong Municipality Contact Form</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #cce7ff;
+            font-family: Arial, sans-serif;
+        }
+        /* แถบด้านบน */
+        .header {
+            background-color: #00FF47;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 15px;
+            width: 90%;
+            margin: 20px auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            color: #000;
+        }
+        .header .logo img {
+            height: 80px;
+            border-radius: 10px;
+        }
+        .header-nav {
+            display: flex;
+            gap: 15px;
+            font-weight: bold;
+        }
+        .header-nav a {
+            color: #000;
+            text-decoration: none;
+        }
+        /* ข้อมูลติดต่อ */
+        .contact-info {
+            text-align: center;
+            margin: 20px auto;
+            font-size: 16px;
+        }
+        .contact-info h2 {
+            font-weight: bold;
+        }
+        /* กำหนดขนาด container */
+        .container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .form-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        /* กำหนดขนาดและจัดตำแหน่งแผนที่ */
+        .map-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px auto;
+        }
+        .map-container iframe {
+            width: 1000px;
+            height: 400px;
+            border: 0;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- แถบด้านบน -->
+    <div class="header">
+        <div class="logo">
+            <img src="logo.png" alt="Banpong Municipality Logo">
+        </div>
+        <div class="header-nav">
+            <a href="#">หน้าแรก</a>
+            <a href="#">ติดต่อเรา</a>
+            <a href="#">เข้าสู่ระบบ</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="contact-info">
+            <img src="logo.png" alt="Banpong Municipality Logo" style="height: 120px;"><br><br>
+            <h2>เทศบาลเมืองบ้านโป่ง<br>BANPONG MUNICIPALITY</h2>
+            <p>ตำบลบ้านโป่ง อำเภอบ้านโป่ง จังหวัดราชบุรี 70110</p>
+            <p>โทรศัพท์ : 0-3222-1001, 0-3221-1114 โทรสาร : 0-3222-1975</p>
+            <p>Email : admin@banpong.go.th</p>
+        </div><br>
+
+        <h2 class="form-title">ติดต่อเรา</h2><br>
+
+        <form class="needs-validation" novalidate>
+            <div class="form-group">
+                <label for="name">ชื่อ <span style="color: red;">*</span></label>
+                <input type="text" class="form-control" id="name" required>
+                <div class="invalid-feedback">กรุณากรอกชื่อ</div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">อีเมล <span style="color: red;">*</span></label>
+                <input type="email" class="form-control" id="email" required>
+                <div class="invalid-feedback">กรุณากรอกอีเมลที่ถูกต้อง</div>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">เบอร์โทรศัพท์ <span style="color: red;">*</span></label>
+                <input type="tel" class="form-control" id="phone" pattern="[0-9]{10}" maxlength="10" required 
+                       oninput="this.value = this.value.replace(/[^0-9]/g, '')" placeholder="กรอก 10 หลัก">
+                <div class="invalid-feedback">กรุณากรอกเบอร์โทรศัพท์ 10 หลัก</div>
+            </div>
+
+            <div class="form-group">
+                <label for="message">รายละเอียด <span style="color: red;">*</span></label>
+                <textarea class="form-control" id="message" required></textarea>
+                <div class="invalid-feedback">กรุณากรอกรายละเอียด</div>
+            </div>
+
+            <button type="submit" class="btn btn-success">ส่ง</button>
+        </form>
+    </div>
+
+    <!-- แผนที่ Google Maps -->
+    <div class="map-container">
+        <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d603.5752625400377!2d99.88245470744143!3d13.816851290724143!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30e31de648d73063%3A0x1f16111ee803f17b!2z4Liq4Liz4LiZ4Lix4LiB4LiH4Liy4LiZ4LmA4LiX4Lio4Lia4Liy4Lil4LmA4Lih4Li34Lit4LiH4Lia4LmJ4Liy4LiZ4LmC4Lib4LmI4LiH!5e0!3m2!1sth!2sth!4v1731338258783!5m2!1sth!2sth" 
+            allowfullscreen="" 
+            loading="lazy" 
+            referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Bootstrap validation
+        (function() {
+            'use strict';
+            window.addEventListener('load', function() {
+                var forms = document.getElementsByClassName('needs-validation');
+                Array.prototype.filter.call(forms, function(form) {
+                    form.addEventListener('submit', function(event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+    </script>
+
+</body>
+</html>
