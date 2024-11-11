@@ -10,6 +10,10 @@ const complaints = [
   { id: "FIG-116", title: "ไฟราวส่องถนน", department: "เทศบาล", level: "ปกติ", date: "Dec 5", status: "✔" },
   { id: "FIG-115", title: "หายทรากทางเข้า", department: "เทศบาล", level: "เร่งด่วน", date: "Dec 5", status: "✔" }
 ];
+function showDetails(title, details) {
+  document.getElementById("complaintTitle").textContent = title;
+  document.getElementById("complaintDetails").textContent = details;
+}
 
 // Function to load data into the table
 function loadTableData() {
@@ -23,10 +27,12 @@ function loadTableData() {
                   <td>${complaint.level}</td>
                   <td>${complaint.date}</td>
                   <td>${complaint.status}</td>
+                  <td><button class="btn btn-info btn-sm" data-toggle="modal" data-target="#infoModal" onclick="showDetails('${complaint.title}', 'Details for ${complaint.title}')">More Info</button></td>
                 </tr>`;
     tableBody.innerHTML += row;
   });
 }
+
 
 // Function to search and filter the table
 function filterTable() {
@@ -68,6 +74,7 @@ function searchTable() {
     rows[i].style.display = match ? '' : 'none';
   }
 }
+
 
 // Load table data when the page is loaded
 window.onload = loadTableData;
