@@ -32,6 +32,13 @@
       text-decoration: none;
       margin: 0 10px;
       font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 5px;
+      transition: color 0.3s ease, background-color 0.3s ease;
+    }
+    .header-nav a:hover {
+      color: #fff;
+      background-color: #2a7cff;
     }
     .header-nav a:last-child {
       color: #2a7cff;
@@ -42,7 +49,7 @@
     }
     .container {
       width: 90%;
-      max-width: 1000px;
+      max-width: 600px;
       margin: 20px auto;
       padding: 20px;
       background-color: #ffffff;
@@ -55,6 +62,18 @@
       font-weight: bold;
       margin-bottom: 20px;
     }
+    .btn-submit {
+      background-color: #28a745;
+      color: #ffffff;
+      font-weight: bold;
+      width: 100px;
+    }
+    .btn-cancel {
+      background-color: #dc3545;
+      color: #ffffff;
+      font-weight: bold;
+      width: 100px;
+    }
   </style>
 </head>
 <body>
@@ -62,9 +81,13 @@
   <div class="header">
     <img src="logo.png" alt="Ban Pong Municipality Logo">
     <div class="header-nav">
-      <a href="#">เข้าสู่ระบบ</a>
-      <a href="#">ติดต่อเรา</a>
-      <a href="#">หน้าแรก</a>
+      <nav>
+        <ul>
+          <a href="login.html">เข้าสู่ระบบ</a>
+          <a href="contact.html">ติดต่อเรา</a>
+          <a href="home.html">หน้าแรก</a>
+        </ul>
+      </nav>
     </div>
   </div>
 
@@ -134,8 +157,8 @@
       </div>
 
       <div class="d-flex justify-content-between">
-        <button type="reset" class="btn btn-danger">ยกเลิก</button>
-        <button type="submit" class="btn btn-success">ต่อไป</button>
+        <button type="button" class="btn btn-danger" onclick="goToHome()">ยกเลิก</button>
+        <button type="button" class="btn btn-success" onclick="submitForm()">ต่อไป</button>
       </div>
     </form>
   </div>
@@ -144,6 +167,19 @@
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script>
+    function goToHome() {
+      window.location.href = "home.html";
+    }
+
+    function submitForm() {
+      var form = document.querySelector('.needs-validation');
+      if (form.checkValidity() === true) {
+        window.location.href = "home.html";
+      } else {
+        form.classList.add('was-validated');
+      }
+    }
+    
     // Bootstrap validation
     (function() {
       'use strict';

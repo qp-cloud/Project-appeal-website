@@ -10,32 +10,42 @@
             background-color: #cce7ff;
             font-family: Arial, sans-serif;
         }
-        /* แถบด้านบน */
         .header {
-            background-color: #00FF47;
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-radius: 15px;
-            width: 90%;
-            margin: 20px auto;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            color: #000;
-        }
-        .header .logo img {
-            height: 80px;
-            border-radius: 10px;
-        }
-        .header-nav {
-            display: flex;
-            gap: 15px;
-            font-weight: bold;
-        }
-        .header-nav a {
-            color: #000;
-            text-decoration: none;
-        }
+      background: #1ceb61;
+      color: #000;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 5px solid #1ceb61;
+      border-radius: 15px;
+      width: 90%;
+      margin: 20px auto;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .header img {
+      height: 100px;
+    }
+    .header-nav a {
+      color: #000;
+      text-decoration: none;
+      margin: 0 10px;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 5px;
+      transition: color 0.3s ease, background-color 0.3s ease;
+    }
+    .header-nav a:hover {
+      color: #fff;
+      background-color: #2a7cff;
+    }
+    .header-nav a:last-child {
+      color: #2a7cff;
+      background-color: #fff;
+      padding: 5px 15px;
+      border: 1px solid #2a7cff;
+      border-radius: 5px;
+    }
         /* ข้อมูลติดต่อ */
         .contact-info {
             text-align: center;
@@ -82,9 +92,13 @@
             <img src="logo.png" alt="Banpong Municipality Logo">
         </div>
         <div class="header-nav">
-            <a href="#">หน้าแรก</a>
-            <a href="#">ติดต่อเรา</a>
-            <a href="#">เข้าสู่ระบบ</a>
+            <nav>
+                <ul>
+                    <a href="login.html">เข้าสู่ระบบ</a>
+                    <a href="contact.html">ติดต่อเรา</a>
+                    <a href="home.html">หน้าแรก</a>
+                </ul>
+            </nav>
         </div>
     </div>
 

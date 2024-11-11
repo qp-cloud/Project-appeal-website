@@ -9,7 +9,7 @@
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background-image: url('https://s3-alpha-sig.figma.com/img/464b/ce5f/77b6e95107ebcb5c341a97c542fe001e?Expires=1731283200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=fzwsdraZbCoovDW4S4Edi49T2BNv8zqZSNX4av2fCd5tTqFPZZSxU9hNwByDLch21L0nDemHJHsn1Von8nKIngRu49I6IFlW2pWGJG21C-DL5x~xBdouoEjzDS9yv5nRNCFmJokapH4kDIxWJrLr5nm2G34i1mLxjLgyTYZLrA-R1y4p-bWV4GxphSvhdl8xfNxqUxk9EjdKUYaEg~H9O4MRJY6oUttH7hnWfESHfc4iitc9zYSk8zsHlpirFF~bJhOeX29qyIwJtjkpStcyNNwGn2GHi432HzVW1SkV6Lt-ivMfa6Ubq2G7BWxyIuJjNI3tj8eswJXq0FmGqmgCTw__');
+      background-image: url('https://images-ext-1.discordapp.net/external/TmqwfUj-0smfX--lIGhAZrNskT5brqA6S22j_Gu5EhM/%3FExpires%3D1732492800%26Key-Pair-Id%3DAPKAQ4GOSFWCVNEHN3O4%26Signature%3DXPuphAsOwZRT~vM6Si9Q4oMzNKr~7DGuMqQ6~5qg6Bonz-tseovVAAv8FwBa0TBZUEuynHTOpKm80mS3rCuZey35Km6eQ6bhUuSE-heu0svDA6JrP6HxQuPOFbqSHxjHaq7KbY0neoYJpJsvo9FdIzN7y9Oj2KwTgbMU7UpvKY4CG5b5Rg8JO~2TguzM59VU-tAhV7fL4XJwoPesnxhMS5-wKihfj8J5QTXkaq9BRR~2wpx~ENy1AU2qKw4YouVbUXL1Q-F-YMM~ng~VJYJtaLaa6VoFpqaPiBLSWNRgfpNs8W5gCPs7q6amKKFGrJtyK7UZMmo6WKQD6kOtCOdtOw__/https/s3-alpha-sig.figma.com/img/464b/ce5f/77b6e95107ebcb5c341a97c542fe001e?format=webp&width=1003&height=670');
       background-size: cover;
     }
     .header {
@@ -33,6 +33,13 @@
       text-decoration: none;
       margin: 0 10px;
       font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 5px;
+      transition: color 0.3s ease, background-color 0.3s ease;
+    }
+    .header-nav a:hover {
+      color: #fff;
+      background-color: #2a7cff;
     }
     .header-nav a:last-child {
       color: #2a7cff;
@@ -137,13 +144,16 @@
   </style>
 </head>
 <body>
-
   <div class="header">
     <img src="logo.png" alt="Ban Pong Municipality Logo">
     <div class="header-nav">
-      <a href="#">เข้าสู่ระบบ</a>
-      <a href="#">ติดต่อเรา</a>
-      <a href="#">หน้าแรก</a>
+      <nav>
+        <ul>
+          <a href="login.html">เข้าสู่ระบบ</a>
+          <a href="contact.html">ติดต่อเรา</a>
+          <a href="home.html">หน้าแรก</a>
+        </ul>
+      </nav>
     </div>
   </div>
 
@@ -161,11 +171,10 @@
 
     <div class="right-section">
       <div class="button-container">
-        <a href="#" class="button-login">เข้าสู่ระบบ</a>
-        <a href="#" class="button-register">ลงทะเบียน</a>
-      </div>
-      <div class="report-section">
-        รายงานสถิติการรับแจ้งเรื่องร้องเรียน/แจ้งเบาะแส การทุจริตและประพฤติมิชอบ
+        <ul>
+          <a href="login.html" class="button-login">เข้าสู่ระบบ</a>
+          <a href="register.html" class="button-register">ลงทะเบียน</a>
+        </ul>
       </div>
     </div>
   </div>
