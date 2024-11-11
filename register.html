@@ -5,197 +5,90 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>เทศบาลอำเภอบ้านโป่ง - ลงทะเบียน</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
   <style>
     body {
-      background: #cce7ff;
-      font-family: Arial, sans-serif;
-    }
-    .header {
-      background: #1ceb61;
-      color: #000;
-      padding: 10px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border: 5px solid #1ceb61;
-      border-radius: 15px;
-      width: 90%;
-      margin: 20px auto;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-    .header img {
-      height: 100px;
-    }
-    .header-nav a {
-      color: #000;
-      text-decoration: none;
-      margin: 0 10px;
-      font-weight: bold;
-      padding: 5px 10px;
-      border-radius: 5px;
-      transition: color 0.3s ease, background-color 0.3s ease;
-    }
-    .header-nav a:hover {
-      color: #fff;
-      background-color: #2a7cff;
-    }
-    .header-nav a:last-child {
-      color: #2a7cff;
-      background-color: #fff;
-      padding: 5px 15px;
-      border: 1px solid #2a7cff;
-      border-radius: 5px;
+      background-color: #f8f9fa;
+      font-family: 'Arial', sans-serif;
     }
     .container {
-      width: 90%;
       max-width: 600px;
-      margin: 20px auto;
+      margin-top: 50px;
       padding: 20px;
-      background-color: #ffffff;
-      border-radius: 15px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
     .form-title {
       text-align: center;
       font-size: 24px;
-      font-weight: bold;
       margin-bottom: 20px;
+      color: #343a40;
     }
-    .btn-submit {
-      background-color: #28a745;
-      color: #ffffff;
-      font-weight: bold;
-      width: 100px;
+    .form-control {
+      margin-bottom: 15px;
     }
-    .btn-cancel {
-      background-color: #dc3545;
-      color: #ffffff;
-      font-weight: bold;
-      width: 100px;
+    button {
+      width: 100%;
+      background-color: #007bff;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .alert {
+      text-align: center;
     }
   </style>
 </head>
 <body>
 
-  <div class="header">
-    <img src="logo.png" alt="Ban Pong Municipality Logo">
-    <div class="header-nav">
-      <nav>
-        <ul>
-          <a href="login.html">เข้าสู่ระบบ</a>
-          <a href="contact.html">ติดต่อเรา</a>
-          <a href="home.html">หน้าแรก</a>
-        </ul>
-      </nav>
-    </div>
-  </div>
+<div class="container">
+    <!-- Success message -->
+    <?php if (isset($message)): ?>
+        <div class="alert alert-success mt-3" role="alert">
+            <?php echo $message; ?>
+        </div>
+    <?php endif; ?>
 
-  <div class="container">
     <div class="form-title">ลงทะเบียน</div>
-
-    <form class="needs-validation" novalidate>
-      <div class="form-group">
-        <label for="first-name">ชื่อจริง <span style="color: red;">*</span></label>
-        <input type="text" class="form-control" id="first-name" required>
-        <div class="invalid-feedback">กรุณากรอกชื่อจริง</div>
-      </div>
-
-      <div class="form-group">
-        <label for="last-name">นามสกุล <span style="color: red;">*</span></label>
-        <input type="text" class="form-control" id="last-name" required>
-        <div class="invalid-feedback">กรุณากรอกนามสกุล</div>
-      </div>
-
-      <div class="form-group">
-        <label for="id-number">เลขบัตรประชาชน <span style="color: red;">*</span></label>
-        <input type="text" class="form-control" id="id-number" pattern="[0-9]{13}" maxlength="13" required 
-               oninput="this.value = this.value.replace(/[^0-9]/g, '')" placeholder="กรอก 13 หลัก">
-        <div class="invalid-feedback">กรุณากรอกเลขบัตรประชาชน 13 หลัก</div>
-      </div>
-
-      <div class="form-group">
-        <label for="gender">เพศ <span style="color: red;">*</span></label>
-        <select class="form-control" id="gender" required>
-          <option value="">-- เลือกเพศ --</option>
-          <option value="male">ชาย</option>
-          <option value="female">หญิง</option>
-          <option value="other">อื่นๆ</option>
-        </select>
-        <div class="invalid-feedback">กรุณาเลือกเพศ</div>
-      </div>
-
-      <div class="form-group">
-        <label for="birth-date">วัน เดือน ปี เกิด <span style="color: red;">*</span></label>
-        <input type="date" class="form-control" id="birth-date" required>
-        <div class="invalid-feedback">กรุณากรอกวัน เดือน ปี เกิด</div>
-      </div>
-
-      <div class="form-group">
-        <label for="occupation">อาชีพ <span style="color: red;">*</span></label>
-        <input type="text" class="form-control" id="occupation" required>
-        <div class="invalid-feedback">กรุณากรอกอาชีพ</div>
-      </div>
-
-      <div class="form-group">
-        <label for="phone">เบอร์โทรศัพท์ <span style="color: red;">*</span></label>
-        <input type="tel" class="form-control" id="phone" pattern="[0-9]{10}" maxlength="10" required 
-               oninput="this.value = this.value.replace(/[^0-9]/g, '')" placeholder="กรอก 10 หลัก">
-        <div class="invalid-feedback">กรุณากรอกเบอร์โทรศัพท์ 10 หลัก</div>
-      </div>
-
-      <div class="form-group">
-        <label for="email">อีเมล <span style="color: red;">*</span></label>
-        <input type="email" class="form-control" id="email" required>
-        <div class="invalid-feedback">กรุณากรอกอีเมล</div>
-      </div>
-
-      <div class="form-group">
-        <label for="address">ที่อยู่ <span style="color: red;">*</span></label>
-        <input type="text" class="form-control" id="address" required>
-        <div class="invalid-feedback">กรุณากรอกที่อยู่</div>
-      </div>
-
-      <div class="d-flex justify-content-between">
-        <button type="button" class="btn btn-danger" onclick="goToHome()">ยกเลิก</button>
-        <button type="button" class="btn btn-success" onclick="submitForm()">ต่อไป</button>
-      </div>
+    <form action="register.php" method="POST">
+        <div class="form-group">
+            <input type="text" name="first_name" class="form-control" placeholder="First Name" required>
+        </div>
+        <div class="form-group">
+            <input type="text" name="last_name" class="form-control" placeholder="Last Name" required>
+        </div>
+        <div class="form-group">
+            <input type="text" name="id_number" class="form-control" placeholder="ID Number" required>
+        </div>
+        <div class="form-group">
+            <select name="gender" class="form-control" required>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <input type="date" name="birth_date" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <input type="text" name="occupation" class="form-control" placeholder="Occupation" required>
+        </div>
+        <div class="form-group">
+            <input type="text" name="phone" class="form-control" placeholder="Phone" required>
+        </div>
+        <div class="form-group">
+            <input type="email" name="email" class="form-control" placeholder="Email" required>
+        </div>
+        <div class="form-group">
+            <textarea name="address" class="form-control" placeholder="Address" required></textarea>
+        </div>
+        <button type="submit">Register</button>
     </form>
-  </div>
+</div>
 
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  <script>
-    function goToHome() {
-      window.location.href = "home.html";
-    }
-
-    function submitForm() {
-      var form = document.querySelector('.needs-validation');
-      if (form.checkValidity() === true) {
-        window.location.href = "home.html";
-      } else {
-        form.classList.add('was-validated');
-      }
-    }
-    
-    // Bootstrap validation
-    (function() {
-      'use strict';
-      window.addEventListener('load', function() {
-        var forms = document.getElementsByClassName('needs-validation');
-        Array.prototype.filter.call(forms, function(form) {
-          form.addEventListener('submit', function(event) {
-            if (form.checkValidity() === false) {
-              event.preventDefault();
-              event.stopPropagation();
-            }
-            form.classList.add('was-validated');
-          }, false);
-        });
-      }, false);
-    })();
-  </script>
 </body>
 </html>
