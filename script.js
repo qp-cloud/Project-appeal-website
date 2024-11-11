@@ -10,10 +10,17 @@ const complaints = [
   { id: "FIG-116", title: "ไฟราวส่องถนน", department: "เทศบาล", level: "ปกติ", date: "Dec 5", status: "✔" },
   { id: "FIG-115", title: "หายทรากทางเข้า", department: "เทศบาล", level: "เร่งด่วน", date: "Dec 5", status: "✔" }
 ];
-function showDetails(title, details) {
-  document.getElementById("complaintTitle").textContent = title;
-  document.getElementById("complaintDetails").textContent = details;
+function showDetails(data) {
+  document.getElementById("department").value = data.department;
+  document.getElementById("level").value = data.level;
+  document.getElementById("details").value = data.details;
+  document.getElementById("location").value = data.location;
+  document.getElementById("contact").value = data.contact;
+  document.getElementById("date").value = data.date;
+  document.getElementById("time").value = data.time;
+  document.getElementById("status").value = data.status;
 }
+
 
 // Function to load data into the table
 function loadTableData() {
@@ -21,14 +28,14 @@ function loadTableData() {
   tableBody.innerHTML = '';  // Clear table first
   complaints.forEach(complaint => {
     const row = `<tr>
-                  <td>${complaint.id}</td>
-                  <td>${complaint.title}</td>
-                  <td>${complaint.department}</td>
-                  <td>${complaint.level}</td>
-                  <td>${complaint.date}</td>
-                  <td>${complaint.status}</td>
-                  <td><button class="btn btn-info btn-sm" data-toggle="modal" data-target="#infoModal" onclick="showDetails('${complaint.title}', 'Details for ${complaint.title}')">More Info</button></td>
-                </tr>`;
+               <td>${complaint.id}</td>
+               <td>${complaint.title}</td>
+               <td>${complaint.department}</td>
+               <td>${complaint.level}</td>
+               <td>${complaint.date}</td>
+               <td>${complaint.status}</td>
+               <td><button class="btn btn-info btn-sm" data-toggle="modal" data-target="#infoModal" onclick="showDetails(${JSON.stringify(complaint)})">More Info</button></td>
+             </tr>`;
     tableBody.innerHTML += row;
   });
 }

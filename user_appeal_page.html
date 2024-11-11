@@ -12,39 +12,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     <style>
         body {
-            background-color: #a2e1ec;
-        }
-        .header {
-            background: #ffffff;
-            color: #000;
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 5px solid #2a7cff;
-            border-radius: 15px;
-            width: 90%;
-            margin: 20px auto;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .header img {
-            height: 100px;
-        }
-        .user-info {
-            display: flex;
-            align-items: center;
-        }
-        .user-info span {
-            margin-right: 15px;
-            font-weight: bold;
-            color: #2a7cff;
-        }
-        .user-info a {
-            color: #fff;
-            background-color: #2a7cff;
-            padding: 5px 10px;
-            text-decoration: none;
-            border-radius: 5px;
+            background-color: #f7f7f7;
         }
         .form-container {
             margin-top: 50px;
@@ -53,35 +21,12 @@
             color: red;
             font-size: 0.875rem;
         }
-        .function-buttons a {
-            display: inline-block;
-            width: 300px;
-            padding: 15px;
-            margin: 15px;
-            font-size: 18px;
-            color: #fff;
-            background-color: #2a7cff;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: bold;
-            transition: background-color 0.3s ease;
-        }
-        .function-buttons a:hover {
-            background-color: #1e60c3;
-        }
     </style>
 </head>
-
 <body>
-    <div class="header">
-        <img src="logo.png" alt="Ban Pong Municipality Logo">
-        <div class="user-info">
-          <span>ยินดีต้อนรับ, [ชื่อผู้ใช้]</span>
-          <a href="secondpage.html">กลับสู่หน้าหลัก</a>
-        </div>
-      </div>
+
 <div class="container form-container">
-    <h2 class="text-center mb-4">ร้องทุกข์ / ร้องเรียน</h2>
+    <h2 class="text-center mb-4">ร้องทุกข์</h2>
 
     <form id="complaint-form">
 
@@ -206,12 +151,13 @@
                 <p>คุณแน่ใจหรือไม่ว่าต้องการส่งข้อมูลทั้งหมดนี้?</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="window.location.href='secondpage.html'">ยกเลิก</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">ยกเลิก</button>
                 <button type="button" class="btn btn-primary" id="confirm-submit">ยืนยัน</button>
             </div>
         </div>
     </div>
 </div>
+
 <script>
     $(document).ready(function() {
 
@@ -291,5 +237,6 @@
         });
     });
 </script>
+
 </body>
 </html>
