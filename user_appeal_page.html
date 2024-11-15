@@ -10,6 +10,11 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Bootstrap JS -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://api.longdo.com/map?key=35bbbe40a96e844b27eba45df1ddad0b"></script>
+
+
+
+
     <style>
         body {
             background-color: #f7f7f7;
@@ -61,10 +66,11 @@
         <!-- Longdo Map (This is just a placeholder for the map) -->
         <div class="form-group">
             <label>ปักหมุดบนแผนที่</label>
-            <div id="map" style="height: 200px; background-color: #ddd;">แผนที่</div>
+            <div id="map" style="height: 400px; background-color: #ddd;"></div>
             <input type="hidden" id="latitude" name="latitude">
             <input type="hidden" id="longitude" name="longitude">
         </div>
+        
 
         <!-- Incident Date and Time -->
         <div class="form-group">
@@ -159,6 +165,17 @@
 </div>
 
 <script>
+    let geolocation = { lat: 13.7367, lng: 100.5231 }; // Default location (Bangkok)
+map = new longdo.Map({
+    placeholder: document.getElementById('map'),
+    defaultCenter: geolocation,
+    defaultZoom: 13
+});
+var script = document.createElement('script');
+script.src = "https://mapapi.longdo.com/mapapi?key=35bbbe40a96e844b27eba45df1ddad0b";
+script.onload = initMap;
+document.body.appendChild(script);
+
     $(document).ready(function() {
 
         // Enable/Disable the submit button based on privacy consent
@@ -236,7 +253,10 @@
             }
         });
     });
+
+
 </script>
+
 
 </body>
 </html>

@@ -1,69 +1,53 @@
 <?php
 // Database connection
-$servername = "localhost";  // Your database host
-$username = "root";         // Your database username
-$password = "";             // Your database password
-$dbname = "registration_db"; // Your database name
+$servername = "localhost";
+$username = "root"; // ชื่อผู้ใช้งาน MySQL
+$password = "";     // รหัสผ่าน MySQL
+$dbname = "web_appeal_db"; // ชื่อฐานข้อมูล
 
-// Create connection
+// สร้างการเชื่อมต่อ
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-// Check connection
+// ตรวจสอบการเชื่อมต่อ
 if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+    die("การเชื่อมต่อล้มเหลว: " . $conn->connect_error);
 }
 
-// Check if form is submitted via POST method
+// ตรวจสอบ method ว่าเป็น POST หรือไม่
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Check if the required form fields are set before accessing them
-    if (isset($_POST['first_name'], $_POST['last_name'], $_POST['id_number'], $_POST['gender'], $_POST['birth_date'], $_POST['occupation'], $_POST['phone'], $_POST['email'], $_POST['address'])) {
-        // Collect form data
-        $first_name = $_POST['first_name'];
-        $last_name = $_POST['last_name'];
-        $id_number = $_POST['id_number'];
-        $gender = $_POST['gender'];
-        $birth_date = $_POST['birth_date'];
-        $occupation = $_POST['occupation'];
-        $phone = $_POST['phone'];
-        $email = $_POST['email'];
-        $address = $_POST['address'];
-
-        // SQL query to insert data into the database
-        $sql = "INSERT INTO users (first_name, last_name, id_number, gender, birth_date, occupation, phone, email, address)
-                VALUES ('$first_name', '$last_name', '$id_number', '$gender', '$birth_date', '$occupation', '$phone', '$email', '$address')";
-
-        // Check if the data was inserted successfully
-        if ($conn->query($sql) === TRUE) {
-            $message = "ลงทะเบียนสำเร็จ!"; // Success message
+    // รับข้อมูลจากฟอร์ม
+    $first_name = $_POST['first_name'] ?? '';
+    $last_name = $_POST['last_name'] ?? '';
+    $id_number = $_POST['id_number'] ?? '';
+    $gender = $_POST['gender'] ?? '';
+    $birth_date = $_POST['birth_date'] ?? '';
+    $occupation = $_POST['occupation'] ?? '';
+    $phone = $_POST['phone'] ?? '';
+    $email = $_POST['email'] ?? '';
+    $address = $_POST['address'] ?? '';
+    $username = $_POST['username'] ?? '';
+    $password = $_POST['password'] ?? '';
+    // ใช้ prepared statement เพื่อป้องกัน SQL Injection
+    $stmt = $conn->prepare("INSERT INTO user (first_name, last_name, id_number, gender, birth_date, occupation, phone, email, address,username,password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)");
+    if ($stmt) {
+        $stmt->bind_param("sssssssssss", $first_name, $last_name, $id_number, $gender, $birth_date, $occupation, $phone, $email, $address,$username,$password);
+        if ($stmt->execute()) {
+            $message = "ลงทะเบียนสำเร็จ!";
         } else {
-            $message = "เกิดข้อผิดพลาด: " . $conn->error; // Error message
+            $message = "เกิดข้อผิดพลาด: " . $stmt->error;
         }
+        $stmt->close();
     } else {
-        $message = "กรุณากรอกข้อมูลให้ครบถ้วน!"; // Error message if required fields are missing
+        $message = "เกิดข้อผิดพลาดในการเตรียมคำสั่ง SQL: " . $conn->error;
     }
-    // Close connection
     $conn->close();
 }
-?>
-
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Registration</title>
-</head>
-<body>
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Form processing code goes here
+    // Example: save the form data to the database
     
-  <div class="header">
-    <img src="logo.png" alt="Ban Pong Municipality Logo">
-    <div class="header-nav">
-      <nav>
-        <ul>
-          <a href="login.html">เข้าสู่ระบบ</a>
-          <a href="contact.html">ติดต่อเรา</a>
-          <a href="home.html">หน้าแรก</a>
-        </ul>
-      </nav>
-    </div>
-  </div>
-</body>
-</html>
+    // After processing, redirect to login.html
+    header('Location: login.html');
+    exit();
+}
+?>
