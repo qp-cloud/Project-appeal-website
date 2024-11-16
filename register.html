@@ -7,120 +7,118 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <style>
     body {
-      background-color: #f8f9fa;
+      background: linear-gradient(135deg, #74ebd5, #9face6);
       font-family: 'Arial', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .container {
       max-width: 600px;
-      margin-top: 50px;
-      padding: 20px;
+      padding: 30px;
       background-color: #fff;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
     }
     .form-title {
       text-align: center;
-      font-size: 24px;
+      font-size: 28px;
+      font-weight: bold;
       margin-bottom: 20px;
       color: #343a40;
     }
-    .form-control {
-      margin-bottom: 15px;
-      position: relative;
-    }
-    .form-control.is-invalid {
-      border-color: #dc3545;
-    }
-    .form-control.is-invalid ~ .invalid-feedback {
-      display: block;
-      position: absolute;
-      right: 0;
-      top: 50%;
-      transform: translateY(-50%);
-    }
-    .invalid-feedback {
-      display: none;
-      color: #dc3545;
-      font-size: 12px;
-    }
+    
     .btn-primary {
       width: 100%;
-      background-color: #007bff;
-      color: white;
       padding: 10px;
       border: none;
       border-radius: 5px;
+      background-color: #007bff;
+      color: white;
+      font-size: 16px;
     }
     .btn-primary:hover {
       background-color: #0056b3;
     }
-    .alert {
-      text-align: center;
+    .modal-content {
+      border-radius: 10px;
     }
+    .modal-header {
+      border-bottom: none;
+    }
+    .modal-title {
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .modal-footer {
+      border-top: none;
+    }
+    
   </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- Success message -->
-    <?php if (isset($message)): ?>
-        <div class="alert alert-success mt-3" role="alert">
-            <?php echo $message; ?>
-        </div>
-    <?php endif; ?>
-
     <div class="form-title">ลงทะเบียน</div>
-    <form action="register.php" method="POST" id="registerForm">
-        <div class="form-group">
-            <input type="text" name="first_name" class="form-control" placeholder="First Name" required>
-            <div class="invalid-feedback">กรุณากรอกชื่อจริง</div>
-        </div>
-        <div class="form-group">
-            <input type="text" name="last_name" class="form-control" placeholder="Last Name" required>
-            <div class="invalid-feedback">กรุณากรอกนามสกุล</div>
-        </div>
-        <div class="form-group">
-            <input type="text" name="id_number" class="form-control" placeholder="ID Number" required>
-            <div class="invalid-feedback">กรุณากรอกหมายเลขบัตรประชาชน</div>
-        </div>
-        <div class="form-group">
-            <select name="gender" class="form-control" required>
-                <option value="">กรุณาเลือกเพศ</option>
-                <option value="male">ชาย</option>
-                <option value="female">หญิง</option>
-                <option value="other">อื่นๆ</option>
-            </select>
-            <div class="invalid-feedback">กรุณาเลือกเพศ</div>
-        </div>
-        <div class="form-group">
-            <input type="date" name="birth_date" class="form-control" required>
-            <div class="invalid-feedback">กรุณากรอกวันเกิด</div>
-        </div>
-        <div class="form-group">
-            <input type="text" name="occupation" class="form-control" placeholder="Occupation" required>
-            <div class="invalid-feedback">กรุณากรอกอาชีพ</div>
-        </div>
-        <div class="form-group">
-            <input type="text" name="phone" class="form-control" placeholder="Phone" required>
-            <div class="invalid-feedback">กรุณากรอกหมายเลขโทรศัพท์</div>
-        </div>
-        <div class="form-group">
-            <input type="email" name="email" class="form-control" placeholder="Email" required>
-            <div class="invalid-feedback">กรุณากรอกอีเมล์</div>
-        </div>
-        <div class="form-group">
-            <textarea name="address" class="form-control" placeholder="Address" required></textarea>
-            <div class="invalid-feedback">กรุณากรอกที่อยู่</div>
-        </div>
-
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#usernamePasswordModal">Add Username and Password</button>
+    <form action="register.php" method="POST" id="registerForm" novalidate>
+      <div class="form-group">
+        <input type="text" name="first_name" class="form-control" placeholder="First Name" required>
+        <div class="invalid-feedback">กรุณากรอกชื่อ</div>
+      </div>
+      
+      <div class="form-group">
+        <input type="text" name="last_name" class="form-control" placeholder="Last Name" required>
+        <div class="invalid-feedback">กรุณากรอกนามสกุล</div>
+      </div>
+      
+      <div class="form-group">
+        <input type="text" name="id_number" class="form-control" placeholder="ID Number" required pattern="\d{13}">
+        <div class="invalid-feedback">กรุณากรอกเลขบัตรประชาชน 13 หลัก</div>
+      </div>
+      
+      <div class="form-group">
+        <select name="gender" class="form-control" required>
+          <option value="">กรุณาเลือกเพศ</option>
+          <option value="male">ชาย</option>
+          <option value="female">หญิง</option>
+          <option value="other">อื่นๆ</option>
+        </select>
+        <div class="invalid-feedback">กรุณาเลือกเพศ</div>
+      </div>
+      
+      <div class="form-group">
+        <input type="date" name="birth_date" class="form-control" required>
+        <div class="invalid-feedback">กรุณาเลือกวันเกิด</div>
+      </div>
+      
+      <div class="form-group">
+        <input type="text" name="occupation" class="form-control" placeholder="Occupation" required>
+        <div class="invalid-feedback">กรุณากรอกอาชีพ</div>
+      </div>
+      
+      <div class="form-group">
+        <input type="text" name="phone" class="form-control" placeholder="Phone" required pattern="\d{10}">
+        <div class="invalid-feedback">กรุณากรอกเบอร์โทรศัพท์ 10 หลัก</div>
+      </div>
+      
+      <div class="form-group">
+        <input type="email" name="email" class="form-control" placeholder="Email" required>
+        <div class="invalid-feedback">กรุณากรอกอีเมลที่ถูกต้อง</div>
+      </div>
+      
+      <div class="form-group">
+        <textarea name="address" class="form-control" placeholder="Address" rows="3" required></textarea>
+        <div class="invalid-feedback">กรุณากรอกที่อยู่</div>
+      </div>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#usernamePasswordModal">เพิ่มข้อมูลบัญชี</button>
 
         <!-- Modal -->
         <div class="modal fade" id="usernamePasswordModal" tabindex="-1" role="dialog" aria-labelledby="usernamePasswordModalLabel" aria-hidden="true">
           <div class="modal-dialog" role="document">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title" id="usernamePasswordModalLabel">Username and Password</h5>
+                <h5 class="modal-title" id="usernamePasswordModalLabel">ข้อมูลบัญชี</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
@@ -128,60 +126,81 @@
               <div class="modal-body">
                 <div class="form-group">
                     <input type="text" name="username" class="form-control" placeholder="Username" required>
-                    <div class="invalid-feedback">กรุณากรอกชื่อผู้ใช้งาน</div>
                 </div>
                 <div class="form-group">
                     <input type="password" name="password" class="form-control" placeholder="Password" required>
-                    <div class="invalid-feedback">กรุณากรอกรหัสผ่าน</div>
                 </div>
                 <div class="form-group">
                     <input type="password" name="confirm_password" class="form-control" placeholder="Re-enter Password" required>
-                    <div class="invalid-feedback">กรุณากรอกยืนยันรหัสผ่าน</div>
                 </div>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">Register</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">ยกเลิก</button>
+                <button type="submit" class="btn btn-primary">ลงทะเบียน</button>
               </div>
             </div>
           </div>
         </div>
     </form>
+    <div class="text-center mt-3">
+      <a href="home.html" class="btn btn-secondary">กลับไปยังหน้าแรก</a>
+  </div>
+</div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
 <script>
-  // Validate form before submitting
   document.getElementById("registerForm").addEventListener("submit", function(event) {
-    var form = this;
-    form.querySelectorAll('.form-control').forEach(function(input) {
-      if (!input.checkValidity()) {
-        input.classList.add('is-invalid');
-      } else {
-        input.classList.remove('is-invalid');
+  var form = this;
+  var isValid = true;
+
+  // ตรวจสอบข้อมูลในแต่ละช่อง
+  form.querySelectorAll('.form-control').forEach(function(input) {
+    var feedback = input.nextElementSibling; // ข้อความ invalid-feedback
+    if (!input.checkValidity()) {
+      input.classList.add('is-invalid');
+      if (feedback && feedback.classList.contains('invalid-feedback')) {
+        feedback.style.display = 'block';
       }
-    });
-
-    // Password match validation
-    var password = form.querySelector('input[name="password"]');
-    var confirmPassword = form.querySelector('input[name="confirm_password"]');
-    if (password && confirmPassword && password.value !== confirmPassword.value) {
-      confirmPassword.classList.add('is-invalid');
-      confirmPassword.nextElementSibling.textContent = "รหัสผ่านไม่ตรงกัน";
-    } else if (confirmPassword) {
-      confirmPassword.classList.remove('is-invalid');
+      isValid = false;
+    } else {
+      input.classList.remove('is-invalid');
+      if (feedback && feedback.classList.contains('invalid-feedback')) {
+        feedback.style.display = 'none';
+      }
     }
-
-    if (!form.checkValidity() || password.value !== confirmPassword.value) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-    form.classList.add('was-validated');
   });
-</script>
 
+  // ตรวจสอบว่ารหัสผ่านตรงกัน
+  var password = form.querySelector('input[name="password"]');
+  var confirmPassword = form.querySelector('input[name="confirm_password"]');
+  var confirmFeedback = confirmPassword.nextElementSibling; // invalid-feedback สำหรับรหัสผ่าน
+  if (password && confirmPassword && password.value !== confirmPassword.value) {
+    confirmPassword.classList.add('is-invalid');
+    if (confirmFeedback && confirmFeedback.classList.contains('invalid-feedback')) {
+      confirmFeedback.textContent = "รหัสผ่านไม่ตรงกัน";
+      confirmFeedback.style.display = 'block';
+    }
+    isValid = false;
+  } else if (confirmPassword) {
+    confirmPassword.classList.remove('is-invalid');
+    if (confirmFeedback && confirmFeedback.classList.contains('invalid-feedback')) {
+      confirmFeedback.style.display = 'none';
+    }
+  }
+
+  // หยุดการส่งฟอร์มถ้าข้อมูลไม่ถูกต้อง
+  if (!isValid) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  form.classList.add('was-validated');
+});
+
+
+</script>
 </body>
 </html>
