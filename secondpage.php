@@ -1,3 +1,24 @@
+<?php
+// Start the session to manage login status
+session_start();
+
+// Assuming session stores user info after successful login
+// Example: $_SESSION['user'] = ['username' => 'sirawit', 'role' => 'admin'];
+
+// Check if the user is logged in
+if (isset($_SESSION['user'])) {
+    $username = $_SESSION['user']['username']; // User's name
+    $role = $_SESSION['user']['role'];         // Role (admin or user)
+} else {
+    // Redirect to login page if not logged in
+    header("Location: login.php");
+    exit();
+}
+?>
+
+
+
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -83,13 +104,16 @@
     }
   </style>
 </head>
+
 <body>
 
   <div class="header">
     <img src="logo.png" alt="Ban Pong Municipality Logo">
     <div class="user-info">
-      <span>ยินดีต้อนรับ, [ชื่อผู้ใช้]</span>
-      <a href="edit_account.html">แก้ไขข้อมูลบัญชี</a>
+      <span>ยินดีต้อนรับ, <?= htmlspecialchars($username) ?></span>
+      <a href="edit_account.php?username=<?= urlencode($username) ?>">แก้ไขข้อมูลบัญชี</a>
+
+      <a href="logout.php">ออกจากระบบ</a>
     </div>
   </div>
 
@@ -99,6 +123,9 @@
       <a href="user_appeal_page.html">ร้องทุกข์ / ร้องเรียน</a>
       <a href="report-fraud.html">แจ้งเบาะแสการทุจริตประพฤติมิชอบ</a>
       <a href="track-complaint.html">ติดตามรายงานผลการร้องทุกข์ / ร้องเรียน</a>
+      <?php if ($role === 'admin'): ?>
+      <a href="admin_dashboard.html">แผงควบคุมผู้ดูแล</a>
+    <?php endif; ?>
     </div>
   </div>
 
