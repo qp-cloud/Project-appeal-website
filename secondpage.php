@@ -112,7 +112,6 @@ if (isset($_SESSION['user'])) {
     <div class="user-info">
       <span>ยินดีต้อนรับ, <?= htmlspecialchars($username) ?></span>
       <a href="edit_account.php?username=<?= urlencode($username) ?>">แก้ไขข้อมูลบัญชี</a>
-
       <a href="logout.php">ออกจากระบบ</a>
     </div>
   </div>
@@ -120,7 +119,7 @@ if (isset($_SESSION['user'])) {
   <div class="container">
     <h1>เมนูหลัก</h1>
     <div class="function-buttons">
-      <a href="user_appeal_page.html">ร้องทุกข์ / ร้องเรียน</a>
+      <a href="user_appeal_page.php?username=<?= urlencode($username) ?>">ร้องทุกข์ / ร้องเรียน</a>
       <a href="report-fraud.html">แจ้งเบาะแสการทุจริตประพฤติมิชอบ</a>
       <a href="track-complaint.html">ติดตามรายงานผลการร้องทุกข์ / ร้องเรียน</a>
       <?php if ($role === 'admin'): ?>

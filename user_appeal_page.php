@@ -1,9 +1,96 @@
+<?php
+// Start session for user authentication
+session_start();
+
+// Database connection
+$servername = "localhost";
+$username = "root";  // Your MySQL username
+$password = "";  // Your MySQL password
+$dbname = "web_appeal_db";  // Your database name
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Get the username from the URL
+$logged_in_username = isset($_GET['username']) ? $_GET['username'] : null;
+$username = isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest';  // Fallback to guest if no session is available
+
+if ($logged_in_username) {
+    // Retrieve the user ID from the user table based on the username
+    $sql = "SELECT user_id, username FROM user WHERE username = '$logged_in_username'";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        // Fetch user ID and username
+        $row = $result->fetch_assoc();
+        $user_id = $row['user_id'];
+        $username = $row['username'];  // Set the username from the database
+    } else {
+        echo "User not found!";
+        exit();
+    }
+} else {
+    echo "Username parameter is missing!";
+    exit();
+}
+
+// Handle form submission
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Get the form data
+    $complaint_subject = $_POST['complaint_subject'];
+    $contact_phone = $_POST['contact_phone'];
+    $contact_location = $_POST['contact_location'];
+    $contact_details = $_POST['contact_details'];
+    $latitude = $_POST['latitude'];
+    $longitude = $_POST['longitude'];
+    $incident_date = $_POST['incident_date'];
+    $incident_time = $_POST['incident_time'];
+    $problem_level = $_POST['problem_level'];
+    $department = $_POST['department'];
+    $complaint_description = $_POST['complaint_description'];
+    $privacy_consent = isset($_POST['privacy_consent']) ? 1 : 0;  // 1 if consent is given, 0 otherwise
+    
+    // Handle file upload
+    $complaint_file = '';
+    if (isset($_FILES['complaint_file']) && $_FILES['complaint_file']['error'] == 0) {
+        $file_name = $_FILES['complaint_file']['name'];
+        $file_tmp_name = $_FILES['complaint_file']['tmp_name'];
+        $file_upload_dir = 'uploads/';  // Directory where the file will be saved
+        $file_upload_path = $file_upload_dir . basename($file_name);
+
+        // Move the uploaded file to the server
+        if (move_uploaded_file($file_tmp_name, $file_upload_path)) {
+            $complaint_file = $file_upload_path;
+        }
+    }
+
+    // Prepare the SQL query to insert data into the database
+    $sql = "INSERT INTO complaints (user_id, complaint_subject, contact_phone, contact_location, contact_details, latitude, longitude, incident_date, incident_time, problem_level, department, complaint_description, complaint_file, privacy_consent)
+            VALUES ('$user_id', '$complaint_subject', '$contact_phone', '$contact_location', '$contact_details', '$latitude', '$longitude', '$incident_date', '$incident_time', '$problem_level', '$department', '$complaint_description', '$complaint_file', '$privacy_consent')";
+
+    // Execute the query
+    if ($conn->query($sql) === TRUE) {
+        echo "ข้อมูลถูกส่งเรียบร้อยแล้ว!";
+    } else {
+        echo "เกิดข้อผิดพลาด: " . $conn->error;
+    }
+}
+
+// Close the connection
+$conn->close();
+?>
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Complaint Form</title>
+    <title>หน้า ร้องเรียน / ร้องทุกข์</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <!-- jQuery -->
@@ -77,41 +164,36 @@
     <div class="header">
         <img src="logo.png" alt="Ban Pong Municipality Logo">
         <div class="user-info">
-            <span>ยินดีต้อนรับ, [ชื่อผู้ใช้]</span>
-            <a href="secondpage.html">กลับสู่หน้าหลัก</a>
+            <span>ยินดีต้อนรับ, <?= htmlspecialchars($username) ?></span>
+            <a href="secondpage.php">กลับสู่หน้าหลัก</a>
         </div>
     </div>
     <div class="container form-container">
         <h2 class="text-center mb-4">ร้องทุกข์ / ร้องเรียน</h2>
 
-        <form id="complaint-form">
-
+        <form id="complaint-form" action="user_appeal_page.php?username=<?= $username ?>" method="POST" enctype="multipart/form-data">
             <!-- Complaint Subject -->
             <div class="form-group">
                 <label for="complaint-subject">เรื่องที่ต้องการร้องทุกข์ <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="complaint-subject" name="complaint-subject">
-                <small class="error-message" id="complaint-subject-error"></small>
+                <input type="text" class="form-control" id="complaint-subject" name="complaint_subject" required>
             </div>
 
             <!-- Contact Phone -->
             <div class="form-group">
                 <label for="contact-phone">เบอร์โทรศัพท์ที่สามารถติดต่อได้ <span class="text-danger">*</span></label>
-                <input type="tel" class="form-control" id="contact-phone" name="contact-phone">
-                <small class="error-message" id="contact-phone-error"></small>
+                <input type="tel" class="form-control" id="contact-phone" name="contact_phone" required>
             </div>
 
             <!-- Location -->
             <div class="form-group">
                 <label for="contact-location">สถานที่</label>
-                <input type="text" class="form-control" id="contact-location" name="contact-location">
-                <small class="error-message" id="contact-location-error"></small>
+                <input type="text" class="form-control" id="contact-location" name="contact_location">
             </div>
 
             <!-- Details -->
             <div class="form-group">
                 <label for="contact-details">รายละเอียด</label>
-                <textarea class="form-control" id="contact-details" name="contact-details" rows="4"></textarea>
-                <small class="error-message" id="contact-details-error"></small>
+                <textarea class="form-control" id="contact-details" name="contact_details" rows="4"></textarea>
             </div>
 
             <!-- Longdo Map (This is just a placeholder for the map) -->
@@ -127,124 +209,53 @@
                 <label for="incident-time">เวลาที่เกิดเหตุหรือพบเหตุ</label>
                 <div class="form-row">
                     <div class="col">
-                        <input type="date" class="form-control" id="incident-date" name="incident-date">
-                        <small class="error-message" id="incident-date-error"></small>
+                        <input type="date" class="form-control" id="incident-date" name="incident_date">
                     </div>
                     <div class="col">
-                        <input type="time" class="form-control" id="incident-time" name="incident-time">
-                        <small class="error-message" id="incident-time-error"></small>
+                        <input type="time" class="form-control" id="incident-time" name="incident_time">
                     </div>
                 </div>
             </div>
 
             <!-- Problem Level -->
             <div class="form-group">
-                <label>ระดับของปัญหา</label>
-                <div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="problem-level" value="ปกติ" checked>
-                        <label class="form-check-label">ปกติ</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="problem-level" value="เร่งด่วน">
-                        <label class="form-check-label">เร่งด่วน</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="problem-level" value="ร้ายแรง">
-                        <label class="form-check-label">ร้ายแรง</label>
-                    </div>
-                </div>
+                <label for="problem-level">ระดับปัญหา</label>
+                <select class="form-control" id="problem-level" name="problem_level">
+                    <option value="ต่ำ">ต่ำ</option>
+                    <option value="ปานกลาง">ปานกลาง</option>
+                    <option value="สูง">สูง</option>
+                </select>
             </div>
 
             <!-- Department -->
             <div class="form-group">
                 <label for="department">หน่วยงานที่รับผิดชอบ</label>
-                <select class="form-control" id="department" name="department">
-                    <option value="เทศบาล">เทศบาล</option>
-                    <option value="หน่วยงานอื่นๆ">หน่วยงานอื่นๆ</option>
-                </select>
+                <input type="text" class="form-control" id="department" name="department">
             </div>
 
             <!-- Complaint Description -->
             <div class="form-group">
-                <label for="complaint-description">รายละเอียดการร้องทุกข์</label>
-                <textarea class="form-control" id="complaint-description" name="complaint-description" rows="4"></textarea>
-                <small class="error-message" id="complaint-description-error"></small>
+                <label for="complaint-description">รายละเอียดการร้องเรียน</label>
+                <textarea class="form-control" id="complaint-description" name="complaint_description" rows="5"></textarea>
             </div>
 
             <!-- File Upload -->
             <div class="form-group">
-                <label for="complaint-file">อัปโหลดไฟล์ (ถ้ามี)</label>
-                <input type="file" class="form-control-file" id="complaint-file" name="complaint-file">
+                <label for="complaint-file">ไฟล์ที่แนบ</label>
+                <input type="file" class="form-control" id="complaint-file" name="complaint_file">
             </div>
 
-            <!-- Privacy Consent with [อ่านข้อตกลง] ลิงก์ -->
-            <div class="form-group form-check">
-                <input type="checkbox" class="form-check-input" id="privacy-consent" name="privacy-consent" disabled>
-                <label class="form-check-label" for="privacy-consent">
-                    ยินยอมให้ข้อมูลส่วนบุคคล 
-                    <a href="#" id="show-agreement">[อ่านข้อตกลง]</a>
-                </label>
-                <small class="error-message" id="privacy-consent-error"></small>
-            </div>
-
-            <!-- Buttons -->
+            <!-- Privacy Consent -->
             <div class="form-group">
-                <button type="submit" class="btn btn-success btn-block" id="submit-form" disabled>ส่ง</button>
-                <button type="button" class="btn btn-danger btn-block" id="cancel-form">ยกเลิก</button>
+                <label for="privacy-consent">
+                    <input type="checkbox" id="privacy-consent" name="privacy_consent"> ยินยอมให้ใช้ข้อมูลตามข้อกำหนด
+                </label>
             </div>
+
+            <button type="submit" class="btn btn-primary btn-block">ยืนยันการร้องเรียน</button>
         </form>
     </div>
-
-    <!-- Bootstrap Modal for Confirmation -->
-    <div class="modal fade" tabindex="-1" role="dialog" id="confirmation-modal">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">ยืนยันการส่งข้อมูล</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="ปิด">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p>คุณแน่ใจหรือไม่ว่าต้องการส่งข้อมูลทั้งหมดนี้?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="window.location.href='secondpage.html'">ยกเลิก</button>
-                    <button type="button" class="btn btn-primary" id="confirm-submit">ยืนยัน</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="agreement-modal" tabindex="-1" role="dialog" aria-labelledby="agreementModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="agreementModalLabel">ข้อตกลงการยินยอมให้ข้อมูลส่วนบุคคล</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="ปิด">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p>
-                        ข้อมูลส่วนบุคคลของท่านจะถูกใช้เพื่อประมวลผลคำร้องทุกข์/ร้องเรียนของท่านตามวัตถุประสงค์
-                        และจะถูกเก็บรักษาอย่างปลอดภัยภายใต้พระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ.2562
-                    </p>
-                    <p>กรุณาอ่านข้อตกลงฉบับเต็มได้ที่เว็บไซต์ของเรา.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="goToHome()">ยกเลิก</button>
-                    <button type="button" class="btn btn-primary" id="agree-consent">ตกลง</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <script>
-        function goToHome() {
-          window.location.href = "secondpage.html";
-        }
-    </script>
+</body>
 
     <!-- JavaScript -->
     <script>
@@ -351,5 +362,4 @@
             });
         });
     </script>
-</body>
 </html>
