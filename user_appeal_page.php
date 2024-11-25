@@ -157,6 +157,58 @@ $conn->close();
         .function-buttons a:hover {
             background-color: #1e60c3;
         }
+        .custom-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+        .custom-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            width: 80%;
+            max-width: 500px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            z-index: 1001;
+        }
+        .custom-modal h5 {
+            margin: 0 0 15px;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+        .custom-modal p {
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+        .custom-modal .modal-footer {
+            text-align: center;
+        }
+        .custom-modal .modal-footer button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        .btn-close {
+            background: #ccc;
+            color: #333;
+        }
+        .btn-agree {
+            background: #007bff;
+            color: white;
+        }
     </style>
 </head>
 
@@ -230,7 +282,19 @@ $conn->close();
             <!-- Department -->
             <div class="form-group">
                 <label for="department">หน่วยงานที่รับผิดชอบ</label>
-                <input type="text" class="form-control" id="department" name="department">
+                <select class="form-control" id="department" name="department">
+                    <option value="เทศบาลเมือง">เทศบาลเมือง</option>
+                    <option value="สำนักปลัดเทศบาลเมือง">สำนักปลัดเทศบาลเมือง</option>
+                    <option value="กองคลัง">กองคลัง</option>
+                    <option value="กองช่าง">กองช่าง</option>
+                    <option value="กองการศึกษา">กองการศึกษา</option>
+                    <option value="กองสาธารณสุข">กองสาธารณสุข</option>
+                    <option value="กองสวัสดิการสังคม">กองสวัสดิการสังคม</option>
+                    <option value="กองยุทธศาสตร์">กองยุทธศาสตร์</option>
+                    <option value="กองการเจ้าหน้าที่">กองการเจ้าหน้าที่</option>
+                    <option value="หน่วยตรวจสอบภายใน">หน่วยตรวจสอบภายใน</option>
+                    <option value="หน่วยงานอื่นๆ">หน่วยงานอื่นๆ</option>
+                </select>
             </div>
 
             <!-- Complaint Description -->
@@ -255,9 +319,49 @@ $conn->close();
             <button type="submit" class="btn btn-primary btn-block">ยืนยันการร้องเรียน</button>
         </form>
     </div>
-</body>
+
+    <!-- Bootstrap Modal for Confirmation -->
+    <!-- Modal -->
+    <div class="custom-modal-overlay" id="custom-modal-overlay"></div>
+    <div class="custom-modal" id="custom-modal">
+        <h5>ข้อตกลงการยินยอมให้ข้อมูลส่วนบุคคล</h5>
+        <p>ข้อมูลส่วนบุคคลของท่านจะถูกใช้เพื่อประมวลผลคำร้องทุกข์/ร้องเรียนของท่านตามวัตถุประสงค์
+            และจะถูกเก็บรักษาอย่างปลอดภัยภายใต้พระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ.2562</p>
+        <div class="modal-footer">
+            <button class="btn-close" id="btn-close">ยกเลิก</button>
+            <button class="btn-agree" id="btn-agree">ตกลง</button>
+        </div>
+    </div>
+    <script>
+        function goToHome() {
+          window.location.href = "secondpage.html";
+        }
+    </script>
 
     <!-- JavaScript -->
+    <script>
+        // Show Agreement Modal
+        document.getElementById('show-agreement').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('custom-modal-overlay').style.display = 'block';
+            document.getElementById('custom-modal').style.display = 'block';
+        });
+
+        // Close Modal
+        document.getElementById('btn-close').addEventListener('click', function() {
+            document.getElementById('custom-modal-overlay').style.display = 'none';
+            document.getElementById('custom-modal').style.display = 'none';
+        });
+
+        // Agree to Consent
+        document.getElementById('btn-agree').addEventListener('click', function() {
+            document.getElementById('privacy-consent').checked = true;
+            document.getElementById('privacy-consent').disabled = false;
+            document.getElementById('submit-form').disabled = false;
+            document.getElementById('custom-modal-overlay').style.display = 'none';
+            document.getElementById('custom-modal').style.display = 'none';
+        });
+    </script> 
     <script>
         let geolocation = { lat: 13.7367, lng: 100.5231 }; // Default location (Bangkok)
         map = new longdo.Map({

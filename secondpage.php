@@ -19,6 +19,11 @@ if (isset($_SESSION['user'])) {
 
 
 
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -30,7 +35,7 @@ if (isset($_SESSION['user'])) {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background-image: url('https://images-ext-1.discordapp.net/external/TmqwfUj-0smfX--lIGhAZrNskT5brqA6S22j_Gu5EhM/%3FExpires%3D1732492800%26Key-Pair-Id%3DAPKAQ4GOSFWCVNEHN3O4%26Signature%3DXPuphAsOwZRT~vM6Si9Q4oMzNKr~7DGuMqQ6~5qg6Bonz-tseovVAAv8FwBa0TBZUEuynHTOpKm80mS3rCuZey35Km6eQ6bhUuSE-heu0svDA6JrP6HxQuPOFbqSHxjHaq7KbY0neoYJpJsvo9FdIzN7y9Oj2KwTgbMU7UpvKY4CG5b5Rg8JO~2TguzM59VU-tAhV7fL4XJwoPesnxhMS5-wKihfj8J5QTXkaq9BRR~2wpx~ENy1AU2qKw4YouVbUXL1Q-F-YMM~ng~VJYJtaLaa6VoFpqaPiBLSWNRgfpNs8W5gCPs7q6amKKFGrJtyK7UZMmo6WKQD6kOtCOdtOw__/https/s3-alpha-sig.figma.com/img/464b/ce5f/77b6e95107ebcb5c341a97c542fe001e?format=webp&width=1003&height=670');
+      background-image: url('img/bg.png');
       background-size: cover;
     }
     .header {
