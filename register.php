@@ -15,39 +15,53 @@ if ($conn->connect_error) {
 
 // ตรวจสอบ method ว่าเป็น POST หรือไม่
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // รับข้อมูลจากฟอร์ม
-    $first_name = $_POST['first_name'] ?? '';
-    $last_name = $_POST['last_name'] ?? '';
-    $id_number = $_POST['id_number'] ?? '';
-    $gender = $_POST['gender'] ?? '';
-    $birth_date = $_POST['birth_date'] ?? '';
-    $occupation = $_POST['occupation'] ?? '';
-    $phone = $_POST['phone'] ?? '';
-    $email = $_POST['email'] ?? '';
-    $address = $_POST['address'] ?? '';
-    $username = $_POST['username'] ?? '';
-    $password = $_POST['password'] ?? '';
+    // รับข้อมูลจากฟอร์มและกรองข้อมูล
+    $first_name = htmlspecialchars(trim($_POST['first_name'] ?? ''));
+    $last_name = htmlspecialchars(trim($_POST['last_name'] ?? ''));
+    $id_number = htmlspecialchars(trim($_POST['id_number'] ?? ''));
+    $gender = htmlspecialchars(trim($_POST['gender'] ?? ''));
+    $birth_date = htmlspecialchars(trim($_POST['birth_date'] ?? ''));
+    $occupation = htmlspecialchars(trim($_POST['occupation'] ?? ''));
+    $phone = htmlspecialchars(trim($_POST['phone'] ?? ''));
+    $email = htmlspecialchars(trim($_POST['email'] ?? ''));
+    $address = htmlspecialchars(trim($_POST['address'] ?? ''));
+    $username = htmlspecialchars(trim($_POST['username'] ?? ''));
+    $password = htmlspecialchars(trim($_POST['password'] ?? ''));
+
+    // ตรวจสอบว่าชื่อผู้ใช้หรือรหัสผ่านไม่ว่าง
+    if (empty($username) || empty($password)) {
+        die("กรุณากรอกชื่อผู้ใช้งานและรหัสผ่าน.");
+    }
+
+    // เข้ารหัสรหัสผ่าน
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
     // ใช้ prepared statement เพื่อป้องกัน SQL Injection
-    $stmt = $conn->prepare("INSERT INTO user (first_name, last_name, id_number, gender, birth_date, occupation, phone, email, address,username,password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)");
+    $stmt = $conn->prepare(
+        "INSERT INTO user (first_name, last_name, id_number, gender, birth_date, occupation, phone, email, address, username, password) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    );
+
     if ($stmt) {
-        $stmt->bind_param("sssssssssss", $first_name, $last_name, $id_number, $gender, $birth_date, $occupation, $phone, $email, $address,$username,$password);
+        // ผูกข้อมูลลงใน SQL Statement
+        $stmt->bind_param(
+            "sssssssssss", 
+            $first_name, $last_name, $id_number, $gender, $birth_date, 
+            $occupation, $phone, $email, $address, $username, $hashed_password
+        );
+
+        // ตรวจสอบการดำเนินการ
         if ($stmt->execute()) {
-            $message = "ลงทะเบียนสำเร็จ!";
+            // Redirect หลังจากลงทะเบียนสำเร็จ
+            header('Location: login.html');
+            exit();
         } else {
-            $message = "เกิดข้อผิดพลาด: " . $stmt->error;
+            echo "เกิดข้อผิดพลาด: " . $stmt->error;
         }
         $stmt->close();
     } else {
-        $message = "เกิดข้อผิดพลาดในการเตรียมคำสั่ง SQL: " . $conn->error;
+        echo "เกิดข้อผิดพลาดในการเตรียมคำสั่ง SQL: " . $conn->error;
     }
     $conn->close();
-}
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Form processing code goes here
-    // Example: save the form data to the database
-    
-    // After processing, redirect to login.html
-    header('Location: login.html');
-    exit();
 }
 ?>

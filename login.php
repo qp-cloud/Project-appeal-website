@@ -1,29 +1,49 @@
 <?php
-// login.php
+session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Retrieve form data
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+    $username = trim($_POST['username']);
+    $password = trim($_POST['password']);
 
-    // Perform simple validation
     if (empty($username) || empty($password)) {
-        echo "กรุณากรอกข้อมูลให้ครบถ้วน.";
-    } else {
-        // Here you would connect to your database and check the username and password.
-        // Example (replace with real database checks):
-        $stored_username = "admin";  // Example username
-        $stored_password = "password123";  // Example password
+        echo "<script>alert('กรุณากรอกข้อมูลให้ครบถ้วน'); window.location.href='login.html';</script>";
+        exit();
+    }
 
-        if ($username === $stored_username && $password === $stored_password) {
-            // Redirect to home page if login is successful
-            header("Location: home.html");
+    $servername = "localhost";
+    $db_username = "root";
+    $db_password = "";
+    $dbname = "web_appeal_db";
+
+    $conn = new mysqli($servername, $db_username, $db_password, $dbname);
+
+    if ($conn->connect_error) {
+        die("การเชื่อมต่อฐานข้อมูลล้มเหลว: " . $conn->connect_error);
+    }
+
+    $sql = "SELECT username, password FROM user WHERE username = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $user = $result->fetch_assoc();
+
+        if (password_verify($password, $user['password'])) {
+            $_SESSION['username'] = $user['username'];
+            header("Location: secondpage.html");
             exit();
         } else {
-            // Display error message if login fails
-            echo "ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง.";
+            echo "<script>alert('รหัสผ่านไม่ถูกต้อง'); window.location.href='login.html';</script>";
+            exit();
         }
+    } else {
+        echo "<script>alert('ไม่พบชื่อผู้ใช้งาน'); window.location.href='login.html';</script>";
+        exit();
     }
+
+    $stmt->close();
+    $conn->close();
 }
 ?>
-pph

@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>เทศบาลอำเภอบ้านโป่ง - เข้าสู่ระบบ</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
   <style>
     body {
       background: #cce7ff;
@@ -62,6 +61,12 @@
       font-weight: bold;
       margin-bottom: 20px;
     }
+    .error-message {
+      color: red;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 10px;
+    }
     .btn-submit {
       background-color: #28a745;
       color: #ffffff;
@@ -93,60 +98,30 @@
 
   <div class="container">
     <div class="form-title">เข้าสู่ระบบ</div>
-
-    <form class="needs-validation" novalidate>
+    <form method="POST" action="login.php" class="needs-validation" novalidate>
       <div class="form-group">
         <label for="username">ชื่อผู้ใช้งาน <span style="color: red;">*</span></label>
-        <input type="text" class="form-control" id="username" required>
+        <input type="text" class="form-control" id="username" name="username" required>
         <div class="invalid-feedback">กรุณากรอกชื่อผู้ใช้งาน</div>
       </div>
-
+    
       <div class="form-group">
         <label for="password">รหัสผ่าน <span style="color: red;">*</span></label>
-        <input type="password" class="form-control" id="password" required>
+        <input type="password" class="form-control" id="password" name="password" required>
         <div class="invalid-feedback">กรุณากรอกรหัสผ่าน</div>
       </div>
 
       <div class="d-flex justify-content-between">
         <button type="button" class="btn btn-cancel" onclick="goToHome()">ยกเลิก</button>
-        <button type="button" class="btn btn-submit" onclick="submitForm()">ต่อไป</button>
+        <button type="submit" class="btn btn-submit">เข้าสู่ระบบ</button>
       </div>
     </form>
   </div>
-
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
   <script>
     function goToHome() {
       window.location.href = "home.html";
     }
-
-    function submitForm() {
-      var form = document.querySelector('.needs-validation');
-      if (form.checkValidity() === true) {
-        window.location.href = "home.html";
-      } else {
-        form.classList.add('was-validated');
-      }
-    }
-    
-    // Bootstrap validation
-    (function() {
-      'use strict';
-      window.addEventListener('load', function() {
-        var forms = document.getElementsByClassName('needs-validation');
-        Array.prototype.filter.call(forms, function(form) {
-          form.addEventListener('submit', function(event) {
-            if (form.checkValidity() === false) {
-              event.preventDefault();
-              event.stopPropagation();
-            }
-            form.classList.add('was-validated');
-          }, false);
-        });
-      }, false);
-    })();
   </script>
 </body>
 </html>
