@@ -52,8 +52,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // ตรวจสอบการดำเนินการ
         if ($stmt->execute()) {
-            // Redirect หลังจากลงทะเบียนสำเร็จ
-            header('Location: login.html');
+            // แสดงข้อความแจ้งและเปลี่ยนหน้าไปยัง login.html
+            echo "<script>
+                    alert('ลงทะเบียนสำเร็จ!');
+                    window.location.href = 'login.html';
+                  </script>";
             exit();
         } else {
             echo "เกิดข้อผิดพลาด: " . $stmt->error;
