@@ -182,57 +182,9 @@ $conn->close();
             z-index: 1001;
         }
         .custom-modal h5 {
-            margin: 0 0 15px;
+            margin-bottom: 15px;
             font-size: 1.2rem;
             text-align: center;
-        }
-        .custom-modal p {
-            font-size: 1rem;
-            margin-bottom: 20px;
-        }
-        .custom-modal .modal-footer {
-            text-align: center;
-        }
-        .custom-modal .modal-footer button {
-            padding: 10px 20px;
-            margin: 5px;
-            border: none;
-            border-radius: 5px;
-            font-size: 1rem;
-            cursor: pointer;
-        }
-        .custom-modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-        }
-        .custom-modal {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            width: 80%;
-            max-width: 500px;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-            z-index: 1001;
-        }
-        .custom-modal h5 {
-            margin: 0 0 15px;
-            font-size: 1.2rem;
-            text-align: center;
-        }
-        .custom-modal p {
-            font-size: 1rem;
-            margin-bottom: 20px;
         }
         .custom-modal .modal-footer {
             text-align: center;
@@ -252,6 +204,12 @@ $conn->close();
         .btn-agree {
             background: #007bff;
             color: white;
+        }
+        .btn-full-width {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2rem;
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -353,55 +311,80 @@ $conn->close();
                 <label for="complaint-file">ไฟล์ที่แนบ</label>
                 <input type="file" class="form-control" id="complaint-file" name="complaint_file">
             </div>
-
-            <div class="form-group form-check">
-                <input type="checkbox" class="form-check-input" id="privacy-consent" name="privacy-consent" disabled>
+            <form id="report-person-form">
+            <!-- Form fields go here -->
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="privacy-consent" disabled>
                 <label class="form-check-label" for="privacy-consent">
-                    ยินยอมให้ข้อมูลส่วนบุคคล 
+                    ยินยอมให้ข้อมูลส่วนบุคคล
                     <a href="#" id="show-agreement">[อ่านข้อตกลง]</a>
                 </label>
-                <small class="error-message" id="privacy-consent-error"></small>
             </div>
-            
-
-            <button type="submit" class="btn btn-primary btn-block">ยืนยันการร้องเรียน</button>
-                
+            <div id="confirmation-buttons" class="mt-3">
+                <button type="button" class="btn btn-success btn-full-width" id="confirm-submit" disabled>ยืนยันการส่งข้อมูล</button>
+                <button type="button" class="btn btn-danger btn-full-width" id="cancel-submit">ยกเลิก</button>
+            </div>
         </form>
-
-        <!-- Modal -->
-        <div class="custom-modal-overlay" id="custom-modal-overlay"></div>
-            <div class="custom-modal" id="custom-modal">
-                <h5>ข้อตกลงการยินยอมให้ข้อมูลส่วนบุคคล</h5>
-                <p>ข้อมูลส่วนบุคคลของท่านจะถูกใช้เพื่อประมวลผลคำร้องทุกข์/ร้องเรียนของท่านตามวัตถุประสงค์
-                    และจะถูกเก็บรักษาอย่างปลอดภัยภายใต้พระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ.2562</p>
-                <div class="modal-footer">
-                    <button class="btn-close" id="btn-close">ยกเลิก</button>
-                    <button class="btn-agree" id="btn-agree">ตกลง</button>
-                </div>
-            </div>
+    </div>
+    <!-- Custom Modal -->
+    <div class="custom-modal-overlay" id="custom-modal-overlay"></div>
+    <div class="custom-modal" id="custom-modal">
+        <h5>ข้อตกลงการยินยอมให้ข้อมูลส่วนบุคคล</h5>
+        <p>ข้อมูลส่วนบุคคลของท่านจะถูกใช้เพื่อประมวลผลคำร้องทุกข์/ร้องเรียนของท่านตามวัตถุประสงค์
+            และจะถูกเก็บรักษาอย่างปลอดภัยภายใต้พระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ.2562</p>
+        <div class="modal-footer">
+            <button class="btn-close" id="btn-close">ยกเลิก</button>
+            <button class="btn-agree" id="btn-agree">ตกลง</button>
+        </div>
+    </div>
     <script>
-        // Show Agreement Modal
-        document.getElementById('show-agreement').addEventListener('click', function(e) {
-            e.preventDefault();
-            document.getElementById('custom-modal-overlay').style.display = 'block';
-            document.getElementById('custom-modal').style.display = 'block';
-        });
-
-        // Close Modal
-        document.getElementById('btn-close').addEventListener('click', function() {
-            document.getElementById('custom-modal-overlay').style.display = 'none';
-            document.getElementById('custom-modal').style.display = 'none';
-        });
-
-        // Agree to Consent
-        document.getElementById('btn-agree').addEventListener('click', function() {
-            document.getElementById('privacy-consent').checked = true;
-            document.getElementById('privacy-consent').disabled = false;
-            document.getElementById('submit-form').disabled = false;
-            document.getElementById('custom-modal-overlay').style.display = 'none';
-            document.getElementById('custom-modal').style.display = 'none';
-        });
-    </script> 
+            // Show Agreement Modal
+            document.getElementById('show-agreement').addEventListener('click', function (e) {
+                e.preventDefault();
+                document.getElementById('custom-modal-overlay').style.display = 'block';
+                document.getElementById('custom-modal').style.display = 'block';
+            });
+    
+            // Close Modal
+            document.getElementById('btn-close').addEventListener('click', function () {
+                document.getElementById('custom-modal-overlay').style.display = 'none';
+                document.getElementById('custom-modal').style.display = 'none';
+            });
+    
+            // Agree to Consent
+            document.getElementById('btn-agree').addEventListener('click', function () {
+                document.getElementById('privacy-consent').checked = true;
+                document.getElementById('privacy-consent').disabled = false;
+                toggleConfirmButton();
+                document.getElementById('custom-modal-overlay').style.display = 'none';
+                document.getElementById('custom-modal').style.display = 'none';
+            });
+    
+            // Enable/Disable Confirm Button
+            document.getElementById('privacy-consent').addEventListener('change', function () {
+                toggleConfirmButton();
+            });
+    
+            function toggleConfirmButton() {
+                const confirmButton = document.getElementById('confirm-submit');
+                confirmButton.disabled = !document.getElementById('privacy-consent').checked;
+            }
+    
+            // Cancel Button Action
+            document.getElementById('cancel-submit').addEventListener('click', function () {
+                alert('การส่งข้อมูลถูกยกเลิก');
+                document.getElementById('report-form').reset();
+                toggleConfirmButton();
+            });
+    
+            // Confirm Button Action
+            document.getElementById('confirm-submit').addEventListener('click', function (e) {
+                e.preventDefault(); // Prevent page refresh
+                alert('ส่งข้อมูลสำเร็จ');
+                document.getElementById('report-form').reset();
+                toggleConfirmButton();
+            });
+        </script>
     <script>
         let geolocation = { lat: 13.7367, lng: 100.5231 }; // Default location (Bangkok)
         map = new longdo.Map({
