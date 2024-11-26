@@ -81,10 +81,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Prepare the SQL query to insert data into the database
-    $sql = "INSERT INTO complaints (user_id, complaint_subject, contact_phone, contact_location, contact_details, latitude, longitude, incident_date, incident_time, problem_level, department, complaint_description, complaint_file, privacy_consent)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO complaints (user_id, complaint_subject, contact_phone, contact_location, contact_details, latitude, longitude, incident_date, incident_time, problem_level, department, complaint_description, complaint_file, )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("issssssssssssi", $user_id, $complaint_subject, $contact_phone, $contact_location, $contact_details, $latitude, $longitude, $incident_date, $incident_time, $problem_level, $department, $complaint_description, $complaint_file, $privacy_consent);
+    $stmt->bind_param("issssssssssss", $user_id, $complaint_subject, $contact_phone, $contact_location, $contact_details, $latitude, $longitude, $incident_date, $incident_time, $problem_level, $department, $complaint_description, $complaint_file);
 
     if ($stmt->execute()) {
         echo "ข้อมูลถูกส่งเรียบร้อยแล้ว!";
@@ -327,57 +327,42 @@ $conn->close();
                 <label for="complaint-file">ไฟล์ที่แนบ</label>
                 <input type="file" class="form-control" id="complaint-file" name="complaint_file">
             </div>
-            <form id="report-person-form">
-            <!-- Form fields go here -->
-            <div class="form-check">
-                <input type="checkbox" class="form-check-input" id="privacy-consent" disabled>
-                <label class="form-check-label" for="privacy-consent">
-                    ยินยอมให้ข้อมูลส่วนบุคคล
-                    <a href="#" id="show-agreement">[อ่านข้อตกลง]</a>
-                </label>
-            </div>
-            <div id="confirmation-buttons" class="mt-3">
-                
-                <button type="submit" class="btn btn-primary btn-full-width">ยืนยันการร้องเรียน</button>
-
-                <button type="button" class="btn btn-danger btn-full-width" id="cancel-submit">ยกเลิก</button>
-            </div>
-        </form>
-    </div>
-    <!-- Custom Modal -->
-    <div class="custom-modal-overlay" id="custom-modal-overlay"></div>
-    <div class="custom-modal" id="custom-modal">
-        <h5>ข้อตกลงการยินยอมให้ข้อมูลส่วนบุคคล</h5>
-        <p>ข้อมูลส่วนบุคคลของท่านจะถูกใช้เพื่อประมวลผลคำร้องทุกข์/ร้องเรียนของท่านตามวัตถุประสงค์
-            และจะถูกเก็บรักษาอย่างปลอดภัยภายใต้พระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ.2562</p>
+            
+    <!-- Privacy consent popup -->
+    <div class="custom-modal-overlay" id="modal-overlay"></div>
+    <div class="custom-modal" id="modal-consent">
+        <h5>ข้อกำหนดและเงื่อนไข</h5>
+        <div class="modal-body">
+            <p>โปรดอ่านและยอมรับข้อกำหนดและเงื่อนไขก่อนดำเนินการ...</p>
+            <p>ข้อมูลส่วนบุคคลของท่านจะได้รับการคุ้มครองตามนโยบายความเป็นส่วนตัว...</p>
+        </div>
         <div class="modal-footer">
-            <button class="btn-close" id="btn-close">ยกเลิก</button>
-            <button class="btn-agree" id="btn-agree">ตกลง</button>
+            <button class="btn btn-close" id="btn-close">ปิด</button>
+            <button class="btn btn-agree" id="btn-agree">ยอมรับ</button>
         </div>
     </div>
     <script>
-            // Show Agreement Modal
-            document.getElementById('show-agreement').addEventListener('click', function (e) {
-                e.preventDefault();
-                document.getElementById('custom-modal-overlay').style.display = 'block';
-                document.getElementById('custom-modal').style.display = 'block';
-            });
-    
-            // Close Modal
-            document.getElementById('btn-close').addEventListener('click', function () {
-                document.getElementById('custom-modal-overlay').style.display = 'none';
-                document.getElementById('custom-modal').style.display = 'none';
-            });
-    
-            // Agree to Consent
-            document.getElementById('btn-agree').addEventListener('click', function () {
-                document.getElementById('privacy-consent').checked = true;
-                document.getElementById('privacy-consent').disabled = false;
-                toggleConfirmButton();
-                document.getElementById('custom-modal-overlay').style.display = 'none';
-                document.getElementById('custom-modal').style.display = 'none';
-            });
-    
+        // Show privacy consent popup when page loads
+        window.onload = function() {
+            document.getElementById('modal-overlay').style.display = 'block';
+            document.getElementById('modal-consent').style.display = 'block';
+        };
+
+        // Handle closing the popup
+        document.getElementById('btn-close').addEventListener('click', function() {
+            document.getElementById('modal-overlay').style.display = 'none';
+            document.getElementById('modal-consent').style.display = 'none';
+        });
+
+        // Handle agreement
+        document.getElementById('btn-agree').addEventListener('click', function() {
+            document.getElementById('submit-form').disabled = false;  // Enable the submit button
+            document.getElementById('modal-overlay').style.display = 'none';
+            document.getElementById('modal-consent').style.display = 'none';
+        });
+    </script>
+    <script>
+           
             // Enable/Disable Confirm Button
             document.getElementById('privacy-consent').addEventListener('change', function () {
                 toggleConfirmButton();
@@ -414,7 +399,7 @@ $conn->close();
         script.src = "https://mapapi.longdo.com/mapapi?key=35bbbe40a96e844b27eba45df1ddad0b";
         script.onload = initMap;
         document.body.appendChild(script);
-
+        
         $(document).ready(function() {
 
             // เปิด Modal เมื่อคลิกที่ลิงก์ "อ่านข้อตกลง"
@@ -514,5 +499,24 @@ $conn->close();
             });
         });
     </script>
+    <div class="form-group text-center">
+                <button type="submit" class="btn btn-primary btn-full-width" id="submit-form" disabled>ยืนยันการส่งข้อมูล</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Privacy consent popup -->
+    <div class="custom-modal-overlay" id="modal-overlay"></div>
+    <div class="custom-modal" id="modal-consent">
+        <h5>ข้อกำหนดและเงื่อนไข</h5>
+        <div class="modal-body">
+            <p>โปรดอ่านและยอมรับข้อกำหนดและเงื่อนไขก่อนดำเนินการ...</p>
+            <p>ข้อมูลส่วนบุคคลของท่านจะได้รับการคุ้มครองตามนโยบายความเป็นส่วนตัว...</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-close" id="btn-close">ปิด</button>
+            <button class="btn btn-agree" id="btn-agree">ยอมรับ</button>
+        </div>
+    </div>
     
 </html>

@@ -28,7 +28,7 @@ $user_id = $_SESSION['user']['user_id'];
 // Retrieve the complaints for the logged-in user
 $sql = "SELECT id, complaint_subject, contact_phone, contact_location, contact_details, 
         latitude, longitude, incident_date, incident_time, problem_level, department, 
-        complaint_description, complaint_file, privacy_consent, submitted_at, status
+        complaint_description, complaint_file, submitted_at, status
         FROM complaints 
         WHERE user_id = ? 
         ORDER BY submitted_at DESC";  // Fetch complaints in descending order of submission
@@ -44,7 +44,7 @@ if ($stmt = $conn->prepare($sql)) {
     $stmt->bind_result($id, $complaint_subject, $contact_phone, $contact_location, 
                        $contact_details, $latitude, $longitude, $incident_date, $incident_time, 
                        $problem_level, $department, $complaint_description, $complaint_file, 
-                       $privacy_consent, $submitted_at,$status);
+                        $submitted_at,$status);
 
     // Fetch the complaints
     $complaints = [];
@@ -63,7 +63,6 @@ if ($stmt = $conn->prepare($sql)) {
             'department' => $department,
             'complaint_description' => $complaint_description,
             'complaint_file' => $complaint_file,
-            'privacy_consent' => $privacy_consent,
             'submitted_at' => $submitted_at,
             'status' => $status
         ];
