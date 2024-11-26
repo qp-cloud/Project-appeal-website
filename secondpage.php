@@ -138,7 +138,11 @@ if ($role === 'admin') {
     <div class="function-buttons">
       <a href="user_appeal_page.php?username=<?= urlencode($username) ?>">ร้องทุกข์ / ร้องเรียน</a>
       <a href="report-fraud.html">แจ้งเบาะแสการทุจริตประพฤติมิชอบ</a>
-      <a href="track-complaint.html">ติดตามรายงานผลการร้องทุกข์ / ร้องเรียน</a>
+      <?php if (isset($_SESSION['user']['user_id'])): ?>
+    <a href="track_complaint.php?user_id=<?= urlencode($_SESSION['user']['user_id']) ?>">ติดตามรายงานผลการร้องทุกข์ / ร้องเรียน</a>
+<?php else: ?>
+    <p style="color: red;">กรุณาเข้าสู่ระบบเพื่อใช้งานเมนูนี้</p>
+<?php endif; ?>
       <?php if ($role === 'admin'): ?>
       <a href="admin_dashboard.html">แผงควบคุมผู้ดูแล</a>
     <?php endif; ?>
