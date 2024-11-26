@@ -201,14 +201,6 @@ $conn->close();
             font-size: 1rem;
             cursor: pointer;
         }
-        .btn-close {
-            background: #ccc;
-            color: #333;
-        }
-        .btn-agree {
-            background: #007bff;
-            color: white;
-        }
         .custom-modal-overlay {
             display: none;
             position: fixed;
@@ -353,6 +345,7 @@ $conn->close();
             <div class="form-group">
                 <label for="complaint-description">รายละเอียดการร้องเรียน</label>
                 <textarea class="form-control" id="complaint-description" name="complaint_description" rows="5"></textarea>
+                <small class="error-message" id="complaint-description-error"></small>
             </div>
 
             <!-- File Upload -->
@@ -374,7 +367,6 @@ $conn->close();
             <button type="submit" class="btn btn-primary btn-block">ยืนยันการร้องเรียน</button>
                 
         </form>
-        </div>
 
         <!-- Modal -->
         <div class="custom-modal-overlay" id="custom-modal-overlay"></div>
@@ -385,9 +377,8 @@ $conn->close();
                 <div class="modal-footer">
                     <button class="btn-close" id="btn-close">ยกเลิก</button>
                     <button class="btn-agree" id="btn-agree">ตกลง</button>
-
-                    </div>
-                    </div>
+                </div>
+            </div>
     <script>
         // Show Agreement Modal
         document.getElementById('show-agreement').addEventListener('click', function(e) {

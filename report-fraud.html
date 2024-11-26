@@ -70,6 +70,60 @@
         .function-buttons a:hover {
             background-color: #1e60c3;
         }
+        .custom-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+        .custom-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            width: 80%;
+            max-width: 500px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            z-index: 1001;
+        }
+        .custom-modal h5 {
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+        .custom-modal .modal-footer {
+            text-align: center;
+        }
+        .custom-modal .modal-footer button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        .btn-close {
+            background: #ccc;
+            color: #333;
+        }
+        .btn-agree {
+            background: #007bff;
+            color: white;
+        }
+        .btn-full-width {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2rem;
+            margin-top: 10px;
+        }
     </style>
 </head>
 
@@ -84,13 +138,20 @@
 <div class="container form-container">
     <h2 class="text-center mb-4">แจ้งเบาะแสการทุจริตประพฤติมิชอบ</h2>
 
-    <form id="complaint-form">
+    <form id="report-person-form">
 
-        <!-- Complaint Subject -->
+        <!-- Report Subject -->
         <div class="form-group">
             <label for="complaint-subject">เรื่องที่แจ้งเบาะแส <span class="text-danger">*</span></label>
             <input type="text" class="form-control" id="complaint-subject" name="complaint-subject">
             <small class="error-message" id="complaint-subject-error"></small>
+        </div>
+
+        <!-- Report person -->
+        <div class="form-group">
+            <label for="report-person">องค์กร หรือ บุคคลที่ต้องการแจ้งเบาะแส <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="report-person" name="report-person">
+            <small class="error-message" id="report-person-error"></small>
         </div>
 
         <!-- Contact Phone -->
@@ -105,21 +166,6 @@
             <label for="contact-location">สถานที่</label>
             <input type="text" class="form-control" id="contact-location" name="contact-location">
             <small class="error-message" id="contact-location-error"></small>
-        </div>
-
-        <!-- Details -->
-        <div class="form-group">
-            <label for="contact-details">รายละเอียด</label>
-            <textarea class="form-control" id="contact-details" name="contact-details" rows="4"></textarea>
-            <small class="error-message" id="contact-details-error"></small>
-        </div>
-
-        <!-- Longdo Map (This is just a placeholder for the map) -->
-        <div class="form-group">
-            <label>ปักหมุดบนแผนที่</label>
-            <div id="map" style="height: 200px; background-color: #ddd;">แผนที่</div>
-            <input type="hidden" id="latitude" name="latitude">
-            <input type="hidden" id="longitude" name="longitude">
         </div>
 
         <!-- Incident Date and Time -->
@@ -137,31 +183,21 @@
             </div>
         </div>
 
-        <!-- Problem Level -->
-        <div class="form-group">
-            <label>ระดับของปัญหา</label>
-            <div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="problem-level" value="ปกติ" checked>
-                    <label class="form-check-label">ปกติ</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="problem-level" value="เร่งด่วน">
-                    <label class="form-check-label">เร่งด่วน</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="problem-level" value="ร้ายแรง">
-                    <label class="form-check-label">ร้ายแรง</label>
-                </div>
-            </div>
-        </div>
-
         <!-- Department -->
         <div class="form-group">
             <label for="department">หน่วยงานที่รับผิดชอบ</label>
             <select class="form-control" id="department" name="department">
-                <option value="เทศบาล">เทศบาล</option>
-                <option value="หน่วยงานอื่นๆ">หน่วยงานอื่นๆ</option>
+                    <option value="เทศบาลเมือง">เทศบาลเมือง</option>
+                    <option value="สำนักปลัดเทศบาลเมือง">สำนักปลัดเทศบาลเมือง</option>
+                    <option value="กองคลัง">กองคลัง</option>
+                    <option value="กองช่าง">กองช่าง</option>
+                    <option value="กองการศึกษา">กองการศึกษา</option>
+                    <option value="กองสาธารณสุข">กองสาธารณสุข</option>
+                    <option value="กองสวัสดิการสังคม">กองสวัสดิการสังคม</option>
+                    <option value="กองยุทธศาสตร์">กองยุทธศาสตร์</option>
+                    <option value="กองการเจ้าหน้าที่">กองการเจ้าหน้าที่</option>
+                    <option value="หน่วยตรวจสอบภายใน">หน่วยตรวจสอบภายใน</option>
+                    <option value="หน่วยงานอื่นๆ">หน่วยงานอื่นๆ</option>
             </select>
         </div>
 
@@ -171,68 +207,119 @@
             <textarea class="form-control" id="complaint-description" name="complaint-description" rows="4"></textarea>
             <small class="error-message" id="complaint-description-error"></small>
         </div>
-
         <!-- File Upload -->
         <div class="form-group">
-            <label for="complaint-file">อัปโหลดไฟล์ (ถ้ามี)</label>
-            <input type="file" class="form-control-file" id="complaint-file" name="complaint-file">
+            <label for="complaint-file">ไฟล์ที่แนบ</label>
+            <input type="file" class="form-control" id="complaint-file" name="complaint_file">
         </div>
-
-        <!-- Privacy Consent -->
-        <div class="form-group form-check">
-            <input type="checkbox" class="form-check-input" id="privacy-consent" name="privacy-consent">
-            <label class="form-check-label" for="privacy-consent">ยินยอมให้ข้อมูลส่วนบุคคล</label>
-            <small class="error-message" id="privacy-consent-error"></small>
-        </div>
-
-        <!-- Buttons -->
-        <div class="form-group">
-            <button type="submit" class="btn btn-success btn-block" id="submit-form" disabled>ส่ง</button>
-            <button type="button" class="btn btn-danger btn-block" id="cancel-form">ยกเลิก</button>
-        </div>
-    </form>
-</div>
-
-<!-- Bootstrap Modal for Confirmation -->
-<div class="modal" tabindex="-1" role="dialog" id="confirmation-modal">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">ยืนยันการส่งข้อมูล</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+        <form id="report-person-form">
+            <!-- Form fields go here -->
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="privacy-consent" disabled>
+                <label class="form-check-label" for="privacy-consent">
+                    ยินยอมให้ข้อมูลส่วนบุคคล
+                    <a href="#" id="show-agreement">[อ่านข้อตกลง]</a>
+                </label>
             </div>
-            <div class="modal-body">
-                <p>คุณแน่ใจหรือไม่ว่าต้องการส่งข้อมูลทั้งหมดนี้?</p>
+            <div id="confirmation-buttons" class="mt-3">
+                <button type="button" class="btn btn-success btn-full-width" id="confirm-submit" disabled>ยืนยันการส่งข้อมูล</button>
+                <button type="button" class="btn btn-danger btn-full-width" id="cancel-submit">ยกเลิก</button>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="window.location.href='secondpage.html'">ยกเลิก</button>
-                <button type="button" class="btn btn-primary" id="confirm-submit">ยืนยัน</button>
-            </div>
-        </div>
+        </form>
     </div>
-</div>
-<script>
-      let geolocation = { lat: 13.7367, lng: 100.5231 }; // Default location (Bangkok)
-map = new longdo.Map({
-    placeholder: document.getElementById('map'),
-    defaultCenter: geolocation,
-    defaultZoom: 13
-});
-var script = document.createElement('script');
-script.src = "https://mapapi.longdo.com/mapapi?key=35bbbe40a96e844b27eba45df1ddad0b";
-script.onload = initMap;
-document.body.appendChild(script);
+    <!-- Custom Modal -->
+    <div class="custom-modal-overlay" id="custom-modal-overlay"></div>
+    <div class="custom-modal" id="custom-modal">
+        <h5>ข้อตกลงการยินยอมให้ข้อมูลส่วนบุคคล</h5>
+        <p>ข้อมูลส่วนบุคคลของท่านจะถูกใช้เพื่อประมวลผลคำร้องทุกข์/ร้องเรียนของท่านตามวัตถุประสงค์
+            และจะถูกเก็บรักษาอย่างปลอดภัยภายใต้พระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ.2562</p>
+        <div class="modal-footer">
+            <button class="btn-close" id="btn-close">ยกเลิก</button>
+            <button class="btn-agree" id="btn-agree">ตกลง</button>
+        </div>
+    </div>    
+        <script>
+            // Show Agreement Modal
+            document.getElementById('show-agreement').addEventListener('click', function (e) {
+                e.preventDefault();
+                document.getElementById('custom-modal-overlay').style.display = 'block';
+                document.getElementById('custom-modal').style.display = 'block';
+            });
+    
+            // Close Modal
+            document.getElementById('btn-close').addEventListener('click', function () {
+                document.getElementById('custom-modal-overlay').style.display = 'none';
+                document.getElementById('custom-modal').style.display = 'none';
+            });
+    
+            // Agree to Consent
+            document.getElementById('btn-agree').addEventListener('click', function () {
+                document.getElementById('privacy-consent').checked = true;
+                document.getElementById('privacy-consent').disabled = false;
+                toggleConfirmButton();
+                document.getElementById('custom-modal-overlay').style.display = 'none';
+                document.getElementById('custom-modal').style.display = 'none';
+            });
+    
+            // Enable/Disable Confirm Button
+            document.getElementById('privacy-consent').addEventListener('change', function () {
+                toggleConfirmButton();
+            });
+    
+            function toggleConfirmButton() {
+                const confirmButton = document.getElementById('confirm-submit');
+                confirmButton.disabled = !document.getElementById('privacy-consent').checked;
+            }
+    
+            // Cancel Button Action
+            document.getElementById('cancel-submit').addEventListener('click', function () {
+                alert('การส่งข้อมูลถูกยกเลิก');
+                document.getElementById('report-form').reset();
+                toggleConfirmButton();
+            });
+    
+            // Confirm Button Action
+            document.getElementById('confirm-submit').addEventListener('click', function (e) {
+                e.preventDefault(); // Prevent page refresh
+                alert('ส่งข้อมูลสำเร็จ');
+                document.getElementById('report-form').reset();
+                toggleConfirmButton();
+            });
+        </script>
+    <script>
+        let geolocation = { lat: 13.7367, lng: 100.5231 }; // Default location (Bangkok)
+        map = new longdo.Map({
+            placeholder: document.getElementById('map'),
+            defaultCenter: geolocation,
+            defaultZoom: 13
+    });
+        var script = document.createElement('script');
+        script.src = "https://mapapi.longdo.com/mapapi?key=35bbbe40a96e844b27eba45df1ddad0b";
+        script.onload = initMap;
+        document.body.appendChild(script);
 
-    $(document).ready(function() {
+        $(document).ready(function() {
+
+            // เปิด Modal เมื่อคลิกที่ลิงก์ "อ่านข้อตกลง"
+            $('#show-agreement').click(function(e) {
+                e.preventDefault();
+            $('#agreement-modal').modal('show'); // เปิด Modal
+            });
+
+            // เมื่อผู้ใช้กดปุ่ม "ตกลง" ใน Modal
+            $('#agree-consent').click(function() {
+            $('#privacy-consent').prop('checked', true); // ติ๊ก checkbox
+            $('#privacy-consent').prop('disabled', false); // ปลดล็อก checkbox
+            $('#submit-form').prop('disabled', false); // เปิดปุ่มส่งข้อมูล
+            $('#agreement-modal').modal('hide'); // ปิด Modal
+            });
 
         // Enable/Disable the submit button based on privacy consent
         $('#privacy-consent').change(function() {
             if ($(this).prop('checked')) {
-                $('#submit-form').prop('disabled', false);
+        $('#submit-form').prop('disabled', false); // เปิดปุ่มส่งข้อมูล
             } else {
-                $('#submit-form').prop('disabled', true);
+        $('#submit-form').prop('disabled', true); // ปิดปุ่มส่งข้อมูล
             }
         });
 
@@ -249,7 +336,7 @@ document.body.appendChild(script);
         }
 
         // Validate form on submit
-        $('#complaint-form').submit(function(e) {
+        $('#report-person-form').submit(function(e) {
             e.preventDefault();
             resetErrorMessages();
 
@@ -257,7 +344,12 @@ document.body.appendChild(script);
 
             // Validate Complaint Subject
             if ($('#complaint-subject').val().trim() === '') {
-                showError('#complaint-subject', 'กรุณากรอกเรื่องที่ต้องการร้องทุกข์');
+                showError('#complaint-subject', 'กรุณากรอกเรื่องที่ต้องการแจ้งเบาะแส');
+                isValid = false;
+            }
+
+            if ($('#report-person').val().trim() === '') {
+                showError('#report-person', 'กรุณากรอกชื่อองค์กรหรือบุคคลที่ต้องการแจ้งเบาะแส');
                 isValid = false;
             }
 
@@ -290,14 +382,14 @@ document.body.appendChild(script);
         $('#confirm-submit').click(function() {
             $('#confirmation-modal').modal('hide');
             alert('ข้อมูลถูกส่งเรียบร้อยแล้ว!');
-            $('#complaint-form')[0].reset(); // Reset the form
+            $('#report-person-form')[0].reset(); // Reset the form
             $('#submit-form').prop('disabled', true); // Disable submit button
         });
 
         // Handle the cancel button to reset the form
         $('#cancel-form').click(function() {
             if (confirm('คุณแน่ใจหรือไม่ว่าต้องการยกเลิก?')) {
-                $('#complaint-form')[0].reset(); // Reset the form
+                $('#report-person-form')[0].reset(); // Reset the form
                 $('#submit-form').prop('disabled', true); // Disable submit button
             }
         });
