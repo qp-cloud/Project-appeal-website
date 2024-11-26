@@ -23,12 +23,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         die("การเชื่อมต่อฐานข้อมูลล้มเหลว: " . $conn->connect_error);
     }
 
-    // Prepare SQL query
-    $sql = "SELECT username, password FROM user WHERE username = ?";
+    // Prepare SQL query to fetch username, password, and role
+    $sql = "SELECT username, password, role FROM user WHERE username = ?";
     $stmt = $conn->prepare($sql);
 
     if ($stmt === false) {
-        // Output any errors in preparing the query
         die("Error preparing the SQL query: " . $conn->error);
     }
 
@@ -47,11 +46,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Verify the password
         if (password_verify($password, $user['password'])) {
+            // Store user info and role in session
             $_SESSION['user'] = [
                 'username' => $user['username'],
-                'role' => 'user' // or other roles as per your setup
+                'role' => $user['role'] // Use role from the database
             ];
-            header("Location: secondpage.php"); // Redirect to the main page after login
+
+            // Redirect based on role
+            if ($user['role'] === 'admin') {
+                header("Location: secondpage.php"); // Redirect for admin
+            } else {
+                header("Location: secondpage.php"); // Redirect for regular user
+            }
             exit();
         } else {
             echo "<script>alert('รหัสผ่านไม่ถูกต้อง'); window.location.href='login.html';</script>";

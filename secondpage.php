@@ -2,13 +2,25 @@
 // Start the session to manage login status
 session_start();
 
-// Assuming session stores user info after successful login
-// Example: $_SESSION['user'] = ['username' => 'sirawit', 'role' => 'admin'];
-
 // Check if the user is logged in
 if (isset($_SESSION['user'])) {
-    $username = $_SESSION['user']['username']; // User's name
+    $username = $_SESSION['user']['username']; // User's username
     $role = $_SESSION['user']['role'];         // Role (admin or user)
+
+    // Check the user's role
+if ($role === 'admin') {
+        // Allow access for admin
+        echo "Welcome, $username! You are logged in as an administrator.";
+        // Add admin-specific functionality here
+    } elseif ($role === 'user') {
+        // Allow access for regular user
+        echo "Welcome, $username! You are logged in as a regular user.";
+        // Add user-specific functionality here
+    } else {
+        // Unknown role, handle accordingly
+        echo "Access denied. Unknown role.";
+        exit();
+    }
 } else {
     // Redirect to login page if not logged in
     header("Location: login.php");

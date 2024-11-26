@@ -209,6 +209,58 @@ $conn->close();
             background: #007bff;
             color: white;
         }
+        .custom-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+        .custom-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            width: 80%;
+            max-width: 500px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            z-index: 1001;
+        }
+        .custom-modal h5 {
+            margin: 0 0 15px;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+        .custom-modal p {
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+        .custom-modal .modal-footer {
+            text-align: center;
+        }
+        .custom-modal .modal-footer button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        .btn-close {
+            background: #ccc;
+            color: #333;
+        }
+        .btn-agree {
+            background: #007bff;
+            color: white;
+        }
     </style>
 </head>
 
@@ -309,36 +361,33 @@ $conn->close();
                 <input type="file" class="form-control" id="complaint-file" name="complaint_file">
             </div>
 
-            <!-- Privacy Consent -->
-            <div class="form-group">
-                <label for="privacy-consent">
-                    <input type="checkbox" id="privacy-consent" name="privacy_consent"> ยินยอมให้ใช้ข้อมูลตามข้อกำหนด
+            <div class="form-group form-check">
+                <input type="checkbox" class="form-check-input" id="privacy-consent" name="privacy-consent" disabled>
+                <label class="form-check-label" for="privacy-consent">
+                    ยินยอมให้ข้อมูลส่วนบุคคล 
+                    <a href="#" id="show-agreement">[อ่านข้อตกลง]</a>
                 </label>
+                <small class="error-message" id="privacy-consent-error"></small>
             </div>
+            
 
             <button type="submit" class="btn btn-primary btn-block">ยืนยันการร้องเรียน</button>
+                
         </form>
-    </div>
-
-    <!-- Bootstrap Modal for Confirmation -->
-    <!-- Modal -->
-    <div class="custom-modal-overlay" id="custom-modal-overlay"></div>
-    <div class="custom-modal" id="custom-modal">
-        <h5>ข้อตกลงการยินยอมให้ข้อมูลส่วนบุคคล</h5>
-        <p>ข้อมูลส่วนบุคคลของท่านจะถูกใช้เพื่อประมวลผลคำร้องทุกข์/ร้องเรียนของท่านตามวัตถุประสงค์
-            และจะถูกเก็บรักษาอย่างปลอดภัยภายใต้พระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ.2562</p>
-        <div class="modal-footer">
-            <button class="btn-close" id="btn-close">ยกเลิก</button>
-            <button class="btn-agree" id="btn-agree">ตกลง</button>
         </div>
-    </div>
-    <script>
-        function goToHome() {
-          window.location.href = "secondpage.html";
-        }
-    </script>
 
-    <!-- JavaScript -->
+        <!-- Modal -->
+        <div class="custom-modal-overlay" id="custom-modal-overlay"></div>
+            <div class="custom-modal" id="custom-modal">
+                <h5>ข้อตกลงการยินยอมให้ข้อมูลส่วนบุคคล</h5>
+                <p>ข้อมูลส่วนบุคคลของท่านจะถูกใช้เพื่อประมวลผลคำร้องทุกข์/ร้องเรียนของท่านตามวัตถุประสงค์
+                    และจะถูกเก็บรักษาอย่างปลอดภัยภายใต้พระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ.2562</p>
+                <div class="modal-footer">
+                    <button class="btn-close" id="btn-close">ยกเลิก</button>
+                    <button class="btn-agree" id="btn-agree">ตกลง</button>
+
+                    </div>
+                    </div>
     <script>
         // Show Agreement Modal
         document.getElementById('show-agreement').addEventListener('click', function(e) {
@@ -466,4 +515,5 @@ $conn->close();
             });
         });
     </script>
+    
 </html>
