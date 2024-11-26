@@ -55,6 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $complaint_description = $_POST['complaint_description'];
     $privacy_consent = isset($_POST['privacy_consent']) ? 1 : 0;  // 1 if consent is given, 0 otherwise
     
+    
     // Handle file upload
     $complaint_file = '';
     if (isset($_FILES['complaint_file']) && $_FILES['complaint_file']['error'] == 0) {
@@ -336,7 +337,9 @@ $conn->close();
                 </label>
             </div>
             <div id="confirmation-buttons" class="mt-3">
-                <button type="button" class="btn btn-success btn-full-width" id="confirm-submit" disabled>ยืนยันการส่งข้อมูล</button>
+                
+                <button type="submit" class="btn btn-primary btn-full-width">ยืนยันการร้องเรียน</button>
+
                 <button type="button" class="btn btn-danger btn-full-width" id="cancel-submit">ยกเลิก</button>
             </div>
         </form>
