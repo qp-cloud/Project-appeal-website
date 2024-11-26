@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Prepare SQL query to fetch username, password, and role
-    $sql = "SELECT user_id, username, password, role FROM user WHERE username = ?";
+    $sql = "SELECT user_id, username, password, first_name, last_name, role FROM user WHERE username = ?";
     $stmt = $conn->prepare($sql);
 
     if ($stmt === false) {
@@ -51,7 +51,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['user'] = [
                 'user_id' => $user['user_id'],
                 'username' => $user['username'],
-                'role' => $user['role'] // Use role from the database
+                'first_name' => $user['first_name'], // Store first name
+                'last_name' => $user['last_name'],   // Store last name
+                'role' => $user['role'] // Store role from the database
             ];
 
             // Redirect based on role

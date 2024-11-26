@@ -28,7 +28,7 @@ $user_id = $_SESSION['user']['user_id'];
 // Retrieve the complaints for the logged-in user
 $sql = "SELECT id, complaint_subject, contact_phone, contact_location, contact_details, 
         latitude, longitude, incident_date, incident_time, problem_level, department, 
-        complaint_description, complaint_file, privacy_consent, submitted_at
+        complaint_description, complaint_file, privacy_consent, submitted_at, status
         FROM complaints 
         WHERE user_id = ? 
         ORDER BY submitted_at DESC";  // Fetch complaints in descending order of submission
@@ -41,16 +41,16 @@ if ($stmt = $conn->prepare($sql)) {
     $stmt->execute();
     
     // Bind the result to variables
-    $stmt->bind_result($complaint_id, $complaint_subject, $contact_phone, $contact_location, 
+    $stmt->bind_result($id, $complaint_subject, $contact_phone, $contact_location, 
                        $contact_details, $latitude, $longitude, $incident_date, $incident_time, 
                        $problem_level, $department, $complaint_description, $complaint_file, 
-                       $privacy_consent, $submitted_at);
+                       $privacy_consent, $submitted_at,$status);
 
     // Fetch the complaints
     $complaints = [];
     while ($stmt->fetch()) {
         $complaints[] = [
-            'complaint_id' => $complaint_id,
+            'id' => $id,
             'complaint_subject' => $complaint_subject,
             'contact_phone' => $contact_phone,
             'contact_location' => $contact_location,
@@ -64,7 +64,8 @@ if ($stmt = $conn->prepare($sql)) {
             'complaint_description' => $complaint_description,
             'complaint_file' => $complaint_file,
             'privacy_consent' => $privacy_consent,
-            'submitted_at' => $submitted_at
+            'submitted_at' => $submitted_at,
+            'status' => $status
         ];
     }
 
@@ -109,9 +110,9 @@ $conn->close();
                             <td><?= htmlspecialchars($complaint['complaint_subject']) ?></td>
                             <td><?= htmlspecialchars($complaint['incident_date']) ?></td>
                             <td><?= htmlspecialchars($complaint['problem_level']) ?></td>
-                            <td><?= htmlspecialchars($complaint['submitted_at']) ?></td>
+                            <td><?= htmlspecialchars($complaint['status']) ?></td>
                             <td>
-                                <a href="complaint_detail.php?complaint_id=<?= urlencode($complaint['complaint_id']) ?>" class="btn btn-info">ดูรายละเอียด</a>
+                                <a href="complaint_detail.php?id=<?= urlencode($complaint['id']) ?>" class="btn btn-info">ดูรายละเอียด</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -120,6 +121,11 @@ $conn->close();
         <?php else: ?>
             <p class="text-center">ยังไม่มีข้อมูลร้องทุกข์ / ร้องเรียน</p>
         <?php endif; ?>
+
+        <!-- Go Back Button -->
+        <div class="text-center mt-4">
+            <button onclick="window.history.back();" class="btn btn-primary">ย้อนกลับ</button>
+        </div>
     </div>
 </body>
 </html>

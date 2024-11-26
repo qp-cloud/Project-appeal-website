@@ -63,27 +63,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $file_upload_dir = 'uploads/';  // Directory where the file will be saved
         $file_upload_path = $file_upload_dir . basename($file_name);
 
-        // Move the uploaded file to the server
-        if (move_uploaded_file($file_tmp_name, $file_upload_path)) {
-            $complaint_file = $file_upload_path;
+        // Validate file type and size
+        $allowed_types = ['jpg', 'jpeg', 'png', 'pdf', 'docx'];
+        $file_extension = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+
+        if (in_array($file_extension, $allowed_types) && $_FILES['complaint_file']['size'] < 5000000) {  // 5MB limit
+            if (move_uploaded_file($file_tmp_name, $file_upload_path)) {
+                $complaint_file = $file_upload_path;
+            } else {
+                echo "Error uploading file.";
+            }
+        } else {
+            echo "Invalid file type or file size exceeded.";
+            exit();
         }
     }
 
     // Prepare the SQL query to insert data into the database
     $sql = "INSERT INTO complaints (user_id, complaint_subject, contact_phone, contact_location, contact_details, latitude, longitude, incident_date, incident_time, problem_level, department, complaint_description, complaint_file, privacy_consent)
-            VALUES ('$user_id', '$complaint_subject', '$contact_phone', '$contact_location', '$contact_details', '$latitude', '$longitude', '$incident_date', '$incident_time', '$problem_level', '$department', '$complaint_description', '$complaint_file', '$privacy_consent')";
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("issssssssssssi", $user_id, $complaint_subject, $contact_phone, $contact_location, $contact_details, $latitude, $longitude, $incident_date, $incident_time, $problem_level, $department, $complaint_description, $complaint_file, $privacy_consent);
 
-    // Execute the query
-    if ($conn->query($sql) === TRUE) {
+    if ($stmt->execute()) {
         echo "ข้อมูลถูกส่งเรียบร้อยแล้ว!";
     } else {
-        echo "เกิดข้อผิดพลาด: " . $conn->error;
+        echo "เกิดข้อผิดพลาด: " . $stmt->error;
     }
+
+    // Close statement
+    $stmt->close();
 }
 
 // Close the connection
 $conn->close();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="th">
@@ -260,7 +275,7 @@ $conn->close();
     <div class="header">
         <img src="logo.png" alt="Ban Pong Municipality Logo">
         <div class="user-info">
-            <span>ยินดีต้อนรับ, <?= htmlspecialchars($username) ?></span>
+        <span>ยินดีต้อนรับ, <?= htmlspecialchars($_SESSION['user']['first_name']) ?> <?= htmlspecialchars($_SESSION['user']['last_name']) ?></span>
             <a href="secondpage.php">กลับสู่หน้าหลัก</a>
         </div>
     </div>
@@ -395,9 +410,8 @@ $conn->close();
 
         // Agree to Consent
         document.getElementById('btn-agree').addEventListener('click', function() {
-            document.getElementById('privacy-consent').checked = true;
-            document.getElementById('privacy-consent').disabled = false;
-            document.getElementById('submit-form').disabled = false;
+            document.getElementById('privacy-consent').disabled = false;  // Enable the checkbox
+            document.getElementById('privacy-consent').checked = true;  // Automatically check it
             document.getElementById('custom-modal-overlay').style.display = 'none';
             document.getElementById('custom-modal').style.display = 'none';
         });
@@ -431,13 +445,15 @@ $conn->close();
             });
 
             // Enable/Disable the submit button based on privacy consent
+            // Enable/Disable the submit button based on privacy consent
             $('#privacy-consent').change(function() {
                 if ($(this).prop('checked')) {
-            $('#submit-form').prop('disabled', false); // เปิดปุ่มส่งข้อมูล
+                    $('#submit-form').prop('disabled', false); // Enable submit button
                 } else {
-            $('#submit-form').prop('disabled', true); // ปิดปุ่มส่งข้อมูล
+                    $('#submit-form').prop('disabled', true); // Disable submit button
                 }
             });
+
 
             // Function to reset error messages
             function resetErrorMessages() {
@@ -450,44 +466,49 @@ $conn->close();
                 $(inputId).addClass('is-invalid');
                 $(inputId + '-error').text(message);
             }
+        // Validate form on submit
+        $('#complaint-form').submit(function(e) {
+            e.preventDefault();
+            resetErrorMessages();
 
-            // Validate form on submit
-            $('#complaint-form').submit(function(e) {
-                e.preventDefault();
-                resetErrorMessages();
+            let isValid = true;
 
-                let isValid = true;
+            // Validate Complaint Subject
+            if ($('#complaint-subject').val().trim() === '') {
+                showError('#complaint-subject', 'กรุณากรอกเรื่องที่ต้องการร้องทุกข์');
+                isValid = false;
+            }
 
-                // Validate Complaint Subject
-                if ($('#complaint-subject').val().trim() === '') {
-                    showError('#complaint-subject', 'กรุณากรอกเรื่องที่ต้องการร้องทุกข์');
-                    isValid = false;
-                }
+            // Validate Contact Phone
+            if ($('#contact-phone').val().trim() === '') {
+                showError('#contact-phone', 'กรุณากรอกเบอร์โทรศัพท์ที่สามารถติดต่อได้');
+                isValid = false;
+            }
 
-                // Validate Contact Phone (basic phone validation)
-                const phonePattern = /^[0-9]{10}$/;
-                if (!phonePattern.test($('#contact-phone').val())) {
-                    showError('#contact-phone', 'กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง');
-                    isValid = false;
-                }
+            // Validate Incident Date
+            if ($('#incident-date').val().trim() === '') {
+                showError('#incident-date', 'กรุณากรอกวันที่เกิดเหตุ');
+                isValid = false;
+            }
 
-                // Validate Complaint Details
-                if ($('#contact-details').val().trim() === '') {
-                    showError('#contact-details', 'กรุณากรอกรายละเอียด');
-                    isValid = false;
-                }
+            // Validate Incident Time
+            if ($('#incident-time').val().trim() === '') {
+                showError('#incident-time', 'กรุณากรอกเวลาที่เกิดเหตุ');
+                isValid = false;
+            }
 
-                // Validate Privacy Consent
-                if (!$('#privacy-consent').prop('checked')) {
-                    showError('#privacy-consent', 'กรุณายินยอมให้ข้อมูลส่วนบุคคล');
-                    isValid = false;
-                }
+            // Validate Complaint Description
+            if ($('#complaint-description').val().trim() === '') {
+                showError('#complaint-description', 'กรุณากรอกรายละเอียดการร้องเรียน');
+                isValid = false;
+            }
 
-                // If form is valid, show the confirmation modal
-                if (isValid) {
-                    $('#confirmation-modal').modal('show');
-                }
-            });
+            // If all validations pass, submit the form
+            if (isValid) {
+                this.submit();
+            }
+        });
+
 
             // Handle confirmation modal submission
             $('#confirm-submit').click(function() {

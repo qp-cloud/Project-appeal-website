@@ -6,7 +6,7 @@ session_start();
 if (isset($_SESSION['user'])) {
     $username = $_SESSION['user']['username']; // User's username
     $role = $_SESSION['user']['role'];         // Role (admin or user)
-
+    
     // Check the user's role
 if ($role === 'admin') {
         // Allow access for admin
@@ -127,7 +127,7 @@ if ($role === 'admin') {
   <div class="header">
     <img src="logo.png" alt="Ban Pong Municipality Logo">
     <div class="user-info">
-      <span>ยินดีต้อนรับ, <?= htmlspecialchars($username) ?></span>
+    <span>ยินดีต้อนรับ, <?= htmlspecialchars($_SESSION['user']['first_name']) ?> <?= htmlspecialchars($_SESSION['user']['last_name']) ?></span>
       <a href="edit_account.php?username=<?= urlencode($username) ?>">แก้ไขข้อมูลบัญชี</a>
       <a href="logout.php">ออกจากระบบ</a>
     </div>
@@ -139,7 +139,7 @@ if ($role === 'admin') {
       <a href="user_appeal_page.php?username=<?= urlencode($username) ?>">ร้องทุกข์ / ร้องเรียน</a>
       <a href="report-fraud.html">แจ้งเบาะแสการทุจริตประพฤติมิชอบ</a>
       <?php if (isset($_SESSION['user']['user_id'])): ?>
-    <a href="track_complaint.php?user_id=<?= urlencode($_SESSION['user']['user_id']) ?>">ติดตามรายงานผลการร้องทุกข์ / ร้องเรียน</a>
+    <a href="complaint_tracking.php?user_id=<?= urlencode($_SESSION['user']['user_id']) ?>">ติดตามรายงานผลการร้องทุกข์ / ร้องเรียน</a>
 <?php else: ?>
     <p style="color: red;">กรุณาเข้าสู่ระบบเพื่อใช้งานเมนูนี้</p>
 <?php endif; ?>
