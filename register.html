@@ -7,145 +7,194 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <style>
     body {
-      background: linear-gradient(135deg, #74ebd5, #9face6);
+      background-image: url('img/bg.png');
+      background-size: cover;
       font-family: 'Arial', sans-serif;
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
+      background-attachment: fixed;
+      background-position: center;
     }
+
     .container {
       max-width: 600px;
       padding: 30px;
-      background-color: #fff;
-      border-radius: 10px;
+      background-color: rgba(255, 255, 255, 0.8); /* เบลอพื้นหลังให้โปร่งแสง */
+      border-radius: 15px;
       box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
     }
+
     .form-title {
       text-align: center;
-      font-size: 28px;
-      font-weight: bold;
+      font-size: 30px;
+      font-weight: 700;
       margin-bottom: 20px;
-      color: #343a40;
+      color: #007bff;
     }
-    
+
+    .form-group input, .form-group select, .form-group textarea {
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+
+    .invalid-feedback {
+      color: #dc3545;
+      font-size: 14px;
+    }
+
     .btn-primary {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       border: none;
-      border-radius: 5px;
+      border-radius: 10px;
       background-color: #007bff;
       color: white;
-      font-size: 16px;
+      font-size: 18px;
+      transition: background-color 0.3s;
     }
+
     .btn-primary:hover {
       background-color: #0056b3;
     }
+
     .modal-content {
       border-radius: 10px;
     }
+
     .modal-header {
       border-bottom: none;
     }
+
     .modal-title {
       font-size: 20px;
-      font-weight: bold;
+      font-weight: 700;
+      color: #007bff;
     }
+
     .modal-footer {
       border-top: none;
     }
-    
+
+    .text-center a {
+      text-decoration: none;
+      font-size: 16px;
+      color: #ffffff;
+      border-radius: 5px;
+      padding: 10px 20px;
+      border: 1px solid #007bff;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .text-center a:hover {
+      background-color: #007bff;
+      color: rgb(0, 0, 0);
+    }
+
+    .form-title, .form-group label {
+      color: #343a40;
+    }
   </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="form-title">ลงทะเบียน</div>
-    <form action="register.php" method="POST" id="registerForm" novalidate>
-      <div class="form-group">
-        <input type="text" name="first_name" class="form-control" placeholder="First Name" required>
-        <div class="invalid-feedback">กรุณากรอกชื่อ</div>
-      </div>
-      
-      <div class="form-group">
-        <input type="text" name="last_name" class="form-control" placeholder="Last Name" required>
-        <div class="invalid-feedback">กรุณากรอกนามสกุล</div>
-      </div>
-      
-      <div class="form-group">
-        <input type="text" name="id_number" class="form-control" placeholder="ID Number" required pattern="\d{13}">
-        <div class="invalid-feedback">กรุณากรอกเลขบัตรประชาชน 13 หลัก</div>
-      </div>
-      
-      <div class="form-group">
-        <select name="gender" class="form-control" required>
-          <option value="">กรุณาเลือกเพศ</option>
-          <option value="male">ชาย</option>
-          <option value="female">หญิง</option>
-          <option value="other">อื่นๆ</option>
-        </select>
-        <div class="invalid-feedback">กรุณาเลือกเพศ</div>
-      </div>
-      
-      <div class="form-group">
-        <input type="date" name="birth_date" class="form-control" required>
-        <div class="invalid-feedback">กรุณาเลือกวันเกิด</div>
-      </div>
-      
-      <div class="form-group">
-        <input type="text" name="occupation" class="form-control" placeholder="Occupation" required>
-        <div class="invalid-feedback">กรุณากรอกอาชีพ</div>
-      </div>
-      
-      <div class="form-group">
-        <input type="text" name="phone" class="form-control" placeholder="Phone" required pattern="\d{10}">
-        <div class="invalid-feedback">กรุณากรอกเบอร์โทรศัพท์ 10 หลัก</div>
-      </div>
-      
-      <div class="form-group">
-        <input type="email" name="email" class="form-control" placeholder="Email" required>
-        <div class="invalid-feedback">กรุณากรอกอีเมลที่ถูกต้อง</div>
-      </div>
-      
-      <div class="form-group">
-        <textarea name="address" class="form-control" placeholder="Address" rows="3" required></textarea>
-        <div class="invalid-feedback">กรุณากรอกที่อยู่</div>
-      </div>
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#usernamePasswordModal">เพิ่มข้อมูลบัญชี</button>
+  <div class="form-title">ลงทะเบียน</div>
+  <form action="register.php" method="POST" id="registerForm" novalidate>
+    <div class="form-group">
+      <input type="text" name="first_name" class="form-control" placeholder="First Name" required>
+      <div class="invalid-feedback">กรุณากรอกชื่อ</div>
+    </div>
+    
+    <div class="form-group">
+      <input type="text" name="last_name" class="form-control" placeholder="Last Name" required>
+      <div class="invalid-feedback">กรุณากรอกนามสกุล</div>
+    </div>
+    
+    <div class="form-group">
+      <input type="text" name="id_number" class="form-control" placeholder="ID Number" required pattern="\d{13}">
+      <div class="invalid-feedback">กรุณากรอกเลขบัตรประชาชน 13 หลัก</div>
+    </div>
+    
+    <div class="form-group">
+      <select name="gender" class="form-control" required>
+        <option value="">กรุณาเลือกเพศ</option>
+        <option value="male">ชาย</option>
+        <option value="female">หญิง</option>
+        <option value="other">อื่นๆ</option>
+      </select>
+      <div class="invalid-feedback">กรุณาเลือกเพศ</div>
+    </div>
+    
+    <div class="form-group">
+      <input type="date" name="birth_date" class="form-control" required>
+      <div class="invalid-feedback">กรุณาเลือกวันเกิด</div>
+    </div>
+    
+    <div class="form-group">
+      <input type="text" name="occupation" class="form-control" placeholder="Occupation" required>
+      <div class="invalid-feedback">กรุณากรอกอาชีพ</div>
+    </div>
+    
+    <div class="form-group">
+      <input type="text" name="phone" class="form-control" placeholder="Phone" required pattern="\d{10}">
+      <div class="invalid-feedback">กรุณากรอกเบอร์โทรศัพท์ 10 หลัก</div>
+    </div>
+    
+    <div class="form-group">
+      <input type="email" name="email" class="form-control" placeholder="Email" required>
+      <div class="invalid-feedback">กรุณากรอกอีเมลที่ถูกต้อง</div>
+    </div>
+    
+    <div class="form-group">
+      <textarea name="address" class="form-control" placeholder="Address" rows="3" required></textarea>
+      <div class="invalid-feedback">กรุณากรอกที่อยู่</div>
+    </div>
+    
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#usernamePasswordModal">เพิ่มข้อมูลบัญชี</button>
 
-        <!-- Modal -->
-        <div class="modal fade" id="usernamePasswordModal" tabindex="-1" role="dialog" aria-labelledby="usernamePasswordModalLabel" aria-hidden="true">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="usernamePasswordModalLabel">ข้อมูลบัญชี</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <div class="form-group">
-                    <input type="text" name="username" class="form-control" placeholder="Username" required>
-                </div>
-                <div class="form-group">
-                    <input type="password" name="password" class="form-control" placeholder="Password" required>
-                </div>
-                <div class="form-group">
-                    <input type="password" name="confirm_password" class="form-control" placeholder="Re-enter Password" required>
-                </div>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">ยกเลิก</button>
-                <button type="submit" class="btn btn-primary">ลงทะเบียน</button>
-              </div>
+    <!-- Modal -->
+    <div class="modal fade" id="usernamePasswordModal" tabindex="-1" role="dialog" aria-labelledby="usernamePasswordModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="usernamePasswordModalLabel">ข้อมูลบัญชี</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <input type="text" name="username" class="form-control" placeholder="Username" required>
+            </div>
+            <div class="form-group">
+              <input type="password" name="password" class="form-control" placeholder="Password" required>
+            </div>
+            <div class="form-group">
+              <input type="password" name="confirm_password" class="form-control" placeholder="Re-enter Password" required>
             </div>
           </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">ยกเลิก</button>
+            <button type="submit" class="btn btn-primary">ลงทะเบียน</button>
+          </div>
         </div>
-    </form>
-    <div class="text-center mt-3">
-      <a href="home.html" class="btn btn-secondary">กลับไปยังหน้าแรก</a>
+      </div>
+    </div>
+  </form>
+
+  <div class="text-center mt-3">
+    <a href="home.html" class="btn btn-secondary">กลับไปยังหน้าแรก</a>
   </div>
-</div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -199,8 +248,7 @@
 
   form.classList.add('was-validated');
 });
-
-
 </script>
+
 </body>
 </html>

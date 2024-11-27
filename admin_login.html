@@ -3,32 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>เทศบาลอำเภอบ้านโป่ง - เข้าสู่ระบบ</title>
+  <title>ส่วนของเจ้าหน้าที่ - เข้าสู่ระบบ</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <style>
     body {
-      background-image: url('img/bg.png');
+      background-image: url('img/adminbg.jpg');
       background-size: cover;
       font-family: Arial, sans-serif;
+      color: #fff;
     }
     .header {
-      background: #1ceb61;
-      color: #000;
-      padding: 10px 20px;
+      background: #333;
+      color: #fff;
+      padding: 15px 30px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border: 5px solid #1ceb61;
+      border: 5px solid #2a7cff;
       border-radius: 15px;
       width: 90%;
       margin: 20px auto;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
     .header img {
-      height: 100px;
+      height: 80px;
     }
     .header-nav a {
-      color: #000;
+      color: #fff;
       text-decoration: none;
       margin: 0 10px;
       font-weight: bold;
@@ -48,19 +49,20 @@
       border-radius: 5px;
     }
     .container {
-      width: 90%;
-      max-width: 600px;
-      margin: 20px auto;
-      padding: 20px;
-      background-color: #F5F5DC;
+      width: 100%;
+      max-width: 400px;
+      margin: 50px auto;
+      padding: 30px;
+      background-color: #333;
       border-radius: 15px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
     .form-title {
       text-align: center;
-      font-size: 24px;
+      font-size: 28px;
       font-weight: bold;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
+      color: #fff;
     }
     .error-message {
       color: red;
@@ -69,37 +71,50 @@
       margin-bottom: 10px;
     }
     .btn-submit {
-      background-color: #28a745;
-      color: #ffffff;
+      background-color: #2a7cff;
+      color: #fff;
       font-weight: bold;
-      width: 100px;
+      width: 100%;
+      padding: 12px;
     }
     .btn-cancel {
       background-color: #dc3545;
-      color: #ffffff;
+      color: #fff;
       font-weight: bold;
-      width: 100px;
+      width: 100%;
+      padding: 12px;
+    }
+    .form-control {
+      background-color: #444;
+      color: #fff;
+      border: 1px solid #555;
+      border-radius: 5px;
+    }
+    .form-control:focus {
+      border-color: #2a7cff;
+      background-color: #333;
+    }
+    .invalid-feedback {
+      color: #ff4747;
     }
   </style>
 </head>
 <body>
 
-  <div class="header">
-    <img src="logo.png" alt="Ban Pong Municipality Logo">
-    <div class="header-nav">
-      <nav>
-        <ul>
-          <a href="login.html">เข้าสู่ระบบ</a>
-          <a href="contact.html">ติดต่อเรา</a>
-          <a href="home.html">หน้าแรก</a>
-        </ul>
-      </nav>
-    </div>
-  </div>
+    <div class="header">
+        <img src="logo.png" alt="Ban Pong Municipality Logo">
+        <div class="header-nav">
+          <nav>
+            <ul>
+              <a href="home.html">หน้าแรก</a>
+            </ul>
+          </nav>
+        </div>
+      </div>
 
   <div class="container">
-    <div class="form-title">เข้าสู่ระบบ</div>
-    <form method="POST" action="login.php" class="needs-validation" novalidate>
+    <div class="form-title">เข้าสู่ระบบ - เจ้าหน้าที่</div>
+    <form method="POST" action="loginadmin.php" class="needs-validation" novalidate>
       <div class="form-group">
         <label for="username">ชื่อผู้ใช้งาน <span style="color: red;">*</span></label>
         <input type="text" class="form-control" id="username" name="username" required>
@@ -121,7 +136,7 @@
     
   <script>
     function goToHome() {
-      window.location.href = "home.html";
+      window.location.href = "admin_page.html";
     }
   </script>
 </body>

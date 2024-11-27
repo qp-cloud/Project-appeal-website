@@ -3,20 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>เทศบาลอำเภอบ้านโป่ง</title>
+  <title>ส่วนของเจ้าหน้าที่ - เทศบาลอำเภอบ้านโป่ง</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background-image: url('img/bg.png');
+      background-image: url('img/adminbg.jpg');
       background-size: cover;
       background-attachment: fixed;
     }
     .header {
-      background: #ffffff;
-      color: #000;
-      padding: 10px 20px;
+      background: #333;
+      color: #fff;
+      padding: 15px 30px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -27,10 +27,10 @@
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
     .header img {
-      height: 100px;
+      height: 80px;
     }
     .header-nav a {
-      color: #000;
+      color: #fff;
       text-decoration: none;
       margin: 0 10px;
       font-weight: bold;
@@ -51,49 +51,40 @@
     }
     .container {
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
-      padding: 110px 20px;
-      color: #333;
-    }
-    .left-section {
-      flex: 1;
-      text-align: left;
-      margin-left: 50px;
-    }
-    .right-section {
-      display: flex;
       flex-direction: column;
-      align-items: center;
-      margin-right: 50px;
+      padding: 100px 20px;
+      color: #333;
+      height: 80vh;
     }
     .title {
-      font-size: 56px;
+      font-size: 48px;
       font-weight: bold;
-      margin-bottom: 10px;
-      color: #000000;
+      margin-bottom: 20px;
+      color: #D02090;
+      background-color: #D3D3D3;
+      text-align: center;
     }
     .slogan {
-      font-size: 36px;
+      font-size: 32px;
       line-height: 1.6;
       margin: 20px 0;
-      color: #333;
+      color: #020202;
+      text-align: center;
     }
     .slogan .highlight-blue {
       color: #0011ff;
       font-weight: bold;
-      font-size: 42px;
+      font-size: 36px;
     }
     .button-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 10px;
-      margin-bottom: 10px;
+      margin-top: 30px;
+      text-align: center;
     }
     .button-container a {
       display: inline-block;
-      width: 200px;
+      width: 250px;
       padding: 15px 0;
       margin: 10px 0;
       color: #fff;
@@ -107,29 +98,23 @@
     .button-container a:hover {
       transform: scale(1.05);
     }
-    .button-login {
+    .button-dashboard {
       background-color: #2a7cff;
     }
-    .button-login:hover {
+    .button-dashboard:hover {
       background-color: #0056b3;
     }
-    .button-register {
-      background-color: #33cc33;
+    .button-manage {
+      background-color: #ff5722; /* A contrasting color (Orange) */
     }
-    .button-register:hover {
-      background-color: #28a745;
-    }
-    .button-admin {
-      background-color: #9932CC;
-    }
-    .button-admin:hover {
-      background-color: #8A2BE2;
+    .button-manage:hover {
+      background-color: #e64a19;
     }
     .footer {
-      background-color: #ffffff;
+      background-color: #333;
       padding: 25px;
       font-size: 16px;
-      color: #333;
+      color: #fff;
       text-align: center;
       box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);
       margin-top: 50px;
@@ -137,21 +122,12 @@
     .footer p {
       margin: 15px 0;
     }
-    .report-button {
-      display: inline-block;
-      background-color: #ff6600;
+    .footer a {
       color: #fff;
-      padding: 12px 20px;
-      font-size: 18px;
-      font-weight: bold;
       text-decoration: none;
-      border-radius: 8px;
-      margin-top: 20px;
-      transition: background-color 0.3s ease, transform 0.2s ease;
     }
-    .report-button:hover {
-      background-color: #e65c00;
-      transform: scale(1.05);
+    .footer a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
@@ -162,30 +138,23 @@
       <nav>
         <ul>
           <a href="login.html">เข้าสู่ระบบ</a>
-          <a href="contact.html">ติดต่อเรา</a>
-          <a href="home.html">หน้าแรก</a>
+          <a href="home.html">หน้าหลัก</a>
         </ul>
       </nav>
     </div>
   </div>
 
   <div class="container">
-    <div class="left-section">
-      <div class="title">เทศบาลอำเภอบ้านโป่ง</div>
-      <div class="slogan">
-        "บริการ <span class="highlight-blue">ครอบคลุม</span><br>
-        ชุมชน <span class="highlight-blue">เข้มแข็ง</span><br>
-        บ้านเมือง <span class="highlight-blue">น่าอยู่</span><br>
-        <span class="highlight-blue">สู่คุณภาพ</span> ชีวิตที่ดี"
-      </div>
+    <div class="title">ส่วนของเจ้าหน้าที่</div>
+    <div class="slogan">
+      "จัดการข้อมูล <span class="highlight-blue">การร้องเรียน</span><br>
+      ตรวจสอบ <span class="highlight-blue">สถานะ</span><br>
+      รายงาน <span class="highlight-blue">การดำเนินการ</span>"
     </div>
 
-    <div class="right-section">
-      <div class="button-container">
-        <a href="login.html" class="button-login">เข้าสู่ระบบ</a>
-        <a href="register.html" class="button-register">ลงทะเบียน</a>
-        <a href="admin_page.html" class="button-admin">ส่วนของเจ้าหน้าที่</a>
-      </div>
+    <div class="button-container">
+      <a href="admin_login.html" class="button-dashboard">แดชบอร์ดการจัดการ</a>
+      <a href="manage_complaints.html" class="button-manage">ลงทะเบียนเจ้าหน้าที่</a>
     </div>
   </div>
 
@@ -194,7 +163,6 @@
     <p>ถนนบ้านดอนตูม จังหวัดราชบุรี 70110</p>
     <p>โทรศัพท์ : 0-3222-1001, 0-3221-1114 | โทรสาร : 0-3222-1975</p>
     <p>Email : <a href="mailto:admin@banpong.go.th">admin@banpong.go.th</a></p>
-    <a href="report_statistics.php" class="report-button">รายงานสถิติ</a>
   </div>
 </body>
 </html>

@@ -53,22 +53,127 @@ while ($row = $result->fetch_assoc()) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>รายงานสถิติการรับแจ้งเรื่องร้องเรียน</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f6f9;
+            padding-top: 20px;
+        }
+        .navbar {
+            margin-bottom: 30px;
+        }
+        h2, h4 {
+            color: #2a7cff;
+        }
+        .form-control {
+            border-radius: 10px;
+            border: 1px solid #ddd;
+        }
+        .btn-primary {
+            border-radius: 8px;
+            background-color: #2a7cff;
+            border-color: #2a7cff;
+            padding: 10px 20px;
+            width: 100%;  /* Make the button stretch across the available space */
+        }
+        .btn-primary:hover {
+            background-color: #1e60c3;
+            border-color: #1e60c3;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-row {
+            display: flex;
+            align-items: center;
+        }
+        .form-group select {
+            margin-right: 15px; /* Space between the dropdown and the button */
+        }
+        .btn-container {
+            text-align: right;
+        }
+        .table {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .table thead {
+            background-color: #2a7cff;
+            color: white;
+        }
+        .table th, .table td {
+            vertical-align: middle;
+        }
+        .table td {
+            font-size: 16px;
+        }
+        .table-bordered th, .table-bordered td {
+            border: 1px solid #ddd;
+        }
+        .table-bordered {
+            margin-top: 20px;
+        }
+        .header {
+            background: #98FB98;
+            color: #000;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+             align-items: center;
+            border: 5px solid #2a7cff;
+            border-radius: 15px;
+            width: 90%;
+            margin: 20px auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .header img {
+            height: 100px;
+        }
+        .header-nav a {
+            color: #000;
+            text-decoration: none;
+            margin: 0 10px;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: color 0.3s ease, background-color 0.3s ease;
+        }
+        .header-nav a:hover {
+            color: #fff;
+            background-color: #2a7cff;
+        }
+        .header-nav a:last-child {
+            color: #2a7cff;
+            background-color: #fff;
+            padding: 5px 15px;
+            border: 1px solid #2a7cff;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
-    <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">เว็บรายงานเรื่องร้องเรียน</a>
-        </div>
-    </nav>
+<div class="header">
+    <img src="logo.png" alt="Ban Pong Municipality Logo">
+    <div class="header-nav">
+      <nav>
+        <ul>
+          <a href="login.html">เข้าสู่ระบบ</a>
+          <a href="contact.html">ติดต่อเรา</a>
+          <a href="home.html">หน้าแรก</a>
+        </ul>
+      </nav>
+    </div>
+  </div>
+
 
     <div class="container mt-5">
         <h2 class="text-center mb-4">รายงานสถิติการรับแจ้งเรื่องร้องเรียน/แจ้งเบาะแส</h2>
 
         <!-- ฟอร์มกรองข้อมูล -->
         <form method="POST">
-            <div class="row mb-3">
-                <div class="col">
+            <div class="form-row mb-3">
+                <div class="form-group col-md-8">
                     <label for="department">หน่วยงาน</label>
                     <select class="form-control" name="department" id="department">
                         <option value="">เลือกหน่วยงาน</option>
@@ -85,7 +190,7 @@ while ($row = $result->fetch_assoc()) {
                         <option value="หน่วยงานอื่นๆ" <?= ($selected_department == 'หน่วยงานอื่นๆ') ? 'selected' : ''; ?>>หน่วยงานอื่นๆ</option>
                     </select>
                 </div>
-                <div class="col align-self-center">
+                <div class="form-group col-md-4 btn-container">
                     <button type="submit" class="btn btn-primary">กรองข้อมูล</button>
                 </div>
             </div>
@@ -134,6 +239,7 @@ while ($row = $result->fetch_assoc()) {
 </body>
 </html>
 
+
 <?php
 // ปิดการเชื่อมต่อฐานข้อมูล
 $conn->close();
@@ -146,4 +252,3 @@ function getMonthName($month) {
     ];
     return $months[$month];
 }
-?>

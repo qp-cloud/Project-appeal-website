@@ -86,45 +86,83 @@ $conn->close();
     <title>ติดตามรายงานผลการร้องทุกข์ / ร้องเรียน</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-image: url('img/bg.png');
+            background-size: cover; /* Light gray background */
+        }
+        .table {
+            background-color: #fff; /* White table background */
+        }
+        .table th {
+            background-color: #17a2b8; 
+            color: #F8F8FF; 
+        }
+        .card {
+            margin-top: 20px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        }
+        .btn-info {
+            background-color: #99FF99; /* Custom color for "Details" button */
+            border-color: #000;
+        }
+        .btn-info:hover {
+            background-color: #138496;
+            border-color: #117a8b;
+        }
+        h2 {
+            font-weight: bold;
+            color: #FFDEAD;
+        }
+    </style>
 </head>
 <body>
     <div class="container mt-5">
-        <h2 class="text-center mb-4">ติดตามรายงานผลการร้องทุกข์ / ร้องเรียน</h2>
+        <div class="card">
+            <div class="card-body">
+                <h2 class="text-center mb-4">ติดตามรายงานผลการร้องทุกข์ / ร้องเรียน</h2>
 
-        <!-- Display complaints if available -->
-        <?php if (!empty($complaints)): ?>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>เรื่องร้องเรียน</th>
-                        <th>วันที่เกิดเหตุ</th>
-                        <th>ระดับปัญหา</th>
-                        <th>สถานะ</th>
-                        <th>รายละเอียด</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($complaints as $complaint): ?>
-                        <tr>
-                            <td><?= htmlspecialchars($complaint['complaint_subject']) ?></td>
-                            <td><?= htmlspecialchars($complaint['incident_date']) ?></td>
-                            <td><?= htmlspecialchars($complaint['problem_level']) ?></td>
-                            <td><?= htmlspecialchars($complaint['status']) ?></td>
-                            <td>
-                                <a href="complaint_detail.php?id=<?= urlencode($complaint['id']) ?>" class="btn btn-info">ดูรายละเอียด</a>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        <?php else: ?>
-            <p class="text-center">ยังไม่มีข้อมูลร้องทุกข์ / ร้องเรียน</p>
-        <?php endif; ?>
+                <!-- Display complaints if available -->
+                <?php if (!empty($complaints)): ?>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>เรื่องร้องเรียน</th>
+                                <th>วันที่เกิดเหตุ</th>
+                                <th>ระดับปัญหา</th>
+                                <th>สถานะ</th>
+                                <th>รายละเอียด</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($complaints as $complaint): ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($complaint['complaint_subject']) ?></td>
+                                    <td><?= htmlspecialchars($complaint['incident_date']) ?></td>
+                                    <td><?= htmlspecialchars($complaint['problem_level']) ?></td>
+                                    <td><?= htmlspecialchars($complaint['status']) ?></td>
+                                    <td>
+                                        <a href="complaint_detail.php?id=<?= urlencode($complaint['id']) ?>" class="btn btn-info btn-sm">ดูรายละเอียด</a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                <?php else: ?>
+                    <p class="text-center text-muted">ยังไม่มีข้อมูลร้องทุกข์ / ร้องเรียน</p>
+                <?php endif; ?>
 
-        <!-- Go Back Button -->
-        <div class="text-center mt-4">
-            <button onclick="window.history.back();" class="btn btn-primary">ย้อนกลับ</button>
+                <!-- Go Back Button -->
+                <div class="text-center mt-4">
+                    <button onclick="window.history.back();" class="btn btn-primary">ย้อนกลับ</button>
+                </div>
+            </div>
         </div>
     </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

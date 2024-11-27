@@ -300,23 +300,26 @@ $conn->close();
             <div class="form-group">
                 <label for="complaint-subject">เรื่องที่ต้องการร้องทุกข์ <span class="text-danger">*</span></label>
                 <input type="text" class="form-control" id="complaint-subject" name="complaint_subject" required>
+                <div class="invalid-feedback">กรุณากรอกเรื่องที่ต้องการร้องทุกข์</div>
             </div>
 
             <!-- Contact Phone -->
             <div class="form-group">
                 <label for="contact-phone">เบอร์โทรศัพท์ที่สามารถติดต่อได้ <span class="text-danger">*</span></label>
                 <input type="tel" class="form-control" id="contact-phone" name="contact_phone" required>
+                <div class="invalid-feedback">กรุณากรอกเบอร์โทรศัพท์ที่สามารถติดต่อได้</div>
             </div>
 
             <!-- Location -->
             <div class="form-group">
                 <label for="contact-location">สถานที่</label>
                 <input type="text" class="form-control" id="contact-location" name="contact_location">
+                <div class="invalid-feedback">กรุณากรอกสถานที่</div>
             </div>
 
             <!-- Details -->
             <div class="form-group">
-                <label for="contact-details">รายละเอียด</label>
+                <label for="contact-details">รายละเอียดสถานที่</label>
                 <textarea class="form-control" id="contact-details" name="contact_details" rows="4"></textarea>
             </div>
 
@@ -385,6 +388,7 @@ $conn->close();
                 <label for="complaint-description">รายละเอียดการร้องเรียน</label>
                 <textarea class="form-control" id="complaint-description" name="complaint_description" rows="5"></textarea>
                 <small class="error-message" id="complaint-description-error"></small>
+                <div class="invalid-feedback">กรุณากรอกรายละเอียดการร้องเรียน</div>
             </div>
 
             <!-- File Upload -->
@@ -392,7 +396,26 @@ $conn->close();
                 <label for="complaint-file">ไฟล์ที่แนบ</label>
                 <input type="file" class="form-control" id="complaint-file" name="complaint_file">
             </div>
-            
+            <!-- Modal Confirmation for Submit -->
+            <div class="modal" tabindex="-1" role="dialog" id="confirmation-modal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">ยืนยันการส่งข้อมูล</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>คุณต้องการยืนยันการส่งข้อมูลนี้หรือไม่?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="cancel-submit" data-dismiss="modal">ยกเลิก</button>
+                        <button type="button" class="btn btn-primary" id="confirm-submit">ยืนยัน</button>
+                    </div>
+                </div>
+            </div>
+        </div>
             <!-- Privacy consent popup -->
             <div class="custom-modal-overlay" id="modal-overlay"></div>
             <div class="custom-modal" id="modal-consent">
@@ -430,8 +453,37 @@ $conn->close();
                 <button type="submit" class="btn btn-primary btn-full-width" id="submit-form" disabled>ยืนยันการส่งข้อมูล</button>
             </div>
         </form>
-
         <script>
+  document.getElementById("registerForm").addEventListener("submit", function(event) {
+  var form = this;
+  var isValid = true;
+
+  // ตรวจสอบข้อมูลในแต่ละช่อง
+  form.querySelectorAll('.form-control').forEach(function(input) {
+    var feedback = input.nextElementSibling; // ข้อความ invalid-feedback
+    if (!input.checkValidity()) {
+      input.classList.add('is-invalid');
+      if (feedback && feedback.classList.contains('invalid-feedback')) {
+        feedback.style.display = 'block';
+      }
+      isValid = false;
+    } else {
+      input.classList.remove('is-invalid');
+      if (feedback && feedback.classList.contains('invalid-feedback')) {
+        feedback.style.display = 'none';
+      }
+    }
+  });
+  // หยุดการส่งฟอร์มถ้าข้อมูลไม่ถูกต้อง
+  if (!isValid) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  form.classList.add('was-validated');
+});
+</script>
+    <script>
     let map;
 
     // Initialize the map
@@ -578,60 +630,6 @@ $conn->close();
                 }
             });
 
-
-            // Function to reset error messages
-            function resetErrorMessages() {
-                $('.error-message').text('');
-                $('.form-control').removeClass('is-invalid');
-            }
-
-            // Function to show error messages
-            function showError(inputId, message) {
-                $(inputId).addClass('is-invalid');
-                $(inputId + '-error').text(message);
-            }
-        // Validate form on submit
-        $('#complaint-form').submit(function(e) {
-            e.preventDefault();
-            resetErrorMessages();
-
-            let isValid = true;
-
-            // Validate Complaint Subject
-            if ($('#complaint-subject').val().trim() === '') {
-                showError('#complaint-subject', 'กรุณากรอกเรื่องที่ต้องการร้องทุกข์');
-                isValid = false;
-            }
-
-            // Validate Contact Phone
-            if ($('#contact-phone').val().trim() === '') {
-                showError('#contact-phone', 'กรุณากรอกเบอร์โทรศัพท์ที่สามารถติดต่อได้');
-                isValid = false;
-            }
-
-            // Validate Incident Date
-            if ($('#incident-date').val().trim() === '') {
-                showError('#incident-date', 'กรุณากรอกวันที่เกิดเหตุ');
-                isValid = false;
-            }
-
-            // Validate Incident Time
-            if ($('#incident-time').val().trim() === '') {
-                showError('#incident-time', 'กรุณากรอกเวลาที่เกิดเหตุ');
-                isValid = false;
-            }
-
-            // Validate Complaint Description
-            if ($('#complaint-description').val().trim() === '') {
-                showError('#complaint-description', 'กรุณากรอกรายละเอียดการร้องเรียน');
-                isValid = false;
-            }
-
-            // If all validations pass, submit the form
-            if (isValid) {
-                this.submit();
-            }
-        });
 
 
             // Handle confirmation modal submission

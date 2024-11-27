@@ -111,17 +111,86 @@ $conn->close();
     <title>แผงควบคุมผู้ดูแลระบบ</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        .header {
+            background-color: #2a7cff;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h2 {
+            font-weight: bold;
+            font-size: 36px;
+        }
+
+        .btn-back {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-back:hover {
+            background-color: #5a6268;
+        }
+
+        .filter-form {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-form select,
+        .filter-form input {
+            border-radius: 5px;
+        }
+
+        .table {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-info {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background-color: #138496;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <div class="d-flex justify-content-between">
-            <h2 class="text-center mb-4">แผงควบคุมผู้ดูแลระบบ</h2>
+
+    <div class="container">
+        <div class="header d-flex justify-content-between align-items-center">
+            <h2>แผงควบคุมผู้ดูแลระบบ</h2>
             <!-- Go Back Button at the top right -->
-            <a href="secondpage.php" class="btn btn-secondary">ย้อนกลับ</a>
+            <a href="secondpage.php" class="btn btn-back">ย้อนกลับ</a>
         </div>
 
         <!-- Filter Form -->
-        <form method="POST" class="mb-4">
+        <form method="POST" class="filter-form mb-4">
             <div class="row">
                 <div class="col-md-3">
                     <label for="date_filter">กรองตามวันที่</label>
@@ -169,53 +238,55 @@ $conn->close();
                     </select>
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary mt-2">กรองข้อมูล</button>
+            <button type="submit" class="btn btn-primary mt-3">กรองข้อมูล</button>
         </form>
 
         <!-- Complaint Table -->
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>หัวข้อการร้องเรียน</th>
-                    <th>วันที่เกิดเหตุ</th>
-                    <th>ระดับปัญหา</th>
-                    <th>หน่วยงาน</th>
-                    <th>สถานะ</th>
-                    <th>จัดการสถานะ</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if ($result->num_rows > 0): ?>
-                    <?php while ($row = $result->fetch_assoc()): ?>
-                        <tr>
-                            <td><?= htmlspecialchars($row['complaint_subject']) ?></td>
-                            <td><?= htmlspecialchars($row['incident_date']) ?></td>
-                            <td><?= htmlspecialchars($row['problem_level']) ?></td>
-                            <td><?= htmlspecialchars($row['department']) ?></td>
-                            <td><?= htmlspecialchars($row['status']) ?></td>
-                            <td>
-                                <a href="complaint_detail.php?id=<?= urlencode($row['id']) ?>" class="btn btn-info">ดูรายละเอียด</a>
-                            </td>
-                            <td>
-                                <form method="POST">
-                                    <input type="hidden" name="complaint_id" value="<?= $row['id'] ?>">
-                                    <select name="status" class="form-control" required>
-                                        <option value="ยังไม่ดำเนินการ" <?= $row['status'] == 'ยังไม่ดำเนินการ' ? 'selected' : '' ?>>ยังไม่ดำเนินการ</option>
-                                        <option value="กำลังดำเนินการ" <?= $row['status'] == 'กำลังดำเนินการ' ? 'selected' : '' ?>>กำลังดำเนินการ</option>
-                                        <option value="ดำเนินการเสร็จสิ้น" <?= $row['status'] == 'ดำเนินการเสร็จสิ้น' ? 'selected' : '' ?>>ดำเนินการเสร็จสิ้น</option>
-                                    </select>
-                                    <button type="submit" class="btn btn-primary mt-2">อัปเดตสถานะ</button>
-                                </form>
-                            </td>
-                        </tr>
-                    <?php endwhile; ?>
-                <?php else: ?>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead>
                     <tr>
-                        <td colspan="6" class="text-center">ไม่มีข้อมูลการร้องเรียน</td>
+                        <th>หัวข้อการร้องเรียน</th>
+                        <th>วันที่เกิดเหตุ</th>
+                        <th>ระดับปัญหา</th>
+                        <th>หน่วยงาน</th>
+                        <th>สถานะ</th>
+                        <th>จัดการสถานะ</th>
                     </tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <?php if ($result->num_rows > 0): ?>
+                        <?php while ($row = $result->fetch_assoc()): ?>
+                            <tr>
+                                <td><?= htmlspecialchars($row['complaint_subject']) ?></td>
+                                <td><?= htmlspecialchars($row['incident_date']) ?></td>
+                                <td><?= htmlspecialchars($row['problem_level']) ?></td>
+                                <td><?= htmlspecialchars($row['department']) ?></td>
+                                <td><?= htmlspecialchars($row['status']) ?></td>
+                                <td>
+                                    <a href="complaint_detail.php?id=<?= urlencode($row['id']) ?>" class="btn btn-info">ดูรายละเอียด</a>
+                                </td>
+                                <td>
+                                    <form method="POST">
+                                        <input type="hidden" name="complaint_id" value="<?= $row['id'] ?>">
+                                        <select name="status" class="form-control" required>
+                                            <option value="ยังไม่ดำเนินการ" <?= $row['status'] == 'ยังไม่ดำเนินการ' ? 'selected' : '' ?>>ยังไม่ดำเนินการ</option>
+                                            <option value="กำลังดำเนินการ" <?= $row['status'] == 'กำลังดำเนินการ' ? 'selected' : '' ?>>กำลังดำเนินการ</option>
+                                            <option value="ดำเนินการเสร็จสิ้น" <?= $row['status'] == 'ดำเนินการเสร็จสิ้น' ? 'selected' : '' ?>>ดำเนินการเสร็จสิ้น</option>
+                                        </select>
+                                        <button type="submit" class="btn btn-primary mt-2">อัปเดตสถานะ</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="6" class="text-center">ไม่มีข้อมูลการร้องเรียน</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <!-- JavaScript to show/hide custom date range fields -->
