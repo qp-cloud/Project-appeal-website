@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ลงทะเบียนเจ้าหน้าที่ - เทศบาลอำเภอบ้านโป่ง</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-image: url('img/adminbg.jpg');
+      background-size: cover;
+      background-attachment: fixed;
+    }
+    .header {
+      background: #333;
+      color: #fff;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 5px solid #2a7cff;
+      border-radius: 15px;
+      width: 90%;
+      margin: 20px auto;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .header img {
+      height: 80px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+    label {
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: #333;
+    }
+    input, select, textarea {
+      margin-bottom: 15px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+    button {
+      background-color: #2a7cff;
+      color: #fff;
+      font-size: 18px;
+      font-weight: bold;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="logo.png" alt="Ban Pong Municipality Logo">
+    <nav>
+      <a href="home.html" style="color: #fff; text-decoration: none; font-weight: bold;">หน้าหลัก</a>
+    </nav>
+  </div>
+
+  <div class="container">
+    <h1>ลงทะเบียนเจ้าหน้าที่</h1>
+    <form action="register_admin.php" method="POST">
+        <label for="first_name">ชื่อ:</label>
+        <input type="text" id="first_name" name="first_name" required>
+      
+        <label for="last_name">นามสกุล:</label>
+        <input type="text" id="last_name" name="last_name" required>
+      
+        <label for="id_number">เลขประจำตัวประชาชน:</label>
+        <input type="text" id="id_number" name="id_number" required>
+      
+        <label for="gender">เพศ:</label>
+        <select id="gender" name="gender" required>
+          <option value="male">ชาย</option>
+          <option value="female">หญิง</option>
+          <option value="other">อื่น ๆ</option>
+        </select>
+      
+        <label for="birth_date">วันเกิด:</label>
+        <input type="date" id="birth_date" name="birth_date" required>
+      
+        <label for="occupation">ตำแหน่งงาน:</label>
+        <input type="text" id="occupation" name="occupation" required>
+      
+        <label for="phone">เบอร์โทร:</label>
+        <input type="tel" id="phone" name="phone" required>
+      
+        <label for="email">อีเมล:</label>
+        <input type="email" id="email" name="email" required>
+      
+        <label for="address">ที่อยู่:</label>
+        <textarea id="address" name="address" rows="3" required></textarea>
+      
+        <label for="department">แผนก:</label>
+        <select id="department" name="department" required>
+          <option value="เทศบาลเมือง">เทศบาลเมือง</option>
+          <option value="สำนักปลัดเทศบาลเมือง">สำนักปลัดเทศบาลเมือง</option>
+          <option value="กองคลัง">กองคลัง</option>
+          <option value="กองช่าง">กองช่าง</option>
+          <option value="กองการศึกษา">กองการศึกษา</option>
+          <option value="กองสาธารณสุข">กองสาธารณสุข</option>
+          <option value="กองสวัสดิการสังคม">กองสวัสดิการสังคม</option>
+          <option value="กองยุทธศาสตร์">กองยุทธศาสตร์</option>
+          <option value="กองการเจ้าหน้าที่">กองการเจ้าหน้าที่</option>
+          <option value="หน่วยตรวจสอบภายใน">หน่วยตรวจสอบภายใน</option>
+          <option value="หน่วยงานอื่นๆ">หน่วยงานอื่นๆ</option>
+        </select>
+      
+        <label for="username">ชื่อผู้ใช้:</label>
+        <input type="text" id="username" name="username" required>
+      
+        <label for="password">รหัสผ่าน:</label>
+        <input type="password" id="password" name="password" required>
+      
+        <button type="submit">ลงทะเบียน</button>
+      </form>
+      
+  </div>
+</body>
+</html>
