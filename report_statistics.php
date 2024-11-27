@@ -44,7 +44,6 @@ $monthly_complaints = [];
 while ($row = $result->fetch_assoc()) {
     $monthly_complaints[$row['month']][$row['status']] = $row['complaint_count'];
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -98,25 +97,31 @@ while ($row = $result->fetch_assoc()) {
             <thead>
                 <tr>
                     <th>เดือน</th>
-                    <th>สถานะ</th>
-                    <th>จำนวนเรื่องร้องเรียน</th>
+                    <th>ยังไม่ดำเนินการ</th>
+                    <th>กำลังดำเนินการ</th>
+                    <th>ดำเนินการเสร็จสิ้น</th>
+                    <th>รวม</th>
                 </tr>
             </thead>
             <tbody>
                 <?php
                 // แสดงผลจำนวนเรื่องร้องเรียนต่อเดือนและสถานะ
                 for ($month = 1; $month <= 12; $month++) {
-                    if (isset($monthly_complaints[$month])) {
-                        foreach ($monthly_complaints[$month] as $status => $count) {
-                            echo "<tr>";
-                            echo "<td>" . getMonthName($month) . "</td>";
-                            echo "<td>" . $status . "</td>";
-                            echo "<td>" . $count . "</td>";
-                            echo "</tr>";
-                        }
-                    } else {
-                        echo "<tr><td>" . getMonthName($month) . "</td><td>ไม่มีข้อมูล</td><td>0</td></tr>";
-                    }
+                    // Get the complaint counts for each status
+                    $not_processed = isset($monthly_complaints[$month]['ยังไม่ดำเนินการ']) ? $monthly_complaints[$month]['ยังไม่ดำเนินการ'] : 0;
+                    $in_progress = isset($monthly_complaints[$month]['กำลังดำเนินการ']) ? $monthly_complaints[$month]['กำลังดำเนินการ'] : 0;
+                    $completed = isset($monthly_complaints[$month]['ดำเนินการเสร็จสิ้น']) ? $monthly_complaints[$month]['ดำเนินการเสร็จสิ้น'] : 0;
+
+                    // Calculate the total for the month
+                    $total = $not_processed + $in_progress + $completed;
+
+                    echo "<tr>";
+                    echo "<td>" . getMonthName($month) . "</td>";
+                    echo "<td>" . $not_processed . "</td>";
+                    echo "<td>" . $in_progress . "</td>";
+                    echo "<td>" . $completed . "</td>";
+                    echo "<td>" . $total . "</td>";
+                    echo "</tr>";
                 }
                 ?>
             </tbody>
