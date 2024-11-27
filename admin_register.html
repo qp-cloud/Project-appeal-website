@@ -29,17 +29,37 @@
     .header img {
       height: 80px;
     }
+    .header-nav a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 10px;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 5px;
+      transition: color 0.3s ease, background-color 0.3s ease;
+    }
+    .header-nav a:hover {
+      color: #fff;
+      background-color: #2a7cff;
+    }
+    .header-nav a:last-child {
+      color: #2a7cff;
+      background-color: #fff;
+      padding: 5px 15px;
+      border: 1px solid #2a7cff;
+      border-radius: 5px;
+    }
     .container {
       max-width: 600px;
       margin: 50px auto;
       padding: 20px;
-      background: rgba(255, 255, 255, 0.9);
+      background: #333;
       border-radius: 15px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
     h1 {
       text-align: center;
-      color: #333;
+      color: #ffffff;
       margin-bottom: 20px;
     }
     form {
@@ -49,7 +69,7 @@
     label {
       font-weight: bold;
       margin-bottom: 5px;
-      color: #333;
+      color: #fffdfd;
     }
     input, select, textarea {
       margin-bottom: 15px;
@@ -72,74 +92,205 @@
     button:hover {
       background-color: #0056b3;
     }
+    .error-message {
+      color: red;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+    .required {
+      color: red;
+    }
+    .cancel-button {
+      background-color: #ccc;
+      color: #333;
+      font-size: 18px;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-top: 15px;
+    }
+    .cancel-button:hover {
+      background-color: #888;
+    }
+    .header-nav a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 10px;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 5px;
+      transition: color 0.3s ease, background-color 0.3s ease;
+    }
+    .header-nav a:hover {
+      color: #fff;
+      background-color: #2a7cff;
+    }
   </style>
 </head>
 <body>
   <div class="header">
     <img src="logo.png" alt="Ban Pong Municipality Logo">
-    <nav>
-      <a href="home.html" style="color: #fff; text-decoration: none; font-weight: bold;">หน้าหลัก</a>
-    </nav>
+    <div class="header-nav">
+      <nav>
+        <ul>
+          <a href="admin_page.html">หน้าแรก</a>
+        </ul>
+      </nav>
+    </div>
   </div>
 
   <div class="container">
     <h1>ลงทะเบียนเจ้าหน้าที่</h1>
-    <form action="register_admin.php" method="POST">
-        <label for="first_name">ชื่อ:</label>
-        <input type="text" id="first_name" name="first_name" required>
+    <form id="registerForm" action="register_admin.php" method="POST" onsubmit="return validateForm()">
       
-        <label for="last_name">นามสกุล:</label>
-        <input type="text" id="last_name" name="last_name" required>
+      <label for="first_name">ชื่อ:<span class="required">*</span></label>
+      <input type="text" id="first_name" name="first_name">
+      <div id="first_name_error" class="error-message"></div>
+    
+      <label for="last_name">นามสกุล:<span class="required">*</span></label>
+      <input type="text" id="last_name" name="last_name">
+      <div id="last_name_error" class="error-message"></div>
+    
+      <label for="id_number">เลขประจำตัวประชาชน:<span class= required pattern="\d{13}">*</span></label>
+      <input type="text" id="id_number" name="id_number" title="เลขประจำตัวประชาชนต้องมี 13 หลัก">
+      <div id="id_number_error" class="error-message"></div>
+    
+      <label for="gender">เพศ:<span class="required">*</span></label>
+      <select id="gender" name="gender">
+        <option value="male">ชาย</option>
+        <option value="female">หญิง</option>
+        <option value="other">อื่น ๆ</option>
+      </select>
+      <div id="gender_error" class="error-message"></div>
+    
+      <label for="birth_date">วันเกิด:<span class="required">*</span></label>
+      <input type="date" id="birth_date" name="birth_date">
+      <div id="birth_date_error" class="error-message"></div>
+    
+      <label for="occupation">ตำแหน่งงาน:<span class="required">*</span></label>
+      <input type="text" id="occupation" name="occupation">
+      <div id="occupation_error" class="error-message"></div>
+    
+      <label for="phone">เบอร์โทร:<span class="required">*</span></label>
+      <input type="tel" id="phone" name="phone" title="เบอร์โทรต้องมี 10 หลัก">
+      <div id="phone_error" class="error-message"></div>
+    
+      <label for="email">อีเมล:<span class="required">*</span></label>
+      <input type="email" id="email" name="email">
+      <div id="email_error" class="error-message"></div>
+    
+      <label for="address">ที่อยู่:<span class="required">*</span></label>
+      <textarea id="address" name="address" rows="3"></textarea>
+      <div id="address_error" class="error-message"></div>
+    
+      <label for="department">แผนก:<span class="required">*</span></label>
+      <select id="department" name="department">
+        <option value="เทศบาลเมือง">เทศบาลเมือง</option>
+        <option value="สำนักปลัดเทศบาลเมือง">สำนักปลัดเทศบาลเมือง</option>
+        <option value="กองคลัง">กองคลัง</option>
+        <option value="กองช่าง">กองช่าง</option>
+        <option value="กองการศึกษา">กองการศึกษา</option>
+        <option value="กองสาธารณสุข">กองสาธารณสุข</option>
+        <option value="กองสวัสดิการสังคม">กองสวัสดิการสังคม</option>
+        <option value="กองยุทธศาสตร์">กองยุทธศาสตร์</option>
+        <option value="กองการเจ้าหน้าที่">กองการเจ้าหน้าที่</option>
+        <option value="หน่วยตรวจสอบภายใน">หน่วยตรวจสอบภายใน</option>
+        <option value="หน่วยงานอื่นๆ">หน่วยงานอื่นๆ</option>
+      </select>
+      <div id="department_error" class="error-message"></div>
+    
+      <label for="username">ชื่อผู้ใช้:<span class="required">*</span></label>
+      <input type="text" id="username" name="username">
+      <div id="username_error" class="error-message"></div>
+    
+      <label for="password">รหัสผ่าน:<span class="required">*</span></label>
+      <input type="password" id="password" name="password">
+      <div id="password_error" class="error-message"></div>
+    
+      <button type="submit">ลงทะเบียน</button>
       
-        <label for="id_number">เลขประจำตัวประชาชน:</label>
-        <input type="text" id="id_number" name="id_number" required>
-      
-        <label for="gender">เพศ:</label>
-        <select id="gender" name="gender" required>
-          <option value="male">ชาย</option>
-          <option value="female">หญิง</option>
-          <option value="other">อื่น ๆ</option>
-        </select>
-      
-        <label for="birth_date">วันเกิด:</label>
-        <input type="date" id="birth_date" name="birth_date" required>
-      
-        <label for="occupation">ตำแหน่งงาน:</label>
-        <input type="text" id="occupation" name="occupation" required>
-      
-        <label for="phone">เบอร์โทร:</label>
-        <input type="tel" id="phone" name="phone" required>
-      
-        <label for="email">อีเมล:</label>
-        <input type="email" id="email" name="email" required>
-      
-        <label for="address">ที่อยู่:</label>
-        <textarea id="address" name="address" rows="3" required></textarea>
-      
-        <label for="department">แผนก:</label>
-        <select id="department" name="department" required>
-          <option value="เทศบาลเมือง">เทศบาลเมือง</option>
-          <option value="สำนักปลัดเทศบาลเมือง">สำนักปลัดเทศบาลเมือง</option>
-          <option value="กองคลัง">กองคลัง</option>
-          <option value="กองช่าง">กองช่าง</option>
-          <option value="กองการศึกษา">กองการศึกษา</option>
-          <option value="กองสาธารณสุข">กองสาธารณสุข</option>
-          <option value="กองสวัสดิการสังคม">กองสวัสดิการสังคม</option>
-          <option value="กองยุทธศาสตร์">กองยุทธศาสตร์</option>
-          <option value="กองการเจ้าหน้าที่">กองการเจ้าหน้าที่</option>
-          <option value="หน่วยตรวจสอบภายใน">หน่วยตรวจสอบภายใน</option>
-          <option value="หน่วยงานอื่นๆ">หน่วยงานอื่นๆ</option>
-        </select>
-      
-        <label for="username">ชื่อผู้ใช้:</label>
-        <input type="text" id="username" name="username" required>
-      
-        <label for="password">รหัสผ่าน:</label>
-        <input type="password" id="password" name="password" required>
-      
-        <button type="submit">ลงทะเบียน</button>
-      </form>
-      
+      <!-- Cancel Button -->
+      <button type="button" class="cancel-button" onclick="window.location.href='admin_page.html';">ยกเลิก</button>
+    </form>
   </div>
+  
+  <script>
+    // JavaScript function for validating the form
+    function validateForm() {
+      let isValid = true;
+      
+      // Clear all previous error messages
+      const errorMessages = document.querySelectorAll('.error-message');
+      errorMessages.forEach(message => message.textContent = "");
+
+      // Validate the form fields
+      const firstName = document.getElementById("first_name").value;
+      const lastName = document.getElementById("last_name").value;
+      const idNumber = document.getElementById("id_number").value;
+      const gender = document.getElementById("gender").value;
+      const birthDate = document.getElementById("birth_date").value;
+      const occupation = document.getElementById("occupation").value;
+      const phone = document.getElementById("phone").value;
+      const email = document.getElementById("email").value;
+      const address = document.getElementById("address").value;
+      const department = document.getElementById("department").value;
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+      
+      // Check if the fields are filled correctly
+      if (!firstName) {
+        document.getElementById("first_name_error").textContent = "กรุณากรอกชื่อ";
+        isValid = false;
+      }
+      if (!lastName) {
+        document.getElementById("last_name_error").textContent = "กรุณากรอกนามสกุล";
+        isValid = false;
+      }
+      if (!idNumber.match(/^\d{13}$/)) {
+        document.getElementById("id_number_error").textContent = "เลขประจำตัวประชาชนต้องมี 13 หลัก";
+        isValid = false;
+      }
+      if (!gender) {
+        document.getElementById("gender_error").textContent = "กรุณาเลือกเพศ";
+        isValid = false;
+      }
+      if (!birthDate) {
+        document.getElementById("birth_date_error").textContent = "กรุณากรอกวันเกิด";
+        isValid = false;
+      }
+      if (!occupation) {
+        document.getElementById("occupation_error").textContent = "กรุณากรอกตำแหน่งงาน";
+        isValid = false;
+      }
+      if (!phone.match(/^\d{10}$/)) {
+        document.getElementById("phone_error").textContent = "เบอร์โทรต้องมี 10 หลัก";
+        isValid = false;
+      }
+      if (!email.includes("@")) {
+        document.getElementById("email_error").textContent = "กรุณากรอกอีเมลให้ถูกต้อง";
+        isValid = false;
+      }
+      if (!address) {
+        document.getElementById("address_error").textContent = "กรุณากรอกที่อยู่";
+        isValid = false;
+      }
+      if (!department) {
+        document.getElementById("department_error").textContent = "กรุณาเลือกแผนก";
+        isValid = false;
+      }
+      if (!username) {
+        document.getElementById("username_error").textContent = "กรุณากรอกชื่อผู้ใช้";
+        isValid = false;
+      }
+      if (password.length < 6) {
+        document.getElementById("password_error").textContent = "รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัว";
+        isValid = false;
+      }
+
+      return isValid;
+    }
+  </script>
 </body>
 </html>

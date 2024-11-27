@@ -42,7 +42,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         );
 
         if ($stmt->execute()) {
-            echo "ลงทะเบียนสำเร็จ!";
+            echo "<script>
+                    alert('ลงทะเบียนสำเร็จ!');
+                    window.location.href = 'admin_login.html';
+                  </script>";
         } else {
             echo "เกิดข้อผิดพลาด: " . $stmt->error;
         }

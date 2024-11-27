@@ -85,7 +85,7 @@ $result = $conn->query($sql);
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['status'], $_POST['complaint_id'])) {
     $new_status = $_POST['status'];
     $complaint_id = $_POST['complaint_id'];
-
+    
     // Update the complaint status in the database
     $update_sql = "UPDATE complaints SET status = ? WHERE id = ?";
     if ($stmt = $conn->prepare($update_sql)) {
