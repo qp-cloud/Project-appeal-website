@@ -53,7 +53,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 'username' => $user['username'],
                 'first_name' => $user['first_name'], // Store first name
                 'last_name' => $user['last_name'],   // Store last name
-                'role' => $user['role'] // Store role from the database
+                'role' => $user['role'],
+                'department' => $user['department'] // Store role from the database
             ];
 
             // Redirect based on role

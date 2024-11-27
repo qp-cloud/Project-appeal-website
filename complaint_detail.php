@@ -28,7 +28,7 @@ $complaint_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 // Retrieve complaint details for the given complaint_id
 $sql = "SELECT id, user_id, complaint_subject, contact_phone, contact_location, contact_details, 
         latitude, longitude, incident_date, incident_time, problem_level, department, 
-        complaint_description, complaint_file, submitted_at
+        complaint_description, complaint_file, submitted_at, status
         FROM complaints 
         WHERE id = ?";
 
@@ -42,7 +42,7 @@ if ($stmt = $conn->prepare($sql)) {
     // Bind the result to variables
     $stmt->bind_result($id, $user_id, $complaint_subject, $contact_phone, $contact_location, $contact_details,
                        $latitude, $longitude, $incident_date, $incident_time, $problem_level, $department, 
-                       $complaint_description, $complaint_file, $submitted_at);
+                       $complaint_description, $complaint_file, $submitted_at,$status);
 
     // Fetch the complaint details
     if ($stmt->fetch()) {
@@ -61,7 +61,6 @@ if ($stmt = $conn->prepare($sql)) {
             'department' => $department,
             'complaint_description' => $complaint_description,
             'complaint_file' => $complaint_file,
-
             'submitted_at' => $submitted_at,
             'status' => $status
         ];
@@ -114,6 +113,7 @@ $conn->close();
 
 
                     <p><strong>วันที่ยื่นร้องเรียน:</strong> <?= htmlspecialchars($complaint_details['submitted_at']) ?></p>
+                    <p><strong>สถานะ:</strong> <?= htmlspecialchars($complaint_details['status']) ?></p>
                 </div>
             </div>
         <?php else: ?>

@@ -81,13 +81,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Prepare the SQL query to insert data into the database
-    $sql = "INSERT INTO complaints (user_id, complaint_subject, contact_phone, contact_location, contact_details, latitude, longitude, incident_date, incident_time, problem_level, department, complaint_description, complaint_file, )
+    $sql = "INSERT INTO complaints (user_id, complaint_subject, contact_phone, contact_location, contact_details, latitude, longitude, incident_date, incident_time, problem_level, department, complaint_description, complaint_file )
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("issssssssssss", $user_id, $complaint_subject, $contact_phone, $contact_location, $contact_details, $latitude, $longitude, $incident_date, $incident_time, $problem_level, $department, $complaint_description, $complaint_file);
 
     if ($stmt->execute()) {
-        echo "ข้อมูลถูกส่งเรียบร้อยแล้ว!";
+        header("Location: confirmation.php");  // Adjust URL to your confirmation page
+        exit();
     } else {
         echo "เกิดข้อผิดพลาด: " . $stmt->error;
     }
@@ -113,7 +114,7 @@ $conn->close();
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Bootstrap JS -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-    <script src="https://api.longdo.com/map?key=35bbbe40a96e844b27eba45df1ddad0b"></script>
+
     <style>
         body {
             background-color: #a2e1ec;
@@ -227,6 +228,59 @@ $conn->close();
             font-size: 1.2rem;
             margin-top: 10px;
         }
+        /* Initial small content with scroll */
+        .short-content {
+            max-height: 300px; /* Adjust this value to control the initial visible height */
+            overflow-y: auto; /* Enable vertical scrolling */
+        }
+
+        /* Full content when expanded */
+        .full-content {
+            max-height: none; /* Remove height restriction */
+        }
+
+        /* Style for the Expand button */
+        .btn-expand {
+            margin-top: 10px;
+            padding: 5px 15px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .btn-expand:hover {
+            background-color: #45a049;
+        }
+        
+        /* Modal content styling */
+        .custom-modal {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            max-width: 600px;
+            margin: 20px auto;
+        }
+
+        .modal-body {
+            padding: 10px;
+        }
+        .error-icon {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        color: red;
+        font-size: 20px;
+        }
+        /* Adjust the map size */
+        #map {
+            width: 100%;
+            height: 400px;
+        }
+        #marker-info {
+            margin-top: 10px;
+        }
     </style>
 </head>
 
@@ -266,16 +320,28 @@ $conn->close();
                 <textarea class="form-control" id="contact-details" name="contact_details" rows="4"></textarea>
             </div>
 
-            <!-- Longdo Map (This is just a placeholder for the map) -->
-            <div class="form-group">
-                <label>ปักหมุดบนแผนที่</label>
-                <div id="map" style="height: 200px; background-color: #ddd;">แผนที่</div>
-                <input type="hidden" id="latitude" name="latitude">
-                <input type="hidden" id="longitude" name="longitude">
+                    
+            <!-- Map container -->
+            <div id="map" style="width: 100%; height: 400px;"></div>
+            <input type="hidden" id="latitude" name="latitude">
+            <input type="hidden" id="longitude" name="longitude">
+            <!-- Section to display current latitude and longitude -->
+            <div id="coordinates">
+                <p>Latitude: <span id="current-lat">-</span></p>
+                <p>Longitude: <span id="current-lon">-</span></p>
             </div>
 
-            <!-- Incident Date and Time -->
-            <div class="form-group">
+            <button id="get-location-btn">Get Current Location</button>
+
+            <!-- Hidden Fields to store coordinates -->
+            
+
+
+
+
+
+             <!-- Incident Date and Time -->
+             <div class="form-group">
                 <label for="incident-time">เวลาที่เกิดเหตุหรือพบเหตุ</label>
                 <div class="form-row">
                     <div class="col">
@@ -286,7 +352,6 @@ $conn->close();
                     </div>
                 </div>
             </div>
-
             <!-- Problem Level -->
             <div class="form-group">
                 <label for="problem-level">ระดับปัญหา</label>
@@ -328,19 +393,116 @@ $conn->close();
                 <input type="file" class="form-control" id="complaint-file" name="complaint_file">
             </div>
             
-    <!-- Privacy consent popup -->
-    <div class="custom-modal-overlay" id="modal-overlay"></div>
-    <div class="custom-modal" id="modal-consent">
-        <h5>ข้อกำหนดและเงื่อนไข</h5>
-        <div class="modal-body">
-            <p>โปรดอ่านและยอมรับข้อกำหนดและเงื่อนไขก่อนดำเนินการ...</p>
-            <p>ข้อมูลส่วนบุคคลของท่านจะได้รับการคุ้มครองตามนโยบายความเป็นส่วนตัว...</p>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-close" id="btn-close">ปิด</button>
-            <button class="btn btn-agree" id="btn-agree">ยอมรับ</button>
-        </div>
-    </div>
+            <!-- Privacy consent popup -->
+            <div class="custom-modal-overlay" id="modal-overlay"></div>
+            <div class="custom-modal" id="modal-consent">
+                <h5>ข้อกำหนดและเงื่อนไข</h5>
+                <div class="modal-body">
+                    <p>เราตระหนักถึงความสำคัญของการคุ้มครองข้อมูลส่วนบุคคลของท่านเพื่อรับผลิตภัณฑ์และบริการของเรา...</p>
+                    
+                    <div id="policy-content" class="short-content">
+                        <h6>ข้อ 1. ขอบเขตการใช้บังคับ</h6>
+                        <p>นโยบายคุ้มครองข้อมูลส่วนบุคคล (Privacy Policy) ตามพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562...</p>
+
+                        <h6>ข้อ 2. คำจำกัดความ</h6>
+                        <p>“นโยบายคุ้มครองข้อมูลส่วนบุคคล” หมายความว่า นโยบายที่เราจัดทำเพื่อแจ้งให้เจ้าของข้อมูลส่วนบุคคลทราบ...</p>
+                        
+                        <p>“ข้อมูลส่วนบุคคล” หมายความว่า ข้อมูลเกี่ยวกับบุคคลซึ่งทำให้สามารถระบุตัวบุคคลนั้นได้...</p>
+
+                        <h6>ข้อมูลส่วนบุคคลที่มีความอ่อนไหว (Sensitive Data)</h6>
+                        <p>ข้อมูลส่วนบุคคลเกี่ยวกับเชื้อชาติ เผ่าพันธุ์ ความคิดเห็นทางการเมือง...</p>
+                        
+                        <h6>การประมวลผล</h6>
+                        <p>การดำเนินการใดๆ กับข้อมูลส่วนบุคคล เช่น การเก็บรวบรวม บันทึก จัดระบบ...</p>
+
+                        <h6>สิทธิของเจ้าของข้อมูลส่วนบุคคล</h6>
+                        <p>ท่านมีสิทธิในการเข้าถึง แก้ไข และลบข้อมูลส่วนบุคคลของท่านได้ตลอดเวลา...</p>
+                    </div>
+                    
+                    <button id="btn-expand" class="btn btn-expand">แสดงเพิ่มเติม</button>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-close" id="btn-close">ปิด</button>
+                    <button class="btn btn-agree" id="btn-agree">ยอมรับ</button>
+                </div>
+            </div>
+    <div class="form-group text-center">
+                <button type="submit" class="btn btn-primary btn-full-width" id="submit-form" disabled>ยืนยันการส่งข้อมูล</button>
+            </div>
+        </form>
+
+        <script>
+    let map;
+
+    // Initialize the map
+    function initMap() {
+        const geolocation = { lat: 13.7367, lon: 100.5231 }; // Default location (Bangkok)
+        map = new longdo.Map({
+            placeholder: document.getElementById('map')
+        });
+
+        map.location(geolocation);
+        map.zoom(13);
+
+        // Show initial coordinates (from the map's center)
+        updateCoordinates(map.location());
+    }
+
+    // Update the coordinates displayed on the page and in the hidden input fields
+    function updateCoordinates(location) {
+        const lat = location.lat;
+        const lon = location.lon;
+        
+        // Update the visible coordinates
+        document.getElementById('current-lat').textContent = lat;
+        document.getElementById('current-lon').textContent = lon;
+        
+        // Update the hidden input fields with the new coordinates
+        document.getElementById('latitude').value = lat;
+        document.getElementById('longitude').value = lon;
+    }
+
+    // Get the current location when the button is clicked
+    document.getElementById('get-location-btn').addEventListener('click', function() {
+        const currentLocation = map.location(); // Get current map center location
+        console.log("Current Latitude: " + currentLocation.lat);
+        console.log("Current Longitude: " + currentLocation.lon);
+
+        // Update the displayed coordinates and hidden input fields
+        updateCoordinates(currentLocation);
+    });
+
+    // Load the Longdo Map script and initialize the map
+    function loadLongdoMap() {
+        const script = document.createElement('script');
+        script.src = "https://api.longdo.com/map/?key=35bbbe40a96e844b27eba45df1ddad0b";
+        script.onload = initMap;
+        document.body.appendChild(script);
+    }
+
+    // Load the map when the page is ready
+    document.addEventListener('DOMContentLoaded', function() {
+        loadLongdoMap();
+    });
+</script>
+
+    <script>
+        document.getElementById("btn-expand").addEventListener("click", function() {
+            var content = document.getElementById("policy-content");
+            var btn = document.getElementById("btn-expand");
+
+            // Toggle between showing and hiding the policy content
+            if (content.classList.contains("short-content")) {
+                content.classList.remove("short-content");
+                content.classList.add("full-content");
+                btn.innerText = "แสดงน้อยลง";
+            } else {
+                content.classList.remove("full-content");
+                content.classList.add("short-content");
+                btn.innerText = "แสดงเพิ่มเติม";
+            }
+        });
+    </script>
     <script>
         // Show privacy consent popup when page loads
         window.onload = function() {
@@ -360,6 +522,7 @@ $conn->close();
             document.getElementById('modal-overlay').style.display = 'none';
             document.getElementById('modal-consent').style.display = 'none';
         });
+
     </script>
     <script>
            
@@ -389,17 +552,6 @@ $conn->close();
             });
         </script>
     <script>
-        let geolocation = { lat: 13.7367, lng: 100.5231 }; // Default location (Bangkok)
-        map = new longdo.Map({
-            placeholder: document.getElementById('map'),
-            defaultCenter: geolocation,
-            defaultZoom: 13
-        });
-        var script = document.createElement('script');
-        script.src = "https://mapapi.longdo.com/mapapi?key=35bbbe40a96e844b27eba45df1ddad0b";
-        script.onload = initMap;
-        document.body.appendChild(script);
-        
         $(document).ready(function() {
 
             // เปิด Modal เมื่อคลิกที่ลิงก์ "อ่านข้อตกลง"
@@ -499,24 +651,6 @@ $conn->close();
             });
         });
     </script>
-    <div class="form-group text-center">
-                <button type="submit" class="btn btn-primary btn-full-width" id="submit-form" disabled>ยืนยันการส่งข้อมูล</button>
-            </div>
-        </form>
-    </div>
-
-    <!-- Privacy consent popup -->
-    <div class="custom-modal-overlay" id="modal-overlay"></div>
-    <div class="custom-modal" id="modal-consent">
-        <h5>ข้อกำหนดและเงื่อนไข</h5>
-        <div class="modal-body">
-            <p>โปรดอ่านและยอมรับข้อกำหนดและเงื่อนไขก่อนดำเนินการ...</p>
-            <p>ข้อมูลส่วนบุคคลของท่านจะได้รับการคุ้มครองตามนโยบายความเป็นส่วนตัว...</p>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-close" id="btn-close">ปิด</button>
-            <button class="btn btn-agree" id="btn-agree">ยอมรับ</button>
-        </div>
-    </div>
+    
     
 </html>

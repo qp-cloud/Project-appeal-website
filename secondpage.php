@@ -144,7 +144,7 @@ if ($role === 'admin') {
     <p style="color: red;">กรุณาเข้าสู่ระบบเพื่อใช้งานเมนูนี้</p>
 <?php endif; ?>
       <?php if ($role === 'admin'): ?>
-      <a href="admin_dashboard.html">แผงควบคุมผู้ดูแล</a>
+      <a href="admin_dashboard.php?user_id=<?= urlencode($_SESSION['user']['user_id']) ?>">แผงควบคุมผู้ดูแล</a>
     <?php endif; ?>
     </div>
   </div>
