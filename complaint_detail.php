@@ -143,7 +143,7 @@ $conn->close();
                     <p><strong>คำอธิบายปัญหา:</strong> <?= htmlspecialchars($complaint_details['complaint_description']) ?></p>
                     <p><strong>ไฟล์ประกอบการร้องเรียน:</strong> 
                         <?php if (!empty($complaint_details['complaint_file'])): ?>
-                            <a href="uploads/<?= htmlspecialchars($complaint_details['complaint_file']) ?>" class="btn btn-download btn-sm" download>
+                            <a href="<?= htmlspecialchars($complaint_details['complaint_file']) ?>" class="btn btn-download btn-sm" download>
                                 <i class="fas fa-download"></i> ดาวน์โหลดไฟล์
                             </a>
                         <?php else: ?>
