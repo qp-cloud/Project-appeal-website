@@ -439,10 +439,17 @@ $conn->close();
             <!-- Privacy consent popup -->
             <div class="custom-modal-overlay" id="modal-overlay"></div>
             <div class="custom-modal" id="modal-consent">
-                <h5>ข้อกำหนดและเงื่อนไข</h5>
+                    <h5>ข้อกำหนดและเงื่อนไข</h5>
                 <div class="modal-body">
-                    <p>เราตระหนักถึงความสำคัญของการคุ้มครองข้อมูลส่วนบุคคล...</p>
-                    <button id="btn-expand" class="btn btn-expand">แสดงเพิ่มเติม</button>
+                    <p>เราตระหนักถึงความสำคัญของการคุ้มครองข้อมูลส่วนบุคคลของผู้ใช้งานเว็บไซต์ และเราให้ความสำคัญกับการรักษาความเป็นส่วนตัวของคุณ. ข้อกำหนดและเงื่อนไขนี้มีวัตถุประสงค์เพื่ออธิบายถึงวิธีที่เราเก็บรวบรวม ใช้ และปกป้องข้อมูลส่วนบุคคลที่คุณให้ไว้ผ่านเว็บไซต์ของเรา.</p>
+                    <p><strong>1. การเก็บข้อมูลส่วนบุคคล</strong></p>
+                    <p>เมื่อคุณใช้บริการของเรา เราอาจขอข้อมูลส่วนบุคคล เช่น ชื่อ ที่อยู่ อีเมล์ และหมายเลขโทรศัพท์ เพื่อให้บริการต่างๆ แก่คุณ. ข้อมูลเหล่านี้จะถูกเก็บไว้อย่างปลอดภัยและจะไม่ถูกนำไปใช้เพื่อวัตถุประสงค์อื่นใดโดยไม่ได้รับความยินยอมจากคุณ.</p>
+                    <p><strong>2. การใช้ข้อมูล</strong></p>
+                    <p>ข้อมูลที่เรารวบรวมจะถูกใช้เพื่อปรับปรุงการบริการ และเพื่อการติดต่อกับคุณเกี่ยวกับบริการที่คุณได้รับจากเว็บไซต์. เราอาจใช้ข้อมูลนี้ในการส่งข้อมูลเกี่ยวกับผลิตภัณฑ์หรือบริการที่คุณอาจสนใจ.</p>
+                    <p><strong>3. ความปลอดภัยของข้อมูล</strong></p>
+                    <p>เราดำเนินการตามมาตรการที่เหมาะสมเพื่อปกป้องข้อมูลส่วนบุคคลของคุณจากการเข้าถึง การใช้ หรือการเปิดเผยที่ไม่ได้รับอนุญาต. อย่างไรก็ตาม, โปรดทราบว่าไม่มีวิธีการถ่ายโอนข้อมูลผ่านอินเทอร์เน็ตที่สามารถรับประกันความปลอดภัย 100% ได้.</p>
+                    <p><strong>4. การยอมรับและการปฏิเสธ</strong></p>
+                    <p>เมื่อคุณใช้เว็บไซต์ของเรา, คุณยอมรับข้อกำหนดและเงื่อนไขนี้. หากคุณไม่ยินยอม, คุณสามารถเลือกไม่ให้เราเก็บข้อมูลส่วนบุคคลของคุณได้โดยไม่ต้องใช้บริการบางประการของเว็บไซต์.</p>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-close" id="btn-close">ปิด</button>
@@ -455,7 +462,7 @@ $conn->close();
             </div>
         </form>
     </div>
-
+    
     <script>
         // Enable validation feedback on form submit
         const form = document.getElementById('complaint-form');
@@ -474,23 +481,7 @@ $conn->close();
             submitButton.disabled = !form.checkValidity();
         });
     </script>
-    <script>
-        document.getElementById("btn-expand").addEventListener("click", function() {
-            var content = document.getElementById("policy-content");
-            var btn = document.getElementById("btn-expand");
-
-            // Toggle between showing and hiding the policy content
-            if (content.classList.contains("short-content")) {
-                content.classList.remove("short-content");
-                content.classList.add("full-content");
-                btn.innerText = "แสดงน้อยลง";
-            } else {
-                content.classList.remove("full-content");
-                content.classList.add("short-content");
-                btn.innerText = "แสดงเพิ่มเติม";
-            }
-        });
-    </script>
+    
     <script>
         // Show privacy consent popup when page loads
         window.onload = function() {
@@ -678,4 +669,5 @@ $conn->close();
         });
 
         </script>
+        
 </html>
