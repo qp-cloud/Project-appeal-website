@@ -116,186 +116,207 @@ $conn->close();
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 
     <style>
-        body {
-            background-color: #a2e1ec;
-        }
-        .header {
-            background: #ffffff;
-            color: #000;
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 5px solid #2a7cff;
-            border-radius: 15px;
-            width: 90%;
-            margin: 20px auto;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .header img {
-            height: 100px;
-        }
-        .user-info {
-            display: flex;
-            align-items: center;
-        }
-        .user-info span {
-            margin-right: 15px;
-            font-weight: bold;
-            color: #2a7cff;
-        }
-        .user-info a {
-            color: #fff;
-            background-color: #2a7cff;
-            padding: 5px 10px;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-        .form-container {
-            margin-top: 50px;
-        }
-        .error-message {
-            color: red;
-            font-size: 0.875rem;
-        }
-        .function-buttons a {
-            display: inline-block;
-            width: 300px;
-            padding: 15px;
-            margin: 15px;
-            font-size: 18px;
-            color: #fff;
-            background-color: #2a7cff;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: bold;
-            transition: background-color 0.3s ease;
-        }
-        .function-buttons a:hover {
-            background-color: #1e60c3;
-        }
-        .custom-modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-        }
-        .custom-modal {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            width: 80%;
-            max-width: 500px;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-            z-index: 1001;
-        }
-        .custom-modal h5 {
-            margin-bottom: 15px;
-            font-size: 1.2rem;
-            text-align: center;
-        }
-        .custom-modal .modal-footer {
-            text-align: center;
-        }
-        .custom-modal .modal-footer button {
-            padding: 10px 20px;
-            margin: 5px;
-            border: none;
-            border-radius: 5px;
-            font-size: 1rem;
-            cursor: pointer;
-        }
-        .btn-close {
-            background: #ccc;
-            color: #333;
-        }
-        .btn-agree {
-            background: #007bff;
-            color: white;
-        }
-        .btn-full-width {
-            width: 100%;
-            padding: 15px;
-            font-size: 1.2rem;
-            margin-top: 10px;
-        }
-        /* Initial small content with scroll */
-        .short-content {
-            max-height: 300px; /* Adjust this value to control the initial visible height */
-            overflow-y: auto; /* Enable vertical scrolling */
-        }
+    body {
+        background-color: #a2e1ec;
+    }
+    .header {
+        background: #ffffff;
+        color: #000;
+        padding: 10px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border: 5px solid #2a7cff;
+        border-radius: 15px;
+        width: 90%;
+        margin: 20px auto;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .header img {
+        height: 100px;
+    }
+    .user-info {
+        display: flex;
+        align-items: center;
+    }
+    .user-info span {
+        margin-right: 15px;
+        font-weight: bold;
+        color: #2a7cff;
+    }
+    .user-info a {
+        color: #fff;
+        background-color: #2a7cff;
+        padding: 5px 10px;
+        text-decoration: none;
+        border-radius: 5px;
+    }
+    .form-container {
+        margin-top: 50px;
+    }
+    
+    /* Style for error message in top-right corner */
+    .error-message {
+        position: fixed; /* Fixed position to the top-right */
+        top: 20px;
+        right: 20px;
+        background-color: rgba(255, 0, 0, 0.8); /* Red background */
+        color: white;
+        padding: 10px;
+        border-radius: 5px;
+        font-size: 14px;
+        z-index: 9999; /* Ensure it's on top of other elements */
+        display: none; /* Initially hidden */
+        max-width: 300px;
+        word-wrap: break-word;
+    }
 
-        /* Full content when expanded */
-        .full-content {
-            max-height: none; /* Remove height restriction */
-        }
+    /* Optional: Styling for error message when visible */
+    .error-message.show {
+        display: block; /* Show the error message */
+    }
 
-        /* Style for the Expand button */
-        .btn-expand {
-            margin-top: 10px;
-            padding: 5px 15px;
-            cursor: pointer;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-        }
+    .function-buttons a {
+        display: inline-block;
+        width: 300px;
+        padding: 15px;
+        margin: 15px;
+        font-size: 18px;
+        color: #fff;
+        background-color: #2a7cff;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+    }
+    .function-buttons a:hover {
+        background-color: #1e60c3;
+    }
+    .custom-modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+    }
+    .custom-modal {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        width: 80%;
+        max-width: 500px;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        z-index: 1001;
+    }
+    .custom-modal h5 {
+        margin-bottom: 15px;
+        font-size: 1.2rem;
+        text-align: center;
+    }
+    .custom-modal .modal-footer {
+        text-align: center;
+    }
+    .custom-modal .modal-footer button {
+        padding: 10px 20px;
+        margin: 5px;
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        cursor: pointer;
+    }
+    .btn-close {
+        background: #ccc;
+        color: #333;
+    }
+    .btn-agree {
+        background: #007bff;
+        color: white;
+    }
+    .btn-full-width {
+        width: 100%;
+        padding: 15px;
+        font-size: 1.2rem;
+        margin-top: 10px;
+    }
+    /* Initial small content with scroll */
+    .short-content {
+        max-height: 300px; /* Adjust this value to control the initial visible height */
+        overflow-y: auto; /* Enable vertical scrolling */
+    }
 
-        .btn-expand:hover {
-            background-color: #45a049;
-        }
-        
-        /* Modal content styling */
-        .custom-modal {
-            background-color: #fff;
-            border-radius: 8px;
-            padding: 20px;
-            max-width: 600px;
-            margin: 20px auto;
-        }
+    /* Full content when expanded */
+    .full-content {
+        max-height: none; /* Remove height restriction */
+    }
 
-        .modal-body {
-            padding: 10px;
-        }
-        .error-icon {
+    /* Style for the Expand button */
+    .btn-expand {
+        margin-top: 10px;
+        padding: 5px 15px;
+        cursor: pointer;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+    }
+
+    .btn-expand:hover {
+        background-color: #45a049;
+    }
+
+    /* Modal content styling */
+    .custom-modal {
+        background-color: #fff;
+        border-radius: 8px;
+        padding: 20px;
+        max-width: 600px;
+        margin: 20px auto;
+    }
+
+    .modal-body {
+        padding: 10px;
+    }
+
+    .error-icon {
         position: absolute;
         top: 10px;
         right: 10px;
         color: red;
         font-size: 20px;
-        }
-        /* Adjust the map size */
-        #map {
-            width: 100%;
-            height: 400px;
-        }
-        #marker-info {
-            margin-top: 10px;
-        }
-    </style>
+    }
+
+    /* Adjust the map size */
+    #map {
+        width: 100%;
+        height: 400px;
+    }
+    #marker-info {
+        margin-top: 10px;
+    }
+</style>
+
 </head>
 
 <body>
     <div class="header">
         <img src="logo.png" alt="Ban Pong Municipality Logo">
         <div class="user-info">
-        <span>ยินดีต้อนรับ, <?= htmlspecialchars($_SESSION['user']['first_name']) ?> <?= htmlspecialchars($_SESSION['user']['last_name']) ?></span>
+            <span>ยินดีต้อนรับ, <?= htmlspecialchars($_SESSION['user']['first_name']) ?> <?= htmlspecialchars($_SESSION['user']['last_name']) ?></span>
             <a href="secondpage.php">กลับสู่หน้าหลัก</a>
         </div>
     </div>
     <div class="container form-container">
         <h2 class="text-center mb-4">ร้องทุกข์ / ร้องเรียน</h2>
 
-        <form id="complaint-form" action="user_appeal_page.php?username=<?= $username ?>" method="POST" enctype="multipart/form-data">
+        <form id="complaint-form" action="user_appeal_page.php?username=<?= $username ?>" method="POST" enctype="multipart/form-data" novalidate>
             <!-- Complaint Subject -->
             <div class="form-group">
                 <label for="complaint-subject">เรื่องที่ต้องการร้องทุกข์ <span class="text-danger">*</span></label>
@@ -306,24 +327,23 @@ $conn->close();
             <!-- Contact Phone -->
             <div class="form-group">
                 <label for="contact-phone">เบอร์โทรศัพท์ที่สามารถติดต่อได้ <span class="text-danger">*</span></label>
-                <input type="tel" class="form-control" id="contact-phone" name="contact_phone" required>
-                <div class="invalid-feedback">กรุณากรอกเบอร์โทรศัพท์ที่สามารถติดต่อได้</div>
+                <input type="tel" class="form-control" id="contact-phone" name="contact_phone" required pattern="^\d{10}$">
+                <div class="invalid-feedback">กรุณากรอกเบอร์โทรศัพท์ที่สามารถติดต่อได้ (10 หลัก)</div>
             </div>
 
             <!-- Location -->
             <div class="form-group">
                 <label for="contact-location">สถานที่</label>
-                <input type="text" class="form-control" id="contact-location" name="contact_location">
+                <input type="text" class="form-control" id="contact-location" name="contact_location" required>
                 <div class="invalid-feedback">กรุณากรอกสถานที่</div>
             </div>
 
             <!-- Details -->
             <div class="form-group">
                 <label for="contact-details">รายละเอียดสถานที่</label>
-                <textarea class="form-control" id="contact-details" name="contact_details" rows="4"></textarea>
+                <textarea class="form-control" id="contact-details" name="contact_details" rows="4" required></textarea>
             </div>
 
-                    
             <!-- Map container -->
             <div id="map" style="width: 100%; height: 400px;"></div>
             <input type="hidden" id="latitude" name="latitude">
@@ -332,43 +352,37 @@ $conn->close();
             <div id="coordinates">
                 <p>Latitude: <span id="current-lat">-</span></p>
                 <p>Longitude: <span id="current-lon">-</span></p>
+                <button id="get-location-btn" type="button">Get Current Location</button>
             </div>
 
-            <button id="get-location-btn">Get Current Location</button>
-
-            <!-- Hidden Fields to store coordinates -->
-            
-
-
-
-
-
-             <!-- Incident Date and Time -->
-             <div class="form-group">
+            <!-- Incident Date and Time -->
+            <div class="form-group">
                 <label for="incident-time">เวลาที่เกิดเหตุหรือพบเหตุ</label>
                 <div class="form-row">
                     <div class="col">
-                        <input type="date" class="form-control" id="incident-date" name="incident_date">
+                        <input type="date" class="form-control" id="incident-date" name="incident_date" required>
                     </div>
                     <div class="col">
-                        <input type="time" class="form-control" id="incident-time" name="incident_time">
+                        <input type="time" class="form-control" id="incident-time" name="incident_time" required>
                     </div>
                 </div>
             </div>
+
             <!-- Problem Level -->
             <div class="form-group">
                 <label for="problem-level">ระดับปัญหา</label>
-                <select class="form-control" id="problem-level" name="problem_level">
+                <select class="form-control" id="problem-level" name="problem_level" required>
                     <option value="ต่ำ">ต่ำ</option>
                     <option value="ปานกลาง">ปานกลาง</option>
                     <option value="สูง">สูง</option>
                 </select>
+                <div class="invalid-feedback">กรุณาเลือกระดับปัญหา</div>
             </div>
 
             <!-- Department -->
             <div class="form-group">
                 <label for="department">หน่วยงานที่รับผิดชอบ</label>
-                <select class="form-control" id="department" name="department">
+                <select class="form-control" id="department" name="department" required>
                     <option value="เทศบาลเมือง">เทศบาลเมือง</option>
                     <option value="สำนักปลัดเทศบาลเมือง">สำนักปลัดเทศบาลเมือง</option>
                     <option value="กองคลัง">กองคลัง</option>
@@ -381,67 +395,53 @@ $conn->close();
                     <option value="หน่วยตรวจสอบภายใน">หน่วยตรวจสอบภายใน</option>
                     <option value="หน่วยงานอื่นๆ">หน่วยงานอื่นๆ</option>
                 </select>
+                <div class="invalid-feedback">กรุณาเลือกหน่วยงานที่รับผิดชอบ</div>
             </div>
 
             <!-- Complaint Description -->
             <div class="form-group">
                 <label for="complaint-description">รายละเอียดการร้องเรียน</label>
-                <textarea class="form-control" id="complaint-description" name="complaint_description" rows="5"></textarea>
+                <textarea class="form-control" id="complaint-description" name="complaint_description" rows="5" required></textarea>
                 <small class="error-message" id="complaint-description-error"></small>
                 <div class="invalid-feedback">กรุณากรอกรายละเอียดการร้องเรียน</div>
             </div>
 
-            <!-- File Upload -->
+           <!-- File Upload -->
             <div class="form-group">
-                <label for="complaint-file">ไฟล์ที่แนบ</label>
-                <input type="file" class="form-control" id="complaint-file" name="complaint_file">
+                <label for="complaint-file">ไฟล์ที่แนบ (ถ้ามี)</label>
+                <input type="file" class="form-control-file" id="complaint-file" name="complaint_file" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx" onchange="validateFile()">
+                <small class="form-text text-muted">รองรับไฟล์: .jpg, .jpeg, .png, .pdf, .doc, .docx (ขนาดไม่เกิน 5MB)</small>
+                <div class="invalid-feedback" id="file-error"></div>
             </div>
+
+
             <!-- Modal Confirmation for Submit -->
             <div class="modal" tabindex="-1" role="dialog" id="confirmation-modal">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">ยืนยันการส่งข้อมูล</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <p>คุณต้องการยืนยันการส่งข้อมูลนี้หรือไม่?</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" id="cancel-submit" data-dismiss="modal">ยกเลิก</button>
-                        <button type="button" class="btn btn-primary" id="confirm-submit">ยืนยัน</button>
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">ยืนยันการส่งข้อมูล</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p>คุณต้องการยืนยันการส่งข้อมูลนี้หรือไม่?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" id="cancel-submit" data-dismiss="modal">ยกเลิก</button>
+                            <button type="button" class="btn btn-primary" id="confirm-submit">ยืนยัน</button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+
             <!-- Privacy consent popup -->
             <div class="custom-modal-overlay" id="modal-overlay"></div>
             <div class="custom-modal" id="modal-consent">
                 <h5>ข้อกำหนดและเงื่อนไข</h5>
                 <div class="modal-body">
-                    <p>เราตระหนักถึงความสำคัญของการคุ้มครองข้อมูลส่วนบุคคลของท่านเพื่อรับผลิตภัณฑ์และบริการของเรา...</p>
-                    
-                    <div id="policy-content" class="short-content">
-                        <h6>ข้อ 1. ขอบเขตการใช้บังคับ</h6>
-                        <p>นโยบายคุ้มครองข้อมูลส่วนบุคคล (Privacy Policy) ตามพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562...</p>
-
-                        <h6>ข้อ 2. คำจำกัดความ</h6>
-                        <p>“นโยบายคุ้มครองข้อมูลส่วนบุคคล” หมายความว่า นโยบายที่เราจัดทำเพื่อแจ้งให้เจ้าของข้อมูลส่วนบุคคลทราบ...</p>
-                        
-                        <p>“ข้อมูลส่วนบุคคล” หมายความว่า ข้อมูลเกี่ยวกับบุคคลซึ่งทำให้สามารถระบุตัวบุคคลนั้นได้...</p>
-
-                        <h6>ข้อมูลส่วนบุคคลที่มีความอ่อนไหว (Sensitive Data)</h6>
-                        <p>ข้อมูลส่วนบุคคลเกี่ยวกับเชื้อชาติ เผ่าพันธุ์ ความคิดเห็นทางการเมือง...</p>
-                        
-                        <h6>การประมวลผล</h6>
-                        <p>การดำเนินการใดๆ กับข้อมูลส่วนบุคคล เช่น การเก็บรวบรวม บันทึก จัดระบบ...</p>
-
-                        <h6>สิทธิของเจ้าของข้อมูลส่วนบุคคล</h6>
-                        <p>ท่านมีสิทธิในการเข้าถึง แก้ไข และลบข้อมูลส่วนบุคคลของท่านได้ตลอดเวลา...</p>
-                    </div>
-                    
+                    <p>เราตระหนักถึงความสำคัญของการคุ้มครองข้อมูลส่วนบุคคล...</p>
                     <button id="btn-expand" class="btn btn-expand">แสดงเพิ่มเติม</button>
                 </div>
                 <div class="modal-footer">
@@ -449,95 +449,31 @@ $conn->close();
                     <button class="btn btn-agree" id="btn-agree">ยอมรับ</button>
                 </div>
             </div>
-    <div class="form-group text-center">
+
+            <div class="form-group text-center">
                 <button type="submit" class="btn btn-primary btn-full-width" id="submit-form" disabled>ยืนยันการส่งข้อมูล</button>
             </div>
         </form>
-        <script>
-  document.getElementById("registerForm").addEventListener("submit", function(event) {
-  var form = this;
-  var isValid = true;
+    </div>
 
-  // ตรวจสอบข้อมูลในแต่ละช่อง
-  form.querySelectorAll('.form-control').forEach(function(input) {
-    var feedback = input.nextElementSibling; // ข้อความ invalid-feedback
-    if (!input.checkValidity()) {
-      input.classList.add('is-invalid');
-      if (feedback && feedback.classList.contains('invalid-feedback')) {
-        feedback.style.display = 'block';
-      }
-      isValid = false;
-    } else {
-      input.classList.remove('is-invalid');
-      if (feedback && feedback.classList.contains('invalid-feedback')) {
-        feedback.style.display = 'none';
-      }
-    }
-  });
-  // หยุดการส่งฟอร์มถ้าข้อมูลไม่ถูกต้อง
-  if (!isValid) {
-    event.preventDefault();
-    event.stopPropagation();
-  }
-
-  form.classList.add('was-validated');
-});
-</script>
     <script>
-    let map;
+        // Enable validation feedback on form submit
+        const form = document.getElementById('complaint-form');
+        const submitButton = document.getElementById('submit-form');
 
-    // Initialize the map
-    function initMap() {
-        const geolocation = { lat: 13.7367, lon: 100.5231 }; // Default location (Bangkok)
-        map = new longdo.Map({
-            placeholder: document.getElementById('map')
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
         });
 
-        map.location(geolocation);
-        map.zoom(13);
-
-        // Show initial coordinates (from the map's center)
-        updateCoordinates(map.location());
-    }
-
-    // Update the coordinates displayed on the page and in the hidden input fields
-    function updateCoordinates(location) {
-        const lat = location.lat;
-        const lon = location.lon;
-        
-        // Update the visible coordinates
-        document.getElementById('current-lat').textContent = lat;
-        document.getElementById('current-lon').textContent = lon;
-        
-        // Update the hidden input fields with the new coordinates
-        document.getElementById('latitude').value = lat;
-        document.getElementById('longitude').value = lon;
-    }
-
-    // Get the current location when the button is clicked
-    document.getElementById('get-location-btn').addEventListener('click', function() {
-        const currentLocation = map.location(); // Get current map center location
-        console.log("Current Latitude: " + currentLocation.lat);
-        console.log("Current Longitude: " + currentLocation.lon);
-
-        // Update the displayed coordinates and hidden input fields
-        updateCoordinates(currentLocation);
-    });
-
-    // Load the Longdo Map script and initialize the map
-    function loadLongdoMap() {
-        const script = document.createElement('script');
-        script.src = "https://api.longdo.com/map/?key=35bbbe40a96e844b27eba45df1ddad0b";
-        script.onload = initMap;
-        document.body.appendChild(script);
-    }
-
-    // Load the map when the page is ready
-    document.addEventListener('DOMContentLoaded', function() {
-        loadLongdoMap();
-    });
-</script>
-
+        // Enable the submit button only when the form is valid
+        form.addEventListener('input', function () {
+            submitButton.disabled = !form.checkValidity();
+        });
+    </script>
     <script>
         document.getElementById("btn-expand").addEventListener("click", function() {
             var content = document.getElementById("policy-content");
@@ -602,53 +538,144 @@ $conn->close();
                 document.getElementById('report-form').reset();
                 toggleConfirmButton();
             });
-        </script>
-    <script>
-        $(document).ready(function() {
-
-            // เปิด Modal เมื่อคลิกที่ลิงก์ "อ่านข้อตกลง"
-            $('#show-agreement').click(function(e) {
-                e.preventDefault();
-            $('#agreement-modal').modal('show'); // เปิด Modal
-            });
-
-            // เมื่อผู้ใช้กดปุ่ม "ตกลง" ใน Modal
-            $('#agree-consent').click(function() {
-            $('#privacy-consent').prop('checked', true); // ติ๊ก checkbox
-            $('#privacy-consent').prop('disabled', false); // ปลดล็อก checkbox
-            $('#submit-form').prop('disabled', false); // เปิดปุ่มส่งข้อมูล
-            $('#agreement-modal').modal('hide'); // ปิด Modal
-            });
-
-            // Enable/Disable the submit button based on privacy consent
-            // Enable/Disable the submit button based on privacy consent
-            $('#privacy-consent').change(function() {
-                if ($(this).prop('checked')) {
-                    $('#submit-form').prop('disabled', false); // Enable submit button
-                } else {
-                    $('#submit-form').prop('disabled', true); // Disable submit button
-                }
-            });
-
-
-
-            // Handle confirmation modal submission
-            $('#confirm-submit').click(function() {
-                $('#confirmation-modal').modal('hide');
-                alert('ข้อมูลถูกส่งเรียบร้อยแล้ว!');
-                $('#complaint-form')[0].reset(); // Reset the form
-                $('#submit-form').prop('disabled', true); // Disable submit button
-            });
-
-            // Handle the cancel button to reset the form
-            $('#cancel-form').click(function() {
-                if (confirm('คุณแน่ใจหรือไม่ว่าต้องการยกเลิก?')) {
-                    $('#complaint-form')[0].reset(); // Reset the form
-                    $('#submit-form').prop('disabled', true); // Disable submit button
-                }
-            });
-        });
     </script>
     
-    
+    <script>
+        // Enable validation feedback on form submit
+        const form = document.getElementById('complaint-form');
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        });
+    </script>
+
+    <script>
+    let map;
+
+    // Initialize the map
+    function initMap() {
+        const geolocation = { lat: 13.7367, lon: 100.5231 }; // Default location (Bangkok)
+        map = new longdo.Map({
+            placeholder: document.getElementById('map')
+        });
+
+        map.location(geolocation);
+        map.zoom(13);
+
+        // Show initial coordinates (from the map's center)
+        updateCoordinates(map.location());
+
+        // Bind the Get Location button event only after the map is initialized
+        document.getElementById('get-location-btn').addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent form submission
+            const currentLocation = map.location(); // Get current map center location
+            console.log("Current Latitude: " + currentLocation.lat);
+            console.log("Current Longitude: " + currentLocation.lon);
+
+            // Update the displayed coordinates and hidden input fields
+            updateCoordinates(currentLocation);
+        });
+
+    }
+
+    // Update the coordinates displayed on the page and in the hidden input fields
+    function updateCoordinates(location) {
+        const lat = location.lat;
+        const lon = location.lon;
+        
+        // Update the visible coordinates
+        document.getElementById('current-lat').textContent = lat;
+        document.getElementById('current-lon').textContent = lon;
+        
+        // Update the hidden input fields with the new coordinates
+        document.getElementById('latitude').value = lat;
+        document.getElementById('longitude').value = lon;
+    }
+
+    // Load the Longdo Map script and initialize the map
+    function loadLongdoMap() {
+        const script = document.createElement('script');
+        script.src = "https://api.longdo.com/map/?key=35bbbe40a96e844b27eba45df1ddad0b";
+        script.onload = initMap;
+        document.body.appendChild(script);
+    }
+
+    // Load the map when the page is ready
+    document.addEventListener('DOMContentLoaded', function() {
+        loadLongdoMap();
+    });
+</script>
+
+<script>
+        document.getElementById("registerForm").addEventListener("submit", function(event) {
+        var form = this;
+        var isValid = true;
+
+        // ตรวจสอบข้อมูลในแต่ละช่อง
+        form.querySelectorAll('.form-control').forEach(function(input) {
+            var feedback = input.nextElementSibling; // ข้อความ invalid-feedback
+            if (!input.checkValidity()) {
+            input.classList.add('is-invalid');
+            if (feedback && feedback.classList.contains('invalid-feedback')) {
+                feedback.style.display = 'block';
+            }
+            isValid = false;
+            } else {
+            input.classList.remove('is-invalid');
+            if (feedback && feedback.classList.contains('invalid-feedback')) {
+                feedback.style.display = 'none';
+            }
+            }
+        });
+        // หยุดการส่งฟอร์มถ้าข้อมูลไม่ถูกต้อง
+        if (!isValid) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+
+        form.classList.add('was-validated');
+        });
+        </script>
+    <script>
+        function validateFile() {
+            const fileInput = document.getElementById('complaint-file');
+            const fileError = document.getElementById('file-error');
+            const allowedExtensions = ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'];
+            const maxFileSize = 5 * 1024 * 1024; // 5MB
+
+            fileError.textContent = ''; // Clear previous error messages
+            fileInput.classList.remove('is-invalid');
+
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const fileExtension = file.name.split('.').pop().toLowerCase();
+
+                // Check file extension
+                if (!allowedExtensions.includes(fileExtension)) {
+                    fileError.textContent = 'รูปแบบไฟล์ไม่ถูกต้อง กรุณาอัปโหลดไฟล์ในรูปแบบที่รองรับ';
+                    fileInput.classList.add('is-invalid');
+                    return false;
+                }
+
+                // Check file size
+                if (file.size > maxFileSize) {
+                    fileError.textContent = 'ขนาดไฟล์เกิน 5MB กรุณาอัปโหลดไฟล์ที่มีขนาดเล็กกว่า';
+                    fileInput.classList.add('is-invalid');
+                    return false;
+                }
+            }
+            return true; // File is valid
+        }
+
+        // Validate file before submitting form
+        document.getElementById('complaint-form').addEventListener('submit', function (event) {
+            if (!validateFile()) {
+                event.preventDefault(); // Prevent form submission if file is invalid
+            }
+        });
+
+        </script>
 </html>
