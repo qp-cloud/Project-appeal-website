@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         "INSERT INTO user (first_name, last_name, id_number, gender, birth_date, occupation, phone, email, address, username, password) 
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
     );
-
+    
     if ($stmt) {
         // ผูกข้อมูลลงใน SQL Statement
         $stmt->bind_param(

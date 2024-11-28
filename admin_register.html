@@ -268,7 +268,7 @@
         document.getElementById("phone_error").textContent = "เบอร์โทรต้องมี 10 หลัก";
         isValid = false;
       }
-      if (!email.includes("@")) {
+      if (!email) {
         document.getElementById("email_error").textContent = "กรุณากรอกอีเมลให้ถูกต้อง";
         isValid = false;
       }

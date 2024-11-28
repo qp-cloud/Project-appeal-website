@@ -154,7 +154,7 @@ $conn->close();
 
                 <!-- Go Back Button -->
                 <div class="text-center mt-4">
-                    <button onclick="window.history.back();" class="btn btn-primary">ย้อนกลับ</button>
+                    <button onclick="window.location.href='secondpage.php';" class="btn btn-primary">ย้อนกลับ</button>
                 </div>
             </div>
         </div>

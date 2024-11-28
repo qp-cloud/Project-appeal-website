@@ -58,7 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 ];
 
                 // Redirect to admin page
-                header("Location: secondpage.php");
+                header("Location: admin_page.html");
                 exit();
             } else {
                 // If the user is not an admin, show error and redirect
