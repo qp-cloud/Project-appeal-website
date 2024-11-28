@@ -46,30 +46,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Verify the password
         if (password_verify($password, $user['password'])) {
-            // Store user info and role in session
-            
-            $_SESSION['user'] = [
-                'user_id' => $user['user_id'],
-                'username' => $user['username'],
-                'first_name' => $user['first_name'], // Store first name
-                'last_name' => $user['last_name'],   // Store last name
-                'role' => $user['role'],
-                'department' => $user['department'] // Store role from the database
-            ];
-
-            // Redirect based on role
+            // Only allow admin role to login
             if ($user['role'] === 'admin') {
-                header("Location: secondpage.php"); // Redirect for admin
+                // Store user info and role in session
+                $_SESSION['user'] = [
+                    'user_id' => $user['user_id'],
+                    'username' => $user['username'],
+                    'first_name' => $user['first_name'], // Store first name
+                    'last_name' => $user['last_name'],   // Store last name
+                    'role' => $user['role']
+                ];
+
+                // Redirect to admin page
+                header("Location: secondpage.php");
+                exit();
             } else {
-                header("Location: secondpage.php"); // Redirect for regular user
+                // If the user is not an admin, show error and redirect
+                echo "<script>alert('คุณไม่ได้รับสิทธิ์เข้าถึง'); window.location.href='admin_login.html';</script>";
+                exit();
             }
-            exit();
         } else {
-            echo "<script>alert('รหัสผ่านไม่ถูกต้อง'); window.location.href='login.html';</script>";
+            echo "<script>alert('รหัสผ่านไม่ถูกต้อง'); window.location.href='admin_login.html';</script>";
             exit();
         }
     } else {
-        echo "<script>alert('ไม่พบชื่อผู้ใช้งาน'); window.location.href='login.html';</script>";
+        echo "<script>alert('ไม่พบชื่อผู้ใช้งาน'); window.location.href='admin_login.html';</script>";
         exit();
     }
 

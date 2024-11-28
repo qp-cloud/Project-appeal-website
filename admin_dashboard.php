@@ -80,24 +80,41 @@ if (count($filter_conditions) > 0) {
 }
 
 $result = $conn->query($sql);
-
 // Update status when the form is submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['status'], $_POST['complaint_id'])) {
     $new_status = $_POST['status'];
-    $complaint_id = $_POST['complaint_id'];
+    $complaint_id = intval($_POST['complaint_id']);
+    $user_id = $_SESSION['user']['user_id']; // Get the logged-in user's ID
     
-    // Update the complaint status in the database
+    // Get the old status before updating
+    $query_old_status = "SELECT status FROM complaints WHERE id = ?";
+    $stmt_old_status = $conn->prepare($query_old_status);
+    $stmt_old_status->bind_param("i", $complaint_id);
+    $stmt_old_status->execute();
+    $result_old_status = $stmt_old_status->get_result();
+    $old_status = $result_old_status->fetch_assoc()['status'] ?? null;
+    $stmt_old_status->close();
+
+    // Update the complaint status
     $update_sql = "UPDATE complaints SET status = ? WHERE id = ?";
-    if ($stmt = $conn->prepare($update_sql)) {
-        $stmt->bind_param("si", $new_status, $complaint_id);
-        if ($stmt->execute()) {
-            echo "สถานะการร้องเรียนได้รับการอัปเดตแล้ว.";
+    if ($stmt_update = $conn->prepare($update_sql)) {
+        $stmt_update->bind_param("si", $new_status, $complaint_id);
+        if ($stmt_update->execute()) {
+            // Insert a log entry for the status change
+            $log_sql = "INSERT INTO status_change_logs (complaint_id, old_status, new_status, changed_by) VALUES (?, ?, ?, ?)";
+            if ($stmt_log = $conn->prepare($log_sql)) {
+                $stmt_log->bind_param("issi", $complaint_id, $old_status, $new_status, $user_id);
+                $stmt_log->execute();
+                $stmt_log->close();
+            }
+            echo "สถานะการร้องเรียนได้รับการอัปเดตแล้ว และบันทึกการเปลี่ยนแปลงสำเร็จ.";
         } else {
             echo "เกิดข้อผิดพลาดในการอัปเดตสถานะ.";
         }
-        $stmt->close();
+        $stmt_update->close();
     }
 }
+
 
 // Close the connection
 $conn->close();
@@ -186,6 +203,7 @@ $conn->close();
         <div class="header d-flex justify-content-between align-items-center">
             <h2>แผงควบคุมผู้ดูแลระบบ</h2>
             <!-- Go Back Button at the top right -->
+            <a href="view_logs.php" class="btn btn-info">ดูบันทึกการเปลี่ยนแปลง</a>
             <a href="secondpage.php" class="btn btn-back">ย้อนกลับ</a>
         </div>
 

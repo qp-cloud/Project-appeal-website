@@ -25,12 +25,32 @@ if ($conn->connect_error) {
 // Get the complaint ID from the URL
 $complaint_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
-// Retrieve complaint details for the given complaint_id
-$sql = "SELECT id, user_id, complaint_subject, contact_phone, contact_location, contact_details, 
-        latitude, longitude, incident_date, incident_time, problem_level, department, 
-        complaint_description, complaint_file, submitted_at, status
-        FROM complaints 
-        WHERE id = ?";
+// Retrieve complaint details, admin details, and status change time for the given complaint_id
+$sql = "SELECT 
+            c.id, 
+            c.user_id, 
+            c.complaint_subject, 
+            c.contact_phone, 
+            c.contact_location, 
+            c.contact_details, 
+            c.latitude, 
+            c.longitude, 
+            c.incident_date, 
+            c.incident_time, 
+            c.problem_level, 
+            c.department, 
+            c.complaint_description, 
+            c.complaint_file, 
+            c.submitted_at, 
+            c.status, 
+            CONCAT(u.first_name, ' ', u.last_name) AS admin_name,
+            logs.changed_at AS status_changed_at
+        FROM complaints AS c
+        LEFT JOIN status_change_logs AS logs ON c.id = logs.complaint_id
+        LEFT JOIN user AS u ON logs.changed_by = u.user_id
+        WHERE c.id = ?
+        ORDER BY logs.changed_at DESC
+        LIMIT 1";
 
 if ($stmt = $conn->prepare($sql)) {
     // Bind parameters to the prepared statement
@@ -42,7 +62,7 @@ if ($stmt = $conn->prepare($sql)) {
     // Bind the result to variables
     $stmt->bind_result($id, $user_id, $complaint_subject, $contact_phone, $contact_location, $contact_details,
                        $latitude, $longitude, $incident_date, $incident_time, $problem_level, $department, 
-                       $complaint_description, $complaint_file, $submitted_at,$status);
+                       $complaint_description, $complaint_file, $submitted_at, $status, $admin_name, $status_changed_at);
 
     // Fetch the complaint details
     if ($stmt->fetch()) {
@@ -62,7 +82,9 @@ if ($stmt = $conn->prepare($sql)) {
             'complaint_description' => $complaint_description,
             'complaint_file' => $complaint_file,
             'submitted_at' => $submitted_at,
-            'status' => $status
+            'status' => $status,
+            'admin_name' => $admin_name,
+            'status_changed_at' => $status_changed_at
         ];
     } else {
         echo "Complaint not found.";
@@ -133,7 +155,7 @@ $conn->close();
             <div class="card-body">
                 <?php if (!empty($complaint_details)): ?>
                     <h5 class="mb-4" style="font-size: 18px; color: #000; font-weight: 600; border-bottom: 2px solid #2a7cff; padding-bottom: 5px;">
-                         <strong>ชื่อเรื่อง:</strong> <?= htmlspecialchars($complaint_details['complaint_subject']) ?></h5>
+                        <strong>ชื่อเรื่อง:</strong> <?= htmlspecialchars($complaint_details['complaint_subject']) ?></h5>
                     <p><strong>เบอร์โทรติดต่อ:</strong> <?= htmlspecialchars($complaint_details['contact_phone']) ?></p>
                     <p><strong>สถานที่เกิดเหตุ:</strong> <?= htmlspecialchars($complaint_details['contact_location']) ?></p>
                     <p><strong>รายละเอียดที่ติดต่อ:</strong> <?= htmlspecialchars($complaint_details['contact_details']) ?></p>
@@ -151,9 +173,11 @@ $conn->close();
                         <?php endif; ?>
                     </p>
                     <p><strong>วันที่ยื่นร้องเรียน:</strong> <?= htmlspecialchars($complaint_details['submitted_at']) ?></p>
-                    <p><strong>สถานะ:</strong> 
+                    <p><strong>สถานะปัจจุบัน:</strong> 
                         <span class="badge badge-info"><?= htmlspecialchars($complaint_details['status']) ?></span>
                     </p>
+                    <p><strong>เจ้าหน้าที่เปลี่ยนสถานะล่าสุด:</strong> <?= htmlspecialchars($complaint_details['admin_name']) ?></p>
+                    <p><strong>เวลาเปลี่ยนสถานะ:</strong> <?= htmlspecialchars($complaint_details['status_changed_at']) ?></p>
                 <?php else: ?>
                     <p class="text-center text-danger">ไม่พบข้อมูลการร้องเรียน</p>
                 <?php endif; ?>
