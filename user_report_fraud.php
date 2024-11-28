@@ -83,9 +83,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Prepare the SQL query to insert data into the database
     $sql = "INSERT INTO appeals (user_id, report_subject, report_person, contact_phone, contact_location, contact_details, latitude, longitude, incident_date, incident_time, problem_level, department, complaint_description, complaint_file )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("issssssssssss", $user_id, $report_subject, $report_person, $contact_phone, $contact_location, $contact_details, $latitude, $longitude, $incident_date, $incident_time, $problem_level, $department, $complaint_description, $complaint_file);
+    $stmt->bind_param("isssssssssssss", $user_id, $report_subject, $report_person, $contact_phone, $contact_location, $contact_details, $latitude, $longitude, $incident_date, $incident_time, $problem_level, $department, $complaint_description, $complaint_file);
 
     if ($stmt->execute()) {
         header("Location: confirmation.php");  // Adjust URL to your confirmation page
@@ -306,7 +306,7 @@ $conn->close();
             <!-- Report Person -->
             <div class="form-group">
                 <label for="report-person">องค์กรหรือบุคคลที่ต้องการแจ้งเบาะแส <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="report-person" name="report-person" required>
+                <input type="text" class="form-control" id="report-person" name="report_person" required>
                 <div class="invalid-feedback">กรุณากรอกชื่อองค์กรหรือบุคคลที่ต้องการแจ้งเบาะแส</div>
             </div>
 
