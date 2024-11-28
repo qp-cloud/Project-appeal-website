@@ -295,7 +295,7 @@ $conn->close();
     <div class="container form-container">
         <h2 class="text-center mb-4">การแจ้งเบาะแสทุจริตประพฤติมิชอบ</h2>
 
-        <form id="repost-form" action="user_appeal_page.php?username=<?= $username ?>" method="POST" enctype="multipart/form-data">
+        <form id="repost-form" action="user_report_fraud.php?username=<?= $username ?>" method="POST" enctype="multipart/form-data">
             <!-- Report Subject -->
             <div class="form-group">
                 <label for="report-subject">เรื่องที่ต้องการแจ้งเบาะแส <span class="text-danger">*</span></label>
