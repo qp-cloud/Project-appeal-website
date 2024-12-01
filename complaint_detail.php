@@ -44,10 +44,12 @@ $sql = "SELECT
             c.submitted_at, 
             c.status, 
             CONCAT(u.first_name, ' ', u.last_name) AS admin_name,
+            CONCAT(usr.first_name, ' ', usr.last_name) AS user_name,
             logs.changed_at AS status_changed_at
         FROM complaints AS c
         LEFT JOIN status_change_logs AS logs ON c.id = logs.complaint_id
         LEFT JOIN user AS u ON logs.changed_by = u.user_id
+        LEFT JOIN user AS usr ON c.user_id = usr.user_id
         WHERE c.id = ?
         ORDER BY logs.changed_at DESC
         LIMIT 1";
@@ -62,13 +64,14 @@ if ($stmt = $conn->prepare($sql)) {
     // Bind the result to variables
     $stmt->bind_result($id, $user_id, $complaint_subject, $contact_phone, $contact_location, $contact_details,
                        $latitude, $longitude, $incident_date, $incident_time, $problem_level, $department, 
-                       $complaint_description, $complaint_file, $submitted_at, $status, $admin_name, $status_changed_at);
+                       $complaint_description, $complaint_file, $submitted_at, $status, $admin_name, $user_name, $status_changed_at);
 
     // Fetch the complaint details
     if ($stmt->fetch()) {
         $complaint_details = [
             'id' => $id,
             'user_id' => $user_id,
+            'user_name' => $user_name, // เพิ่มชื่อผู้ส่ง
             'complaint_subject' => $complaint_subject,
             'contact_phone' => $contact_phone,
             'contact_location' => $contact_location,
@@ -156,6 +159,7 @@ $conn->close();
                 <?php if (!empty($complaint_details)): ?>
                     <h5 class="mb-4" style="font-size: 18px; color: #000; font-weight: 600; border-bottom: 2px solid #2a7cff; padding-bottom: 5px;">
                         <strong>ชื่อเรื่อง:</strong> <?= htmlspecialchars($complaint_details['complaint_subject']) ?></h5>
+                    <p><strong>ชื่อผู้ส่ง:</strong> <?= htmlspecialchars($complaint_details['user_name']) ?></p>    
                     <p><strong>เบอร์โทรติดต่อ:</strong> <?= htmlspecialchars($complaint_details['contact_phone']) ?></p>
                     <p><strong>สถานที่เกิดเหตุ:</strong> <?= htmlspecialchars($complaint_details['contact_location']) ?></p>
                     <p><strong>รายละเอียดที่ติดต่อ:</strong> <?= htmlspecialchars($complaint_details['contact_details']) ?></p>

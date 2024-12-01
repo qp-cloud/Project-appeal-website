@@ -96,7 +96,9 @@ $result = $conn->query($sql);
                         <th>สถานะเดิม</th>
                         <th>สถานะใหม่</th>
                         <th>เปลี่ยนโดย</th>
+                        <th>หน่วยงาน</th>
                         <th>วันที่เปลี่ยน</th>
+                        
                     </tr>
                 </thead>
                 <tbody>

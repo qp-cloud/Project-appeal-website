@@ -326,9 +326,8 @@ $conn->close();
 
             <!-- Contact Phone -->
             <div class="form-group">
-                <label for="contact-phone">เบอร์โทรศัพท์ที่สามารถติดต่อได้ <span class="text-danger">*</span></label>
-                <input type="tel" class="form-control" id="contact-phone" name="contact_phone" required pattern="^\d{10}$">
-                <div class="invalid-feedback">กรุณากรอกเบอร์โทรศัพท์ที่สามารถติดต่อได้ (10 หลัก)</div>
+                <input type="text" name="phone" class="form-control" placeholder="Phone" required maxlength="10" oninput="this.value = this.value.replace(/\D/g, '')">
+                <div class="invalid-feedback">กรุณากรอกเบอร์โทรศัพท์ 10 หลัก</div>
             </div>
 
             <!-- Location -->

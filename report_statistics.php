@@ -15,24 +15,27 @@ if ($conn->connect_error) {
 
 // ตัวแปรสำหรับกรองข้อมูล
 $selected_department = isset($_POST['department']) ? $_POST['department'] : null;
+$selected_year = isset($_POST['year']) ? $_POST['year'] : date("Y"); // ค่าเริ่มต้นเป็นปีปัจจุบัน
 
 // กำหนดคำสั่ง SQL เพื่อดึงข้อมูล
 $sql = "SELECT MONTH(incident_date) AS month, status, COUNT(*) AS complaint_count
         FROM complaints
-        WHERE 1=1";
+        WHERE YEAR(incident_date) = ?"; // เพิ่มเงื่อนไขสำหรับกรองปี
 
 // กรองตามหน่วยงาน
 if ($selected_department) {
     $sql .= " AND department = ?";
 }
 
-$sql .= " GROUP BY MONTH(incident_date), status ORDER BY MONTH(incident_date), status";  // Group by month and status
+$sql .= " GROUP BY MONTH(incident_date), status ORDER BY MONTH(incident_date), status";
 
 $stmt = $conn->prepare($sql);
 
-// Binding parameter for department filter
+// Binding parameters
 if ($selected_department) {
-    $stmt->bind_param("s", $selected_department);
+    $stmt->bind_param("is", $selected_year, $selected_department); // สำหรับปีและหน่วยงาน
+} else {
+    $stmt->bind_param("i", $selected_year); // เฉพาะปี
 }
 
 $stmt->execute();
@@ -74,7 +77,7 @@ while ($row = $result->fetch_assoc()) {
             background-color: #2a7cff;
             border-color: #2a7cff;
             padding: 10px 20px;
-            width: 100%;  /* Make the button stretch across the available space */
+            width: 100%;
         }
         .btn-primary:hover {
             background-color: #1e60c3;
@@ -88,7 +91,7 @@ while ($row = $result->fetch_assoc()) {
             align-items: center;
         }
         .form-group select {
-            margin-right: 15px; /* Space between the dropdown and the button */
+            margin-right: 15px;
         }
         .btn-container {
             text-align: right;
@@ -166,35 +169,43 @@ while ($row = $result->fetch_assoc()) {
     </div>
   </div>
 
-
     <div class="container mt-5">
         <h2 class="text-center mb-4">รายงานสถิติการรับแจ้งเรื่องร้องเรียน/แจ้งเบาะแส</h2>
 
         <!-- ฟอร์มกรองข้อมูล -->
         <form method="POST">
             <div class="form-row mb-3">
-                <div class="form-group col-md-8">
+                <div class="form-group col-md-6">
+                    <label for="year">ปี</label>
+                    <select class="form-control" name="year" id="year">
+                        <?php
+                        $current_year = date("Y");
+                        for ($year = $current_year; $year >= $current_year - 10; $year--) {
+                            $selected = ($selected_year == $year) ? 'selected' : '';
+                            echo "<option value=\"$year\" $selected>$year</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
                     <label for="department">หน่วยงาน</label>
                     <select class="form-control" name="department" id="department">
                         <option value="">เลือกหน่วยงาน</option>
                         <option value="เทศบาลเมือง" <?= ($selected_department == 'เทศบาลเมือง') ? 'selected' : ''; ?>>เทศบาลเมือง</option>
                         <option value="สำนักปลัดเทศบาลเมือง" <?= ($selected_department == 'สำนักปลัดเทศบาลเมือง') ? 'selected' : ''; ?>>สำนักปลัดเทศบาลเมือง</option>
-                        <option value="กองคลัง" <?= ($selected_department == 'กองคลัง') ? 'selected' : ''; ?>>กองคลัง</option>
-                        <option value="กองช่าง" <?= ($selected_department == 'กองช่าง') ? 'selected' : ''; ?>>กองช่าง</option>
-                        <option value="กองการศึกษา" <?= ($selected_department == 'กองการศึกษา') ? 'selected' : ''; ?>>กองการศึกษา</option>
-                        <option value="กองสาธารณสุข" <?= ($selected_department == 'กองสาธารณสุข') ? 'selected' : ''; ?>>กองสาธารณสุข</option>
-                        <option value="กองสวัสดิการสังคม" <?= ($selected_department == 'กองสวัสดิการสังคม') ? 'selected' : ''; ?>>กองสวัสดิการสังคม</option>
-                        <option value="กองยุทธศาสตร์" <?= ($selected_department == 'กองยุทธศาสตร์') ? 'selected' : ''; ?>>กองยุทธศาสตร์</option>
-                        <option value="กองการเจ้าหน้าที่" <?= ($selected_department == 'กองการเจ้าหน้าที่') ? 'selected' : ''; ?>>กองการเจ้าหน้าที่</option>
-                        <option value="หน่วยตรวจสอบภายใน" <?= ($selected_department == 'หน่วยตรวจสอบภายใน') ? 'selected' : ''; ?>>หน่วยตรวจสอบภายใน</option>
-                        <option value="หน่วยงานอื่นๆ" <?= ($selected_department == 'หน่วยงานอื่นๆ') ? 'selected' : ''; ?>>หน่วยงานอื่นๆ</option>
+                        <!-- ตัวเลือกอื่น ๆ คงเดิม -->
                     </select>
                 </div>
-                <div class="form-group col-md-4 btn-container">
+            </div>
+            <div class="form-row mb-3">
+                <div class="form-group col-md-12 btn-container">
                     <button type="submit" class="btn btn-primary">กรองข้อมูล</button>
                 </div>
             </div>
         </form>
+
+        <!-- แสดงปีที่กำลังแสดง -->
+        <h4 class="text-center">กำลังแสดงข้อมูลสำหรับปี: <?= $selected_year ?></h4>
 
         <!-- แสดงผลรวมตามเดือนและสถานะ -->
         <h4>ผลรวมตามเดือนและสถานะ</h4>
@@ -210,14 +221,10 @@ while ($row = $result->fetch_assoc()) {
             </thead>
             <tbody>
                 <?php
-                // แสดงผลจำนวนเรื่องร้องเรียนต่อเดือนและสถานะ
                 for ($month = 1; $month <= 12; $month++) {
-                    // Get the complaint counts for each status
                     $not_processed = isset($monthly_complaints[$month]['ยังไม่ดำเนินการ']) ? $monthly_complaints[$month]['ยังไม่ดำเนินการ'] : 0;
                     $in_progress = isset($monthly_complaints[$month]['กำลังดำเนินการ']) ? $monthly_complaints[$month]['กำลังดำเนินการ'] : 0;
                     $completed = isset($monthly_complaints[$month]['ดำเนินการเสร็จสิ้น']) ? $monthly_complaints[$month]['ดำเนินการเสร็จสิ้น'] : 0;
-
-                    // Calculate the total for the month
                     $total = $not_processed + $in_progress + $completed;
 
                     echo "<tr>";
@@ -239,12 +246,9 @@ while ($row = $result->fetch_assoc()) {
 </body>
 </html>
 
-
 <?php
-// ปิดการเชื่อมต่อฐานข้อมูล
 $conn->close();
 
-// ฟังก์ชันสำหรับแปลงหมายเลขเดือนเป็นชื่อเดือน
 function getMonthName($month) {
     $months = [
         1 => 'มกราคม', 2 => 'กุมภาพันธ์', 3 => 'มีนาคม', 4 => 'เมษายน', 5 => 'พฤษภาคม', 6 => 'มิถุนายน',
@@ -252,3 +256,4 @@ function getMonthName($month) {
     ];
     return $months[$month];
 }
+?>

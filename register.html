@@ -121,7 +121,7 @@
     </div>
     
     <div class="form-group">
-      <input type="text" name="id_number" class="form-control" placeholder="ID Number" required pattern="\d{13}">
+      <input type="text" name="id_number" class="form-control" placeholder="ID Number" required maxlength="13" oninput="this.value = this.value.replace(/\D/g, '')">
       <div class="invalid-feedback">กรุณากรอกเลขบัตรประชาชน 13 หลัก</div>
     </div>
     
@@ -146,7 +146,7 @@
     </div>
     
     <div class="form-group">
-      <input type="text" name="phone" class="form-control" placeholder="Phone" required pattern="\d{10}">
+      <input type="text" name="phone" class="form-control" placeholder="Phone" required maxlength="10" oninput="this.value = this.value.replace(/\D/g, '')">
       <div class="invalid-feedback">กรุณากรอกเบอร์โทรศัพท์ 10 หลัก</div>
     </div>
     
