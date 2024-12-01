@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['status'], $_POST['comp
     $new_status = $_POST['status'];
     $complaint_id = intval($_POST['complaint_id']);
     $user_id = $_SESSION['user']['user_id']; // Get the logged-in user's ID
-    
+
     // Get the old status before updating
     $query_old_status = "SELECT status FROM complaints WHERE id = ?";
     $stmt_old_status = $conn->prepare($query_old_status);
@@ -107,13 +107,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['status'], $_POST['comp
                 $stmt_log->execute();
                 $stmt_log->close();
             }
-            echo "สถานะการร้องเรียนได้รับการอัปเดตแล้ว และบันทึกการเปลี่ยนแปลงสำเร็จ.";
+            // Redirect to the success page
+            header("Location: update_success.php");
+            exit(); // Always call exit after header redirection
         } else {
             echo "เกิดข้อผิดพลาดในการอัปเดตสถานะ.";
         }
         $stmt_update->close();
     }
 }
+
 
 
 // Close the connection

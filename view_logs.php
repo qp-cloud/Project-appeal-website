@@ -29,10 +29,12 @@ $sql = "SELECT
             logs.old_status, 
             logs.new_status, 
             logs.changed_at, 
-            CONCAT(user.first_name, ' ', user.last_name) AS changed_by
+            CONCAT(user.first_name, ' ', user.last_name) AS changed_by,
+            user.department AS admin_department -- Fetch admin's department
         FROM status_change_logs AS logs
         JOIN user ON logs.changed_by = user.user_id
         ORDER BY logs.changed_at DESC";
+
 
 $result = $conn->query($sql);
 ?>
@@ -110,12 +112,14 @@ $result = $conn->query($sql);
                                 <td><?= htmlspecialchars($row['old_status']) ?></td>
                                 <td><?= htmlspecialchars($row['new_status']) ?></td>
                                 <td><?= htmlspecialchars($row['changed_by']) ?></td>
+                                <td><?= htmlspecialchars($row['admin_department']) ?></td>
                                 <td><?= htmlspecialchars($row['changed_at']) ?></td>
                             </tr>
                         <?php endwhile; ?>
                     <?php else: ?>
                         <tr>
                             <td colspan="6" class="text-center">ไม่มีข้อมูลการเปลี่ยนสถานะ</td>
+                            <td colspan="7" class="text-center">ไม่มีข้อมูลการเปลี่ยนสถานะ</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
