@@ -153,13 +153,24 @@ $conn->close();
                 <?php endif; ?>
 
                 <!-- Go Back Button -->
+                <!-- Go Back Button -->
                 <div class="text-center mt-4">
-                    <button onclick="window.location.href='secondpage.php';" class="btn btn-primary">ย้อนกลับ</button>
+                    <button onclick="goBackWithUserId();" class="btn btn-back">ย้อนกลับ</button>
                 </div>
+
+            
+
             </div>
         </div>
     </div>
-
+    <script>
+                    function goBackWithUserId() {
+                        // Get the user_id from PHP
+                        const userId = <?= json_encode($_SESSION['user']['user_id']) ?>;
+                        // Redirect to a specific page with the user_id as a query parameter
+                        window.location.href = `complaint_tracking.php?user_id=${userId}`;
+                    }
+    </script>                
     <!-- Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
