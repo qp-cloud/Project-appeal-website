@@ -207,7 +207,7 @@ $conn->close();
             <h2>แผงควบคุมผู้ดูแลระบบ</h2>
             <!-- Go Back Button at the top right -->
             <a href="view_logs.php" class="btn btn-info">ดูบันทึกการเปลี่ยนแปลง</a>
-            <a href="secondpage.php" class="btn btn-back">ย้อนกลับ</a>
+            <a href="admin_page.php" class="btn btn-back">ย้อนกลับ</a>
         </div>
 
         <!-- Filter Form -->

@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Prepare SQL query to fetch username, password, and role
-    $sql = "SELECT user_id, username, password, first_name, last_name, role FROM user WHERE username = ?";
+    $sql = "SELECT user_id, username, password, first_name, last_name, role, department  FROM user WHERE username = ?";
     $stmt = $conn->prepare($sql);
 
     if ($stmt === false) {
@@ -54,11 +54,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     'username' => $user['username'],
                     'first_name' => $user['first_name'], // Store first name
                     'last_name' => $user['last_name'],   // Store last name
-                    'role' => $user['role']
+                    'role' => $user['role'],
+                    'department' => $user['department']
                 ];
 
                 // Redirect to admin page
-                header("Location: admin_page.html");
+                header("Location: admin_page.php");
                 exit();
             } else {
                 // If the user is not an admin, show error and redirect

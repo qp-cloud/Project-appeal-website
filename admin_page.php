@@ -1,3 +1,31 @@
+
+<?php
+// Start the session to manage login status
+session_start();
+
+// Check if the user is logged in
+if (isset($_SESSION['user'])) {
+    $username = $_SESSION['user']['username']; // User's username
+    $role = $_SESSION['user']['role'];         // Role (admin or user)
+    $department = $_SESSION['user']['department']; 
+    
+    // Check the user's role
+    if ($role === 'admin') {
+        echo "Welcome, $username! You are logged in as an administrator.";
+        // Add admin-specific functionality here
+    } elseif ($role === 'user') {
+        echo "Welcome, $username! You are logged in as a regular user.";
+        // Add user-specific functionality here
+    } else {
+        echo "Access denied. Unknown role.";
+        exit();
+    }
+} else {
+    // Redirect to login page if not logged in
+    header("Location: login.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -137,8 +165,10 @@
     <div class="header-nav">
       <nav>
         <ul>
-          <a href="admin_login.html">เข้าสู่ระบบ</a>
           <a href="home.html">หน้าหลัก</a>
+          <span>ยินดีต้อนรับ, <?= htmlspecialchars($_SESSION['user']['first_name']) ?> <?= htmlspecialchars($_SESSION['user']['last_name']) ?></span>
+          <span>แผนก, <?= htmlspecialchars($_SESSION['user']['department']) ?> </span>
+          <a href="edit_account.php?username=<?= urlencode($username) ?>">แก้ไขข้อมูลบัญชี</a>
         </ul>
       </nav>
     </div>
