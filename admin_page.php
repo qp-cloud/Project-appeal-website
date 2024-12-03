@@ -180,7 +180,7 @@ if (isset($_SESSION['user'])) {
       </nav>
     </div>
   </div>
-
+  
   <div class="container">
     <div class="title">ส่วนของเจ้าหน้าที่</div>
     <div class="slogan">
@@ -190,10 +190,10 @@ if (isset($_SESSION['user'])) {
     </div>
 
     <div class="button-container">
-      <a href="admin_dashboard.php" class="button-dashboard">แดชบอร์ดการจัดการ</a>
-      <a href="admin_dashboard_appeal.php" class="button-dashboard">แดชบอร์ดการจัดการผิดมิชอบ</a>
+      <a href="admin_dashboard.php" class="button-dashboard">แดชบอร์ดเรื่องร้องทุกข์</a>
+      <a href="admin_dashboard_appeal.php" class="button-dashboard">แดชบอร์ดแจ้งเบาะแสทุจริตประพฤติมิชอบ</a>
       <a href="admin_register.html" class="button-manage">ลงทะเบียนเจ้าหน้าที่</a>
-      <a href="view_contact.php" class="button-contact">ดูเรื่องติดต่อ</a>
+      <a href="view_contact.php" class="button-contact">ดูการติดต่อ</a>
     </div>
   </div>
 

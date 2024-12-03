@@ -309,6 +309,7 @@ $conn->close();
             </table>
         </div>
     </div>
+    
 
     <!-- JavaScript to show/hide custom date range fields -->
     <script>

@@ -111,17 +111,17 @@
   <div class="form-title">ลงทะเบียน</div>
   <form action="register.php" method="POST" id="registerForm" novalidate>
     <div class="form-group">
-      <input type="text" name="first_name" class="form-control" placeholder="First Name" required>
+      <input type="text" name="first_name" class="form-control" placeholder="ชื่อจริง" required>
       <div class="invalid-feedback">กรุณากรอกชื่อ</div>
     </div>
     
     <div class="form-group">
-      <input type="text" name="last_name" class="form-control" placeholder="Last Name" required>
+      <input type="text" name="last_name" class="form-control" placeholder="นามสกุล" required>
       <div class="invalid-feedback">กรุณากรอกนามสกุล</div>
     </div>
     
     <div class="form-group">
-      <input type="text" name="id_number" class="form-control" placeholder="ID Number" required maxlength="13" oninput="this.value = this.value.replace(/\D/g, '')">
+      <input type="text" name="id_number" class="form-control" placeholder="รหัสบัตรประจำตัวประชาชน 13 หลัก" required maxlength="13" oninput="this.value = this.value.replace(/\D/g, '')">
       <div class="invalid-feedback">กรุณากรอกเลขบัตรประชาชน 13 หลัก</div>
     </div>
     
@@ -141,22 +141,22 @@
     </div>
     
     <div class="form-group">
-      <input type="text" name="occupation" class="form-control" placeholder="Occupation" required>
+      <input type="text" name="occupation" class="form-control" placeholder="อาชีพ" required>
       <div class="invalid-feedback">กรุณากรอกอาชีพ</div>
     </div>
     
     <div class="form-group">
-      <input type="text" name="phone" class="form-control" placeholder="Phone" required maxlength="10" oninput="this.value = this.value.replace(/\D/g, '')">
+      <input type="text" name="phone" class="form-control" placeholder="เบอร์โทรศัพท์" required maxlength="10" oninput="this.value = this.value.replace(/\D/g, '')">
       <div class="invalid-feedback">กรุณากรอกเบอร์โทรศัพท์ 10 หลัก</div>
     </div>
     
     <div class="form-group">
-      <input type="email" name="email" class="form-control" placeholder="Email" required>
+      <input type="email" name="email" class="form-control" placeholder="อีเมลล์" required>
       <div class="invalid-feedback">กรุณากรอกอีเมลที่ถูกต้อง</div>
     </div>
     
     <div class="form-group">
-      <textarea name="address" class="form-control" placeholder="Address" rows="3" required></textarea>
+      <textarea name="address" class="form-control" placeholder="ที่อยู่ปัจจุบัน" rows="3" required></textarea>
       <div class="invalid-feedback">กรุณากรอกที่อยู่</div>
     </div>
     
@@ -174,13 +174,13 @@
           </div>
           <div class="modal-body">
             <div class="form-group">
-              <input type="text" name="username" class="form-control" placeholder="Username" required>
+              <input type="text" name="username" class="form-control" placeholder="ชื่อผู้ใช้" required>
             </div>
             <div class="form-group">
-              <input type="password" name="password" class="form-control" placeholder="Password" required>
+              <input type="password" name="password" class="form-control" placeholder="รหัสผ่าน" required>
             </div>
             <div class="form-group">
-              <input type="password" name="confirm_password" class="form-control" placeholder="Re-enter Password" required>
+              <input type="password" name="confirm_password" class="form-control" placeholder="ยืนยันรหัสผ่าน" required>
             </div>
           </div>
           <div class="modal-footer">
