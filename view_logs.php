@@ -86,7 +86,9 @@ $result = $conn->query($sql);
         <div class="header d-flex justify-content-between align-items-center">
             <h2>ประวัติการเปลี่ยนสถานะ</h2>
             <!-- Go Back Button -->
-            <a href="admin_dashboard.php" class="btn btn-back">ย้อนกลับ</a>
+            <a href="#" class="btn btn-back" onclick="goBack()">ย้อนกลับ</a>
+
+
         </div>
 
         <div class="table-responsive mt-4">
@@ -126,7 +128,11 @@ $result = $conn->query($sql);
             </table>
         </div>
     </div>
-
+    <script>
+    function goBack() {
+        window.history.back(); // Goes to the previous page in the history
+    }
+</script>
 </body>
 </html>
 

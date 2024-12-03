@@ -74,7 +74,7 @@ if (isset($_POST['status']) && $_POST['status'] != '') {
 }
 
 // Construct the SQL query with filters
-$sql = "SELECT id, complaint_subject, incident_date, problem_level, department, status FROM complaints";
+$sql = "SELECT id, report_subject, incident_date, problem_level, department , status FROM appeals";
 if (count($filter_conditions) > 0) {
     $sql .= " WHERE " . implode(" AND ", $filter_conditions);
 }
@@ -83,32 +83,33 @@ $result = $conn->query($sql);
 // Update status when the form is submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['status'], $_POST['complaint_id'])) {
     $new_status = $_POST['status'];
-    $complaint_id = intval($_POST['complaint_id']);
+    $appeal_id = intval($_POST['complaint_id']);
     $user_id = $_SESSION['user']['user_id']; // Get the logged-in user's ID
 
     // Get the old status before updating
-    $query_old_status = "SELECT status FROM complaints WHERE id = ?";
+    $query_old_status = "SELECT status FROM appeals WHERE id = ?";
     $stmt_old_status = $conn->prepare($query_old_status);
-    $stmt_old_status->bind_param("i", $complaint_id);
+    $stmt_old_status->bind_param("i", $appeal_id);
     $stmt_old_status->execute();
     $result_old_status = $stmt_old_status->get_result();
     $old_status = $result_old_status->fetch_assoc()['status'] ?? null;
     $stmt_old_status->close();
 
     // Update the complaint status
-    $update_sql = "UPDATE complaints SET status = ? WHERE id = ?";
+    $update_sql = "UPDATE appeals SET status = ? WHERE id = ?";
     if ($stmt_update = $conn->prepare($update_sql)) {
-        $stmt_update->bind_param("si", $new_status, $complaint_id);
+        $stmt_update->bind_param("si", $new_status, $appeal_id);
         if ($stmt_update->execute()) {
             // Insert a log entry for the status change
             $log_sql = "INSERT INTO status_change_logs (complaint_id, old_status, new_status, changed_by) VALUES (?, ?, ?, ?)";
             if ($stmt_log = $conn->prepare($log_sql)) {
-                $stmt_log->bind_param("issi", $complaint_id, $old_status, $new_status, $user_id);
+                $stmt_log->bind_param("issi", $appeal_id , $old_status, $new_status, $user_id);
+
                 $stmt_log->execute();
                 $stmt_log->close();
             }
             // Redirect to the success page
-            header("Location: update_success.php");
+            header("Location: update_success_appeal.php");
             exit(); // Always call exit after header redirection
         } else {
             echo "เกิดข้อผิดพลาดในการอัปเดตสถานะ.";
@@ -279,13 +280,13 @@ $conn->close();
                     <?php if ($result->num_rows > 0): ?>
                         <?php while ($row = $result->fetch_assoc()): ?>
                             <tr>
-                                <td><?= htmlspecialchars($row['complaint_subject']) ?></td>
+                                <td><?= htmlspecialchars($row['report_subject']) ?></td>
                                 <td><?= htmlspecialchars($row['incident_date']) ?></td>
                                 <td><?= htmlspecialchars($row['problem_level']) ?></td>
                                 <td><?= htmlspecialchars($row['department']) ?></td>
                                 <td><?= htmlspecialchars($row['status']) ?></td>
                                 <td>
-                                    <a href="admin_complant_detail.php?id=<?= urlencode($row['id']) ?>" class="btn btn-info">ดูรายละเอียด</a>
+                                    <a href="admin_appeal_datail.php?id=<?= urlencode($row['id']) ?>" class="btn btn-info">ดูรายละเอียด</a>
                                 </td>
                                 <td>
                                     <form method="POST">

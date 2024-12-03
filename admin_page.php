@@ -138,6 +138,12 @@ if (isset($_SESSION['user'])) {
     .button-manage:hover {
       background-color: #e64a19;
     }
+    .button-contact {
+      background-color: #ff3122; /* A contrasting color (Orange) */
+    }
+    .button-contact:hover {
+      background-color: #e64a19;
+    }
     .footer {
       background-color: #333;
       padding: 25px;
@@ -185,7 +191,9 @@ if (isset($_SESSION['user'])) {
 
     <div class="button-container">
       <a href="admin_dashboard.php" class="button-dashboard">แดชบอร์ดการจัดการ</a>
+      <a href="admin_dashboard_appeal.php" class="button-dashboard">แดชบอร์ดการจัดการผิดมิชอบ</a>
       <a href="admin_register.html" class="button-manage">ลงทะเบียนเจ้าหน้าที่</a>
+      <a href="view_contact.php" class="button-contact">ดูเรื่องติดต่อ</a>
     </div>
   </div>
 

@@ -33,7 +33,7 @@ $result = $conn->query($sql);
 <body>
     <div class="container mt-5">
         <header class="text-center mb-4">
-            <h1>Admin Panel - Contact Form Submissions</h1>
+            <h1>แผงควบคุมผู้ดูแลระบบ - การส่งแบบฟอร์มการติดต่อ</h1>
         </header>
 
         <?php
@@ -43,9 +43,7 @@ $result = $conn->query($sql);
             unset($_SESSION['message']);
         }
         ?>
-        <div class="text-center mt-4">
-            <a href="admin_dashboard.php" class="btn btn-primary">Back to Dashboard</a>
-        </div>
+        
         <!-- Table to display contact form data -->
         <div class="table-responsive">
             <table class="table table-striped table-bordered">
@@ -81,10 +79,11 @@ $result = $conn->query($sql);
                 </tbody>
             </table>
         </div>
-
+        <div class="text-center mt-4">
+            <a href="admin_page.php" class="btn btn-primary">Back to Dashboard</a>
+        </div>
         
     </div>
-
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>

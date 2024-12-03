@@ -29,7 +29,8 @@ $complaint_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 $sql = "SELECT 
             c.id, 
             c.user_id, 
-            c.complaint_subject, 
+            c.report_subject,
+            c.report_person, 
             c.contact_phone, 
             c.contact_location, 
             c.contact_details, 
@@ -47,7 +48,7 @@ $sql = "SELECT
             u.department AS admin_department, -- Admin's department
             CONCAT(usr.first_name, ' ', usr.last_name) AS user_name,
             logs.changed_at AS status_changed_at
-        FROM complaints AS c
+        FROM appeals AS c
         LEFT JOIN status_change_logs AS logs ON c.id = logs.complaint_id
         LEFT JOIN user AS u ON logs.changed_by = u.user_id
         LEFT JOIN user AS usr ON c.user_id = usr.user_id
@@ -64,7 +65,7 @@ if ($stmt = $conn->prepare($sql)) {
     $stmt->execute();
 
     // Bind the result to variables
-    $stmt->bind_result($id, $user_id, $complaint_subject, $contact_phone, $contact_location, $contact_details,
+    $stmt->bind_result($id, $user_id, $report_subject,$report_person, $contact_phone, $contact_location, $contact_details,
                    $latitude, $longitude, $incident_date, $incident_time, $problem_level, $department, 
                    $complaint_description, $complaint_file, $submitted_at, $status, $admin_name, 
                    $admin_department, $user_name, $status_changed_at);
@@ -76,7 +77,8 @@ if ($stmt = $conn->prepare($sql)) {
             'id' => $id,
             'user_id' => $user_id,
             'user_name' => $user_name,
-            'complaint_subject' => $complaint_subject,
+            'report_subject' => $report_subject,
+            'report_person' => $report_person,
             'contact_phone' => $contact_phone,
             'contact_location' => $contact_location,
             'contact_details' => $contact_details,
@@ -163,8 +165,9 @@ $conn->close();
             <div class="card-body">
                 <?php if (!empty($complaint_details)): ?>
                     <h5 class="mb-4" style="font-size: 18px; color: #000; font-weight: 600; border-bottom: 2px solid #2a7cff; padding-bottom: 5px;">
-                        <strong>ชื่อเรื่อง:</strong> <?= htmlspecialchars($complaint_details['complaint_subject']) ?></h5>
-                    <p><strong>ชื่อผู้ส่ง:</strong> <?= htmlspecialchars($complaint_details['user_name']) ?></p>
+                        <strong>ชื่อเรื่อง:</strong> <?= htmlspecialchars($complaint_details['report_subject']) ?></h5>
+                    <p><strong>ชื่อผู้ส่ง:</strong> <?= htmlspecialchars($complaint_details['user_name']) ?></p>  
+                    <p><strong>บุคคล/องกรณฺที่ร้องเรียน:</strong> <?= htmlspecialchars($complaint_details['report_person']) ?></p>      
                     <p><strong>เบอร์โทรติดต่อ:</strong> <?= htmlspecialchars($complaint_details['contact_phone']) ?></p>
                     <p><strong>สถานที่เกิดเหตุ:</strong> <?= htmlspecialchars($complaint_details['contact_location']) ?></p>
                     <p><strong>รายละเอียดที่ติดต่อ:</strong> <?= htmlspecialchars($complaint_details['contact_details']) ?></p>
@@ -205,7 +208,7 @@ $conn->close();
                 // Get the user_id from PHP
                 const userId = <?= json_encode($_SESSION['user']['user_id']) ?>;
                 // Redirect to a specific page with the user_id as a query parameter
-                window.location.href = `complaint_tracking.php?user_id=${userId}`;
+                window.location.href = `admin_dashboard_appeal.php?user_id=${userId}`;
             }
         </script>
     <!-- Bootstrap JS -->
