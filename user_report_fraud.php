@@ -310,7 +310,7 @@ $conn->close();
     <div class="container form-container">
         <h2 class="text-center mb-4">การแจ้งเบาะแสทุจริตประพฤติมิชอบ</h2>
 
-        <form id="repost-form" action="user_report_fraud.php?username=<?= $username ?>" method="POST" enctype="multipart/form-data" novalidate>
+        <form id="report-form" action="user_report_fraud.php?username=<?= $username ?>" method="POST" enctype="multipart/form-data" novalidate>
             <!-- Report Subject -->
             <div class="form-group">
                 <label for="report-subject">เรื่องที่ต้องการแจ้งเบาะแส <span class="text-danger">*</span></label>
@@ -464,7 +464,7 @@ $conn->close();
 
     <script>
         // Enable validation feedback on form submit
-        const form = document.getElementById('complaint-form');
+        const form = document.getElementById('report-form');
         const submitButton = document.getElementById('submit-form');
 
         form.addEventListener('submit', function (event) {
@@ -548,7 +548,7 @@ $conn->close();
     </script>
     <script>
         // Enable validation feedback on form submit
-        const form = document.getElementById('complaint-form');
+        const form = document.getElementById('report-form');
         form.addEventListener('submit', function (event) {
             if (!form.checkValidity()) {
                 event.preventDefault();
@@ -673,7 +673,7 @@ $conn->close();
         }
 
         // Validate file before submitting form
-        document.getElementById('complaint-form').addEventListener('submit', function (event) {
+        document.getElementById('report-form').addEventListener('submit', function (event) {
             if (!validateFile()) {
                 event.preventDefault(); // Prevent form submission if file is invalid
             }
