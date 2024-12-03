@@ -177,7 +177,7 @@ if (isset($_SESSION['user'])) {
         <p style="color: red;">กรุณาเข้าสู่ระบบเพื่อใช้งานเมนูนี้</p>
       <?php endif; ?>
       <?php if ($role === 'admin'): ?>
-        <a href="admin_dashboard.php?user_id=<?= urlencode($_SESSION['user']['user_id']) ?>">ส่วนงานของเจ้าหน้าที่</a>
+        <a href="admin_page.php?user_id=<?= urlencode($_SESSION['user']['user_id']) ?>">ส่วนงานของเจ้าหน้าที่</a>
       <?php endif; ?>
     </div>
   </div>

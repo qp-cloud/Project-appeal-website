@@ -326,7 +326,7 @@ $conn->close();
 
             <!-- Contact Phone -->
             <div class="form-group">
-                <input type="text" name="phone" class="form-control" placeholder="Phone" required maxlength="10" oninput="this.value = this.value.replace(/\D/g, '')">
+                <input type="text" name="contact_phone" class="form-control"  required maxlength="10" oninput="this.value = this.value.replace(/\D/g, '')">
                 <div class="invalid-feedback">กรุณากรอกเบอร์โทรศัพท์ 10 หลัก</div>
             </div>
 
@@ -371,12 +371,14 @@ $conn->close();
             <div class="form-group">
                 <label for="problem-level">ระดับปัญหา</label>
                 <select class="form-control" id="problem-level" name="problem_level" required>
-                    <option value="ต่ำ">ต่ำ</option>
-                    <option value="ปานกลาง">ปานกลาง</option>
-                    <option value="สูง">สูง</option>
+                    <option value="" disabled selected>เลือกระดับปัญหา</option>
+                    <option value="เร่งด่วน">เร่งด่วน (ร้ายแรง มัผลกระทบต่อชีวิตและทรัพย์สินของประชาชน)</option>
+                    <option value="ปานกลาง">ปานกลาง (เรื่องร้องเรียนปัญหาเกี่ยวกับระบบหรือการช่วยเหลือที่เกี่ยวข้องกับเทศบาล)</option>
+                    <option value="ต่ำ">ต่ำ (เรื่องร้องเรียนทั่วไปของปัญหาในพื้นที่)</option>
                 </select>
                 <div class="invalid-feedback">กรุณาเลือกระดับปัญหา</div>
             </div>
+
 
             <!-- Department -->
             <div class="form-group">

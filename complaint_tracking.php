@@ -168,7 +168,7 @@ $conn->close();
                         // Get the user_id from PHP
                         const userId = <?= json_encode($_SESSION['user']['user_id']) ?>;
                         // Redirect to a specific page with the user_id as a query parameter
-                        window.location.href = `complaint_tracking.php?user_id=${userId}`;
+                        window.location.href = `secondpage.php`;
                     }
     </script>                
     <!-- Bootstrap JS -->

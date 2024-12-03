@@ -169,6 +169,7 @@ if (isset($_SESSION['user'])) {
           <span>ยินดีต้อนรับ, <?= htmlspecialchars($_SESSION['user']['first_name']) ?> <?= htmlspecialchars($_SESSION['user']['last_name']) ?></span>
           <span>แผนก, <?= htmlspecialchars($_SESSION['user']['department']) ?> </span>
           <a href="edit_account.php?username=<?= urlencode($username) ?>">แก้ไขข้อมูลบัญชี</a>
+          <a href="logout.php">ออกจากระบบ</a>
         </ul>
       </nav>
     </div>

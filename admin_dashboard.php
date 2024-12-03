@@ -207,6 +207,7 @@ $conn->close();
             <h2>แผงควบคุมผู้ดูแลระบบ</h2>
             <!-- Go Back Button at the top right -->
             <a href="view_logs.php" class="btn btn-info">ดูบันทึกการเปลี่ยนแปลง</a>
+            <a href="view_contact.php" class="btn btn-info">ดูเรื่องติดต่อ</a>
             <a href="admin_page.php" class="btn btn-back">ย้อนกลับ</a>
         </div>
 
@@ -285,7 +286,7 @@ $conn->close();
                                 <td><?= htmlspecialchars($row['department']) ?></td>
                                 <td><?= htmlspecialchars($row['status']) ?></td>
                                 <td>
-                                    <a href="complaint_detail.php?id=<?= urlencode($row['id']) ?>" class="btn btn-info">ดูรายละเอียด</a>
+                                    <a href="admin_complant_detail.php?id=<?= urlencode($row['id']) ?>" class="btn btn-info">ดูรายละเอียด</a>
                                 </td>
                                 <td>
                                     <form method="POST">
