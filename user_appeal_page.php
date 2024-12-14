@@ -372,7 +372,7 @@ $conn->close();
                 <label for="problem-level">ระดับปัญหา</label>
                 <select class="form-control" id="problem-level" name="problem_level" required>
                     <option value="" disabled selected>เลือกระดับปัญหา</option>
-                    <option value="เร่งด่วน">เร่งด่วน (ร้ายแรง มัผลกระทบต่อชีวิตและทรัพย์สินของประชาชน)</option>
+                    <option value="เร่งด่วน">เร่งด่วน (ร้ายแรง มีผลกระทบต่อชีวิตและทรัพย์สินของประชาชน)</option>
                     <option value="ปานกลาง">ปานกลาง (เรื่องร้องเรียนปัญหาเกี่ยวกับระบบหรือการช่วยเหลือที่เกี่ยวข้องกับเทศบาล)</option>
                     <option value="ต่ำ">ต่ำ (เรื่องร้องเรียนทั่วไปของปัญหาในพื้นที่)</option>
                 </select>

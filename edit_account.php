@@ -244,7 +244,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       <div class="button-container">
         <button type="submit" class="save-button">บันทึก</button>
         <button type="button" class="cancel-button" onclick="window.location.href='secondpage.php'">ยกเลิก</button>
-        <button type="delete" class="delete-button">ลบบัญชี</button>
+        <button type="button" class="delete-button" onclick="window.location.href='delete_account.php'">ลบบัญชี</button>
       </div>
     </form>
   </div>
