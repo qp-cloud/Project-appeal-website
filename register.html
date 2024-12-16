@@ -103,6 +103,9 @@
     .form-title, .form-group label {
       color: #343a40;
     }
+    .required {
+      color: red;
+    }
   </style>
 </head>
 <body>
@@ -111,52 +114,63 @@
   <div class="form-title">ลงทะเบียน</div>
   <form action="register.php" method="POST" id="registerForm" novalidate>
     <div class="form-group">
-      <input type="text" name="first_name" class="form-control" placeholder="ชื่อจริง" required>
+      <label for="first_name">ชื่อจริง:<span class="required">*</span></label>
+      <input type="text" name="first_name" class="form-control" placeholder="กรอกชื่อจริง" required>
       <div class="invalid-feedback">กรุณากรอกชื่อ</div>
     </div>
     
     <div class="form-group">
-      <input type="text" name="last_name" class="form-control" placeholder="นามสกุล" required>
+      <labal for="last_name">นามสกุล:<span class="required">*</span></labal>
+      <input type="text" name="last_name" class="form-control" placeholder="กรอกนามสกุล" required>
       <div class="invalid-feedback">กรุณากรอกนามสกุล</div>
     </div>
     
     <div class="form-group">
-      <input type="text" name="id_number" class="form-control" placeholder="รหัสบัตรประจำตัวประชาชน 13 หลัก" required maxlength="13" oninput="this.value = this.value.replace(/\D/g, '')">
+      <labal for="id_number">เลขประจำตัวประชาชน:<span class="required">*</span></labal>
+      <input type="text" name="id_number" class="form-control" placeholder="กรอกรหัสบัตรประจำตัวประชาชน 13 หลัก" required maxlength="13" oninput="this.value = this.value.replace(/\D/g, '')">
       <div class="invalid-feedback">กรุณากรอกเลขบัตรประชาชน 13 หลัก</div>
     </div>
     
-    <div class="form-group">
-      <select name="gender" class="form-control" required>
-        <option value="">กรุณาเลือกเพศ</option>
-        <option value="male">ชาย</option>
-        <option value="female">หญิง</option>
-        <option value="other">อื่นๆ</option>
-      </select>
-      <div class="invalid-feedback">กรุณาเลือกเพศ</div>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label for="gender">เพศ:<span class="required">*</span></label>
+        <select name="gender" class="form-control" required>
+          <option value="">กรุณาเลือกเพศ</option>
+          <option value="male">ชาย</option>
+          <option value="female">หญิง</option>
+          <option value="other">อื่นๆ</option>
+        </select>
+        <div class="invalid-feedback">กรุณาเลือกเพศ</div>
+      </div>
+    
+      <div class="form-group col-md-6">
+        <label for="birth_date">วันเดือนปีเกิด:<span class="required">*</span></label>
+        <input type="date" name="birth_date" class="form-control" required>
+        <div class="invalid-feedback">กรุณาเลือกวันเกิด</div>
+      </div>
     </div>
     
     <div class="form-group">
-      <input type="date" name="birth_date" class="form-control" required>
-      <div class="invalid-feedback">กรุณาเลือกวันเกิด</div>
-    </div>
-    
-    <div class="form-group">
-      <input type="text" name="occupation" class="form-control" placeholder="อาชีพ" required>
+      <labal for="occupation">อาชีพ:<span class="required">*</span></labal>
+      <input type="text" name="occupation" class="form-control" placeholder="ระบุอาชีพ" required>
       <div class="invalid-feedback">กรุณากรอกอาชีพ</div>
     </div>
     
     <div class="form-group">
-      <input type="text" name="phone" class="form-control" placeholder="เบอร์โทรศัพท์" required maxlength="10" oninput="this.value = this.value.replace(/\D/g, '')">
+      <labal for="phone">เบอร์โทรศัพท์:<span class="required">*</span></labal>
+      <input type="text" name="phone" class="form-control" placeholder="กรอกเบอร์โทรศัพท์" required maxlength="10" oninput="this.value = this.value.replace(/\D/g, '')">
       <div class="invalid-feedback">กรุณากรอกเบอร์โทรศัพท์ 10 หลัก</div>
     </div>
     
     <div class="form-group">
-      <input type="email" name="email" class="form-control" placeholder="อีเมลล์" required>
+      <labal for="email">อีเมล:<span class="required">*</span></labal>
+      <input type="email" name="email" class="form-control" placeholder="กรอกอีเมล" required>
       <div class="invalid-feedback">กรุณากรอกอีเมลที่ถูกต้อง</div>
     </div>
     
     <div class="form-group">
-      <textarea name="address" class="form-control" placeholder="ที่อยู่ปัจจุบัน" rows="3" required></textarea>
+      <labal for="address">ที่อยู่:<span class="required">*</span></labal>
+      <textarea name="address" class="form-control" placeholder="กรอกที่อยู่ปัจจุบัน" rows="3" required></textarea>
       <div class="invalid-feedback">กรุณากรอกที่อยู่</div>
     </div>
     
@@ -174,17 +188,19 @@
           </div>
           <div class="modal-body">
             <div class="form-group">
-              <input type="text" name="username" class="form-control" placeholder="ชื่อผู้ใช้" required>
+              <labal for="username">ชื่อผู้ใช้:<span class="required">*</span></labal>
+              <input type="text" name="username" class="form-control" placeholder="กรอกชื่อผู้ใช้" required>
             </div>
             <div class="form-group">
-              <input type="password" name="password" class="form-control" placeholder="รหัสผ่าน" required>
+              <labal for="password">รหัสผ่าน:<span class="required">*</span></labal>
+              <input type="password" name="password" class="form-control" placeholder="กรอกรหัสผ่าน" required>
             </div>
             <div class="form-group">
+              <labal for="confirm_password">ยืนยันรหัสผ่าน:<span class="required">*</span></labal>
               <input type="password" name="confirm_password" class="form-control" placeholder="ยืนยันรหัสผ่าน" required>
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">ยกเลิก</button>
             <button type="submit" class="btn btn-primary">ลงทะเบียน</button>
           </div>
         </div>

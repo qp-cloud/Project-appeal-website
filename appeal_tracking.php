@@ -150,7 +150,7 @@ $conn->close();
                         </tbody>
                     </table>
                 <?php else: ?>
-                    <p class="text-center text-muted">ยังไม่มีข้อมูลร้องทุกข์ / ร้องเรียน</p>
+                    <p class="text-center text-muted">ยังไม่มีข้อมูลการแจ้งเบาะแสกรทุจริตประพฤติมิชอบ</p>
                 <?php endif; ?>
 
                 <!-- Go Back Button -->

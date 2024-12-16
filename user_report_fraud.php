@@ -398,6 +398,7 @@ $conn->close();
                     <option value="กองการเจ้าหน้าที่">กองการเจ้าหน้าที่</option>
                     <option value="หน่วยตรวจสอบภายใน">หน่วยตรวจสอบภายใน</option>
                     <option value="หน่วยงานอื่นๆ">หน่วยงานอื่นๆ</option>
+                    <option value="ไม่ทราบหน่วยงาน">ไม่ทราบหน่วยงาน</option>
                 </select>
                 <div class="invalid-feedback">กรุณาเลือกหน่วยงานที่รับผิดชอบ</div>
             </div>

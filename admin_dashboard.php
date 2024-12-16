@@ -198,13 +198,18 @@ $conn->close();
         .btn-primary:hover {
             background-color: #0056b3;
         }
+        .problem-level {
+        background-color: #f8d7da; /* สีชมพูอ่อน */
+        color: #721c24; /* สีแดงเข้มสำหรับข้อความ */
+        font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
         <div class="header d-flex justify-content-between align-items-center">
-            <h2>แผงควบคุมผู้ดูแลระบบ</h2>
+            <h2>เรื่องราวร้องทุกข์ในระบบ</h2>
             <!-- Go Back Button at the top right -->
             <a href="view_logs.php" class="btn btn-info">ดูบันทึกการเปลี่ยนแปลง</a>
             <a href="admin_page.php" class="btn btn-back">ย้อนกลับ</a>
@@ -269,10 +274,11 @@ $conn->close();
                     <tr>
                         <th>หัวข้อการร้องเรียน</th>
                         <th>วันที่เกิดเหตุ</th>
-                        <th>ระดับปัญหา</th>
+                        <th class="problem-level">ระดับปัญหา</th>
                         <th>หน่วยงาน</th>
                         <th>สถานะ</th>
-                        <th>จัดการสถานะ</th>
+                        <th>รายละเอียด</th>
+                        <th>จัดการ/อัพเดทสถานะ</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -281,7 +287,7 @@ $conn->close();
                             <tr>
                                 <td><?= htmlspecialchars($row['complaint_subject']) ?></td>
                                 <td><?= htmlspecialchars($row['incident_date']) ?></td>
-                                <td><?= htmlspecialchars($row['problem_level']) ?></td>
+                                <td class="problem-level"><?= htmlspecialchars($row['problem_level']) ?></td>
                                 <td><?= htmlspecialchars($row['department']) ?></td>
                                 <td><?= htmlspecialchars($row['status']) ?></td>
                                 <td>

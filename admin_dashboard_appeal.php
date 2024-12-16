@@ -152,7 +152,7 @@ $conn->close();
 
         .header h2 {
             font-weight: bold;
-            font-size: 36px;
+            font-size: 30px;
         }
 
         .btn-back {
@@ -205,7 +205,7 @@ $conn->close();
 
     <div class="container">
         <div class="header d-flex justify-content-between align-items-center">
-            <h2>แผงควบคุมผู้ดูแลระบบ</h2>
+            <h2>เรื่องราวแจ้งเบาะแสการทุจริตประพฤติมิชอบในระบบ</h2>
             <!-- Go Back Button at the top right -->
             <a href="view_logs.php" class="btn btn-info">ดูบันทึกการเปลี่ยนแปลง</a>
             <a href="admin_page.php" class="btn btn-back">ย้อนกลับ</a>
@@ -273,7 +273,8 @@ $conn->close();
                         <th>ระดับปัญหา</th>
                         <th>หน่วยงาน</th>
                         <th>สถานะ</th>
-                        <th>จัดการสถานะ</th>
+                        <th>รายละเอียด</th>
+                        <th>จัดการ/อัพเดทสถานะ</th>
                     </tr>
                 </thead>
                 <tbody>

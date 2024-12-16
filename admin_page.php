@@ -90,8 +90,8 @@ if (isset($_SESSION['user'])) {
       font-size: 48px;
       font-weight: bold;
       margin-bottom: 20px;
-      color: #D02090;
-      background-color: #D3D3D3;
+      color:rgb(172, 27, 143);
+      background-color:rgba(4, 4, 4, 0.19);
       text-align: center;
     }
     .slogan {
@@ -171,9 +171,8 @@ if (isset($_SESSION['user'])) {
     <div class="header-nav">
       <nav>
         <ul>
-          <a href="home.html">หน้าหลัก</a>
-          <span>ยินดีต้อนรับ, <?= htmlspecialchars($_SESSION['user']['first_name']) ?> <?= htmlspecialchars($_SESSION['user']['last_name']) ?></span>
-          <span>แผนก, <?= htmlspecialchars($_SESSION['user']['department']) ?> </span>
+          <span style="color: cyan;">ยินดีต้อนรับ</span>, <?= htmlspecialchars($_SESSION['user']['first_name']) ?> <?= htmlspecialchars($_SESSION['user']['last_name']) ?>
+          <span style="color: green;">แผนก</span>, <?= htmlspecialchars($_SESSION['user']['department']) ?> 
           <a href="edit_account.php?username=<?= urlencode($username) ?>">แก้ไขข้อมูลบัญชี</a>
           <a href="logout.php">ออกจากระบบ</a>
         </ul>
