@@ -1,4 +1,3 @@
-
 <?php
 // Start the session to manage login status
 session_start();
@@ -25,7 +24,45 @@ if (isset($_SESSION['user'])) {
     header("Location: login.php");
     exit();
 }
+
+// Database connection
+$servername = "localhost";
+$username_db = "root";  // Your MySQL username
+$password = "";  // Your MySQL password
+$dbname = "web_appeal_db";  // Your database name
+
+// Create connection
+$conn = new mysqli($servername, $username_db, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Query to count the number of complaints and appeals with the status "ยังไม่ดำเนินการ"
+$sql = "
+    SELECT source, status, problem_level, COUNT(*) AS count
+    FROM (
+        SELECT 'ร้องทุกข์' AS source, status, problem_level FROM complaints WHERE status = 'ยังไม่ดำเนินการ'
+        UNION ALL
+        SELECT 'การทุจริตประพฤติมิชอบ' AS source, status, problem_level FROM appeals WHERE status = 'ยังไม่ดำเนินการ'
+    ) AS all_data
+    GROUP BY source, status, problem_level
+    ORDER BY source, problem_level";
+$result = $conn->query($sql);
+
+// Fetch the counts into an array
+$counts = [];
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $counts[] = $row;
+    }
+}
+
+// Close connection
+$conn->close();
 ?>
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -163,19 +200,103 @@ if (isset($_SESSION['user'])) {
     .footer a:hover {
       text-decoration: underline;
     }
+
+    /* Style for the dropdown menu */
+    /* Style for the dropdown menu */
+.dropdown {
+  position: relative;
+  display: inline-block;
+  margin: 10px;
+}
+
+.dropbtn {
+  background-color: #2a7cff;
+  color: white;
+  padding: 12px 20px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  text-align: center;
+  width: 100%;
+}
+
+.dropbtn:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 300px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  border-radius: 5px;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  font-size: 16px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #ddd;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.dropdown-content a:hover {
+  background-color: #f1f1f1;
+  cursor: pointer;
+}
+
+/* Optional: Adjust dropdown menu arrow */
+.dropdown-content:before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  margin-left: -10px;
+  border-width: 10px;
+  border-style: solid;
+  border-color: transparent transparent #f9f9f9 transparent;
+}
+
   </style>
+  
 </head>
 <body>
   <div class="header">
     <img src="logo.png" alt="Ban Pong Municipality Logo">
+    <div class="dropdown">
+  <button class="dropbtn">ดูจำนวนการร้องเรียนที่ยังไม่ดำเนินการ</button>
+  <div class="dropdown-content">
+        <?php foreach ($counts as $item): ?>
+          <a href="#">
+            <?= htmlspecialchars($item['source']) ?> - <?= htmlspecialchars($item['problem_level']) ?> : <?= htmlspecialchars($item['count']) ?> ราย
+          </a>
+        <?php endforeach; ?>
+      </div>
+    </div>
     <div class="header-nav">
       <nav>
         <ul>
+        
           <span style="color: cyan;">ยินดีต้อนรับ</span>, <?= htmlspecialchars($_SESSION['user']['first_name']) ?> <?= htmlspecialchars($_SESSION['user']['last_name']) ?>
           <span style="color: green;">แผนก</span>, <?= htmlspecialchars($_SESSION['user']['department']) ?> 
           <a href="edit_account.php?username=<?= urlencode($username) ?>">แก้ไขข้อมูลบัญชี</a>
           <a href="logout.php">ออกจากระบบ</a>
+          
         </ul>
+        
       </nav>
     </div>
   </div>
@@ -193,6 +314,10 @@ if (isset($_SESSION['user'])) {
       <a href="admin_dashboard_appeal.php" class="button-dashboard">แดชบอร์ดแจ้งเบาะแสทุจริตประพฤติมิชอบ</a>
       <a href="admin_register.html" class="button-manage">ลงทะเบียนเจ้าหน้าที่</a>
       <a href="view_contact.php" class="button-contact">ดูการติดต่อ</a>
+    </div>
+
+    <!-- Dropdown to select status "ยังไม่ดำเนินการ" counts -->
+    
     </div>
   </div>
 
