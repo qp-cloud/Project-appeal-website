@@ -325,11 +325,20 @@ $conn->close();
                 <div class="invalid-feedback">กรุณากรอกชื่อองค์กรหรือบุคคลที่ต้องการแจ้งเบาะแส</div>
             </div>
 
+            <div class="form-group">
+                <label for="contact">ช่องทางการติดต่อ </label>
+                <select class="form-control" id="contact" name="contact" required>
+                    <option value="" disabled selected>เลือกช่องทางการติดต่อ</option>
+                    <option value="อีเมล">อีเมล</option>
+                    <option value="เบอร์โทรศัพท์">เบอร์โทรศัพท์</option>
+                </select>
+                <div class="invalid-feedback">กรุณาเลือกช่องทางการติดต่อ</div>
+            </div>
             <!-- Contact Phone -->
             <div class="form-group">
-                <label for="contact-phone">เบอร์โทรศัพท์ที่สามารถติดต่อได้ <span class="text-danger">*</span></label>
-                <input type="tel" class="form-control" id="contact-phone" name="contact_phone" required pattern="^\d{10}$">
-                <div class="invalid-feedback">กรุณากรอกเบอร์โทรศัพท์ที่สามารถติดต่อได้ (10 หลัก)</div>
+                <label for="contact">ข้อมูลช่องทางการติดต่อ <span class="text-danger">*</span></label>
+                <input type="text" name="contact_phone" id="contact_phone" class="form-control" required>
+                <div class="invalid-feedback">กรุณาเลือกและกรอกช่องทางการติดต่อ</div>
             </div>
 
             <!-- Location -->
@@ -460,7 +469,7 @@ $conn->close();
                 </div>
             </div>
         <div class="form-group text-center">
-                <button type="submit" class="btn btn-primary btn-full-width" id="submit-form" disabled>ยืนยันการส่งข้อมูล</button>
+                <button type="submit" class="btn btn-primary w-50" id="submit-form" disabled>ยืนยันการส่งข้อมูล</button>
             </div>
         </form>
     </div>

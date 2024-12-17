@@ -169,11 +169,11 @@ if (isset($_SESSION['user'])) {
   <div class="container">
     <h1>เมนูหลัก</h1>
     <div class="function-buttons">
-      <a href="user_appeal_page.php?username=<?= urlencode($username) ?>">ร้องทุกข์ / ร้องเรียน</a>
+      <a href="user_appeal_page.php?username=<?= urlencode($username) ?>">แจ้งเรื่องร้องทุกข์</a>
       <a href="user_report_fraud.php?username=<?= urlencode($username) ?>">แจ้งเบาะแสการทุจริตประพฤติมิชอบ</a>
       <?php if (isset($_SESSION['user']['user_id'])): ?>
-        <a href="complaint_tracking.php?user_id=<?= urlencode($_SESSION['user']['user_id']) ?>">ติดตามรายงานผลการร้องทุกข์ / ร้องเรียน</a>
-        <a href="appeal_tracking.php?user_id=<?= urlencode($_SESSION['user']['user_id']) ?>">ติดตามรายงานผลการทุจริตประพฤติมิชอบ</a>
+        <a href="complaint_tracking.php?user_id=<?= urlencode($_SESSION['user']['user_id']) ?>">ติดตามรายงานผลการแจ้งเรื่องร้องทุกข์</a>
+        <a href="appeal_tracking.php?user_id=<?= urlencode($_SESSION['user']['user_id']) ?>">ติดตามรายงานผลการแจ้งเบาะแสการทุจริตประพฤติมิชอบ</a>
       <?php else: ?>
         <p style="color: red;">กรุณาเข้าสู่ระบบเพื่อใช้งานเมนูนี้</p>
       <?php endif; ?>

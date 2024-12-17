@@ -314,7 +314,7 @@ $conn->close();
         </div>
     </div>
     <div class="container form-container">
-        <h2 class="text-center mb-4">ร้องทุกข์ / ร้องเรียน</h2>
+        <h2 class="text-center mb-4">แจ้งเรื่องร้องทุกข์</h2>
 
         <form id="complaint-form" action="user_appeal_page.php?username=<?= $username ?>" method="POST" enctype="multipart/form-data" novalidate>
             <!-- Complaint Subject -->
@@ -324,15 +324,25 @@ $conn->close();
                 <div class="invalid-feedback">กรุณากรอกเรื่องที่ต้องการร้องทุกข์</div>
             </div>
 
+            <div class="form-group">
+                <label for="contact">ช่องทางการติดต่อ </label>
+                <select class="form-control" id="contact" name="contact" required>
+                    <option value="" disabled selected>เลือกช่องทางการติดต่อ</option>
+                    <option value="อีเมล">อีเมล</option>
+                    <option value="เบอร์โทรศัพท์">เบอร์โทรศัพท์</option>
+                </select>
+                <div class="invalid-feedback">กรุณาเลือกช่องทางการติดต่อ</div>
+            </div>
             <!-- Contact Phone -->
             <div class="form-group">
-                <input type="text" name="contact_phone" class="form-control"  required maxlength="10" oninput="this.value = this.value.replace(/\D/g, '')">
-                <div class="invalid-feedback">กรุณากรอกเบอร์โทรศัพท์ 10 หลัก</div>
+                <label for="contact">ข้อมูลช่องทางการติดต่อ <span class="text-danger">*</span></label>
+                <input type="text" name="contact_phone" id="contact_phone" class="form-control" required>
+                <div class="invalid-feedback">กรุณาเลือกและกรอกช่องทางการติดต่อ</div>
             </div>
 
             <!-- Location -->
             <div class="form-group">
-                <label for="contact-location">สถานที่</label>
+                <label for="contact-location">สถานที่ <span class="text-danger">*</span></label>
                 <input type="text" class="form-control" id="contact-location" name="contact_location" required>
                 <div class="invalid-feedback">กรุณากรอกสถานที่</div>
             </div>

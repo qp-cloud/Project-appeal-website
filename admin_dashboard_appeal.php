@@ -283,7 +283,7 @@ function map_problem_level($level) {
                                 <td><?= htmlspecialchars($row['department']) ?></td>
                                 <td><?= htmlspecialchars($row['status']) ?></td>
                                 <td>
-                                    <a href="admin_appeal_datail.php?id=<?= urlencode($row['id']) ?>" class="btn btn-info">ดูรายละเอียด</a>
+                                    <a href="admin_appeal_datail.php?id=<?= urlencode($row['id']) ?>" class="btn btn-info">จัดการเรื่อง</a>
                                 </td>
                                 
                             </tr>

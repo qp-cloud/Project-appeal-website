@@ -223,7 +223,7 @@ $conn->close();
                             <td><?= htmlspecialchars($complaint_details['user_name']) ?></td>
                         </tr>
                         <tr>
-                            <th>เบอร์โทรติดต่อ</th>
+                            <th>ช่องทางการติดต่อ</th>
                             <td><?= htmlspecialchars($complaint_details['contact_phone']) ?></td>
                         </tr>
                         <tr>

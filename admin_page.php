@@ -291,7 +291,7 @@ $conn->close();
         <ul>
         
           <span style="color: cyan;">ยินดีต้อนรับ</span>, <?= htmlspecialchars($_SESSION['user']['first_name']) ?> <?= htmlspecialchars($_SESSION['user']['last_name']) ?>
-          <span style="color: green;">แผนก</span>, <?= htmlspecialchars($_SESSION['user']['department']) ?> 
+          <span style="color: green;">หน่วยงาน</span>, <?= htmlspecialchars($_SESSION['user']['department']) ?> 
           <a href="edit_account.php?username=<?= urlencode($username) ?>">แก้ไขข้อมูลบัญชี</a>
           <a href="logout.php">ออกจากระบบ</a>
           

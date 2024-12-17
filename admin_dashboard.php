@@ -257,7 +257,7 @@ function map_problem_level($level) {
                     </select>
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary">กรองข้อมูล</button>
+                <button type="submit" class="btn btn-primary">กรองข้อมูล</button>
         </form>
 
         <!-- Complaint Table -->
@@ -285,7 +285,7 @@ function map_problem_level($level) {
                                 <td><?= htmlspecialchars($row['department']) ?></td>
                                 <td><?= htmlspecialchars($row['status']) ?></td>
                                 <td>
-                                    <a href="admin_complant_detail.php?id=<?= urlencode($row['id']) ?>" class="btn btn-info">ดูรายละเอียด</a>
+                                    <a href="admin_complant_detail.php?id=<?= urlencode($row['id']) ?>" class="btn btn-info">จัดการเรื่อง</a>
                                 </td>
                                 
                             </tr>
