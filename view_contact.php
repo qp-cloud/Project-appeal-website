@@ -30,11 +30,47 @@ $result = $conn->query($sql);
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+<style>
+    body {
+        background-image: url('img/adminbg.jpg');
+        background-size: cover;
+        background-attachment: fixed;
+    }
+    .header {
+        background: #333;
+        color: #fff;
+        padding: 15px 30px;
+        display: flex;
+        justify-content: center; /* จัดวางข้อความแนวนอนตรงกลาง */
+        align-items: center; /* จัดวางข้อความแนวตั้งตรงกลาง */
+        border: 5px solid #2a7cff;
+        border-radius: 15px;
+        width: 90%;
+        margin: 20px auto;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center; /* ข้อความภายในอยู่ตรงกลาง */
+    }
+    .header h1 {
+        margin: 0; /* เอา Margin ออกเพื่อจัดตำแหน่งให้พอดี */
+    }.table {
+        background-color: white;
+    }
+    .table th,
+    .table td {
+        background-color: white; /* พื้นหลังของเซลล์ */
+    }.table-container {
+        max-width: 70%; /* กำหนดความกว้างสูงสุดของตารางเป็น 80% ของหน้าจอ */
+        margin: 0 auto; /* จัดตารางให้อยู่ตรงกลาง */
+    }
+</style>
+
 <body>
     <div class="container mt-5">
-        <header class="text-center mb-4">
+        <header class="header">
             <h1>แผงควบคุมผู้ดูแลระบบ - การส่งแบบฟอร์มการติดต่อ</h1>
         </header>
+    </div>
+
 
         <?php
         // Display any session message
@@ -45,16 +81,15 @@ $result = $conn->query($sql);
         ?>
         
         <!-- Table to display contact form data -->
-        <div class="table-responsive">
+        <div class="table-responsive table-container">
             <table class="table table-striped table-bordered">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                        <th>Message</th>
-                        <th>Submitted At</th>
+                        <th>วันเวลาที่ส่งการติดต่อ</th>
+                        <th>ชื่อผู้ติดต่อ</th>
+                        <th>อีเมลของผู้ติดต่อ</th>
+                        <th>เบอร์โทรศัพท์ของผู้ติดต่อ</th>
+                        <th>ข้อความ</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -64,12 +99,11 @@ $result = $conn->query($sql);
                         // Output data of each row
                         while ($row = $result->fetch_assoc()) {
                             echo "<tr>
-                                    <td>{$row['id']}</td>
+                                    <td>{$row['submitted_at']}</td>
                                     <td>{$row['name']}</td>
                                     <td>{$row['email']}</td>
                                     <td>{$row['phone']}</td>
                                     <td>{$row['message']}</td>
-                                    <td>{$row['submitted_at']}</td>
                                 </tr>";
                         }
                     } else {
@@ -80,7 +114,7 @@ $result = $conn->query($sql);
             </table>
         </div>
         <div class="text-center mt-4">
-            <a href="admin_page.php" class="btn btn-primary">Back to Dashboard</a>
+            <a href="admin_page.php" class="btn btn-primary">ย้อนกลับ</a>
         </div>
         
     </div>

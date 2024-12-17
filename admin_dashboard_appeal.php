@@ -246,6 +246,13 @@ function map_problem_level($level) {
                     </select>
                 </div>
                 <div class="col-md-3">
+                    <label for="sort_order">จัดเรียงตามวันที่</label>
+                    <select name="sort_order" id="sort_order" class="form-control">
+                        <option value="desc" <?= (isset($_POST['sort_order']) && $_POST['sort_order'] == 'desc') ? 'selected' : '' ?>>ใหม่ล่าสุด</option>
+                        <option value="asc" <?= (isset($_POST['sort_order']) && $_POST['sort_order'] == 'asc') ? 'selected' : '' ?>>เก่าสุด</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
                     <label for="status">สถานะ</label>
                     <select name="status" id="status" class="form-control">
                         <option value="">เลือกสถานะ</option>

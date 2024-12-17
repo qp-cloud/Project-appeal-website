@@ -256,6 +256,15 @@ function map_problem_level($level) {
                         <option value="asc" <?= (isset($_POST['sort_order']) && $_POST['sort_order'] == 'asc') ? 'selected' : '' ?>>เก่าสุด</option>
                     </select>
                 </div>
+                <div class="col-md-3">
+                    <label for="status">สถานะ</label>
+                    <select name="status" id="status" class="form-control">
+                        <option value="">เลือกสถานะ</option>
+                        <option value="ยังไม่ดำเนินการ">ยังไม่ดำเนินการ</option>
+                        <option value="กำลังดำเนินการ">กำลังดำเนินการ</option>
+                        <option value="ดำเนินการเสร็จสิ้น">ดำเนินการเสร็จสิ้น</option>
+                    </select>
+                </div>
             </div>
                 <button type="submit" class="btn btn-primary">กรองข้อมูล</button>
         </form>

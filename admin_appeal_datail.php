@@ -273,10 +273,7 @@ $conn->close();
                         <th>วันที่ยื่นร้องเรียน</th>
                         <td><?= htmlspecialchars($complaint_details['submitted_at']) ?></td>
                     </tr>
-                    <tr>
-                        <th>สถานะปัจจุบัน</th>
-                        <td><span class="badge badge-info"><?= htmlspecialchars($complaint_details['status']) ?></span></td>
-                    </tr>
+
 
                     <tr>
                             <th>สถานะ</th>

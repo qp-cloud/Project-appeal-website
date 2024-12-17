@@ -195,6 +195,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     .footer p {
       margin: 5px 0;
+    }.header-nav a {
+      color: #fff;
+      background-color: #2a7cff;
+      text-decoration: none;
+      margin: 0 10px;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 5px;
+      transition: color 0.3s ease, background-color 0.3s ease;
+    }
+    .header-nav a:hover {
+      color: #fff;
+      background-color:rgb(115, 238, 58);
+    }
+    .header-nav a:last-child {
+      color: #2a7cff;
+      background-color: #fff;
+      padding: 5px 15px;
+      border: 1px solid #2a7cff;
+      border-radius: 5px;
     }
   </style>
 </head>
@@ -202,14 +222,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   <div class="header">
     <img src="logo.png" alt="Ban Pong Municipality Logo">
-    <div class="user-info">
-      <a href="secondpage.php" style="color: #2a7cff; text-decoration: none;">กลับสู่หน้าหลัก</a>
+    <div class="header-nav">
+      <a href="javascript:history.back();" style="color: #2a7cff; text-decoration: none;">กลับสู่หน้าหลัก</a>
     </div>
   </div>
 
   <div class="container">
-    <h1>แก้ไขข้อมูลบัญชีผู้ใช้</h1>
-
+      <h1>แก้ไขข้อมูลบัญชีผู้ใช้</h1>
     <!-- Display success message if update is successful -->
     <?php if (isset($_GET['status']) && $_GET['status'] == 'success'): ?>
       <p style="color: green;">ข้อมูลของคุณได้รับการอัปเดตสำเร็จ!</p>

@@ -96,6 +96,7 @@ $conn->close();
     }
     .header-nav a {
       color: #fff;
+      background-color: #2a7cff;
       text-decoration: none;
       margin: 0 10px;
       font-weight: bold;
@@ -105,7 +106,7 @@ $conn->close();
     }
     .header-nav a:hover {
       color: #fff;
-      background-color: #2a7cff;
+      background-color:rgb(115, 238, 58);
     }
     .header-nav a:last-child {
       color: #2a7cff;

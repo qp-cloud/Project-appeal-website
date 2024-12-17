@@ -175,7 +175,7 @@
       <div id="last_name_error" class="error-message"></div>
     
       <label for="id_number">เลขประจำตัวประชาชน:<span class="required">*</span></label>
-      <input type="text" id="id_number" name="id_number" pattern="\d{13}" title="เลขประจำตัวประชาชนต้องมี 13 หลัก" placeholder="กรอกเลขประจำตัวประชาชน">
+      <input type="text" name="id_number" class="form-control" placeholder="กรอกรหัสบัตรประจำตัวประชาชน 13 หลัก" required maxlength="13" oninput="this.value = this.value.replace(/\D/g, '')">
       <div id="id_number_error" class="error-message"></div>
 
       <!-- จัด row เพศและวันเกิดให้อยู่บรรทัดเดียวกัน -->
@@ -202,7 +202,7 @@
       <div id="occupation_error" class="error-message"></div>
     
       <label for="phone">เบอร์โทร:<span class="required">*</span></label>
-      <input type="tel" id="phone" name="phone" title="เบอร์โทรต้องมี 10 หลัก" placeholder="กรอกเบอร์โทรศัพท์">
+      <input type="text" name="phone" class="form-control" placeholder="กรอกเบอร์โทรศัพท์" required maxlength="10" oninput="this.value = this.value.replace(/\D/g, '')">
       <div id="phone_error" class="error-message"></div>
     
       <label for="email">อีเมล์:<span class="required">*</span></label>

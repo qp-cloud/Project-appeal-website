@@ -270,7 +270,7 @@ $conn->close();
                         </tr>
                         <tr>
                         <th>สถานะปัจจุบัน</th>
-                        <td><?= htmlspecialchars($complaint_details['status'])?></td>
+                        <td><span class="badge badge-info"><?= htmlspecialchars($complaint_details['status']) ?></span></td>
                         </tr>
                             </td>
                         </tr>
@@ -303,10 +303,10 @@ $conn->close();
     </div>
         <!-- Go Back Button -->
         <div class="text-center mt-4">
-            <button onclick="goBackWithUserId();" class="btn btn-back">ย้อนกลับ</button>
+            <button onclick="goBackWithUserId();" class="btn btn-back" style="background-color:rgb(33, 170, 180); color: white;">ย้อนกลับ</button>
         </div>
-
     </div>
+
     <script>
             function goBackWithUserId() {
                 // Get the user_id from PHP
