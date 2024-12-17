@@ -19,9 +19,12 @@ $selected_year = isset($_POST['year']) ? $_POST['year'] : date("Y"); // ค่�
 
 // กำหนดคำสั่ง SQL เพื่อดึงข้อมูล
 $sql = "SELECT MONTH(incident_date) AS month, status, COUNT(*) AS complaint_count
-        FROM complaints
+        FROM (
+            SELECT incident_date, status, department FROM complaints
+            UNION ALL
+            SELECT incident_date, status, department FROM appeals
+        ) AS combined_data
         WHERE YEAR(incident_date) = ?"; // เพิ่มเงื่อนไขสำหรับกรองปี
-
 // กรองตามหน่วยงาน
 if ($selected_department) {
     $sql .= " AND department = ?";
