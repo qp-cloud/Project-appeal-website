@@ -121,43 +121,92 @@ $conn->close();
     <style>
         body {
             background-color: #AFEEEE; /* Light gray background */
+            font-family: 'Arial', sans-serif;
         }
+
         .card {
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
             border-radius: 10px; /* Rounded corners */
             overflow: hidden;
         }
+
         .card-header {
             background-color: #007bff;
             color: #fff;
             font-size: 1.2rem;
             font-weight: bold;
         }
+
         .card-body p {
             margin-bottom: 10px;
+            font-size: 16px;
         }
+
         .btn-download {
             background-color: #28a745;
             border-color: #28a745;
             color: #fff;
         }
+
         .btn-download:hover {
             background-color: #218838;
             border-color: #1e7e34;
         }
+
         .btn-back {
             background-color: #6c757d;
             border-color: #6c757d;
             color: #fff;
         }
+
         .btn-back:hover {
             background-color: #5a6268;
             border-color: #545b62;
         }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-spacing: 0; /* Remove the collapse between cells */
+        }
+
+        th, td {
+            padding: 8px 12px;
+            border-right: 1px solid #ddd; /* Add right border to all cells */
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+            font-weight: bold;
+        }
+
+        /* Remove the right border of the last cell */
+        td:last-child, th:last-child {
+            border-right: none;
+        }
+
+        .badge-info {
+            background-color: #17a2b8;
+        }
+        .card-body table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .card-body table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f1f1f1;
+        }
     </style>
+    
 </head>
-<body>
-    <div class="container mt-5">
+<div class="container mt-5">
         <div class="card">
             <div class="card-header text-center">
                 รายละเอียดการร้องเรียน
@@ -166,40 +215,92 @@ $conn->close();
                 <?php if (!empty($complaint_details)): ?>
                     <h5 class="mb-4" style="font-size: 18px; color: #000; font-weight: 600; border-bottom: 2px solid #2a7cff; padding-bottom: 5px;">
                         <strong>ชื่อเรื่อง:</strong> <?= htmlspecialchars($complaint_details['report_subject']) ?></h5>
-                    <p><strong>ชื่อผู้ส่ง:</strong> <?= htmlspecialchars($complaint_details['user_name']) ?></p>  
-                    <p><strong>บุคคล/องกรณฺที่ร้องเรียน:</strong> <?= htmlspecialchars($complaint_details['report_person']) ?></p>      
-                    <p><strong>เบอร์โทรติดต่อ:</strong> <?= htmlspecialchars($complaint_details['contact_phone']) ?></p>
-                    <p><strong>สถานที่เกิดเหตุ:</strong> <?= htmlspecialchars($complaint_details['contact_location']) ?></p>
-                    <p><strong>รายละเอียดที่ติดต่อ:</strong> <?= htmlspecialchars($complaint_details['contact_details']) ?></p>
-                    <p><strong>วันและเวลาเกิดเหตุ:</strong> <?= htmlspecialchars($complaint_details['incident_date']) ?> <?= htmlspecialchars($complaint_details['incident_time']) ?></p>
-                    <p><strong>ระดับปัญหา:</strong> <?= htmlspecialchars($complaint_details['problem_level']) ?></p>
-                    <p><strong>หน่วยงานที่เกี่ยวข้อง:</strong> <?= htmlspecialchars($complaint_details['department']) ?></p>
-                    <p><strong>คำอธิบายปัญหา:</strong> <?= htmlspecialchars($complaint_details['complaint_description']) ?></p>
-                    <p><strong>ไฟล์ประกอบการร้องเรียน:</strong> 
-                        <?php if (!empty($complaint_details['complaint_file'])): ?>
-                            <a href="<?= htmlspecialchars($complaint_details['complaint_file']) ?>" class="btn btn-download btn-sm" download>
-                                <i class="fas fa-download"></i> ดาวน์โหลดไฟล์
-                            </a>
-                        <?php else: ?>
-                            <span class="text-muted">ไม่มีไฟล์</span>
-                        <?php endif; ?>
-                    </p>
-                    <p><strong>วันที่ยื่นร้องเรียน:</strong> <?= htmlspecialchars($complaint_details['submitted_at']) ?></p>
-                    <p><strong>สถานะปัจจุบัน:</strong> 
-                        <span class="badge badge-info"><?= htmlspecialchars($complaint_details['status']) ?></span>
-                    </p>
-                    <p><strong>เจ้าหน้าที่เปลี่ยนสถานะล่าสุด:</strong> <?= htmlspecialchars($complaint_details['admin_name']) ?></p>
-                    <p><strong>แผนกเจ้าหน้าที่:</strong> <?= htmlspecialchars($complaint_details['admin_department']) ?></p>
-                    <p><strong>เวลาเปลี่ยนสถานะ:</strong> <?= htmlspecialchars($complaint_details['status_changed_at']) ?></p>
-                    <p><strong>หมายเหตุจากเจ้าหน้าที่:</strong> 
-                        <?= !empty($complaint_details['note']) ? htmlspecialchars($complaint_details['note']) : '<span class="text-muted">ไม่มีหมายเหตุ</span>' ?>
-                    </p>
+                    
+                    <!-- Complaint Details Table -->
+                    <table>
+                        <tr>
+                            <th>ชื่อผู้ส่ง</th>
+                            <td><?= htmlspecialchars($complaint_details['user_name']) ?></td>
+                        </tr>
+                        <tr>
+                            <th>เบอร์โทรติดต่อ</th>
+                            <td><?= htmlspecialchars($complaint_details['contact_phone']) ?></td>
+                        </tr>
+                        <tr>
+                        <th>บุคคล/องค์กรที่ร้องเรียน</th>
+                        <td><?= htmlspecialchars($complaint_details['report_person']) ?></td>
+                        </tr>
+                        <tr>
+                            <th>สถานที่เกิดเหตุ</th>
+                            <td><?= htmlspecialchars($complaint_details['contact_location']) ?></td>
+                        </tr>
+                        <tr>
+                            <th>รายละเอียดที่ติดต่อ</th>
+                            <td><?= htmlspecialchars($complaint_details['contact_details']) ?></td>
+                        </tr>
+                        <tr>
+                            <th>วันและเวลาเกิดเหตุ</th>
+                            <td><?= htmlspecialchars($complaint_details['incident_date']) ?> <?= htmlspecialchars($complaint_details['incident_time']) ?></td>
+                        </tr>
+                        <tr>
+                            <th>ระดับปัญหา</th>
+                            <td><?= htmlspecialchars($complaint_details['problem_level']) ?></td>
+                        </tr>
+                        <tr>
+                            <th>หน่วยงานที่เกี่ยวข้อง</th>
+                            <td><?= htmlspecialchars($complaint_details['department']) ?></td>
+                        </tr>
+                        <tr>
+                            <th>คำอธิบายปัญหา</th>
+                            <td><?= htmlspecialchars($complaint_details['complaint_description']) ?></td>
+                        </tr>
+                        <tr>
+                        <th>วันที่ยื่นร้องเรียน</th>
+                        <td><?= htmlspecialchars($complaint_details['submitted_at'])?></td>
+                        </tr>
+                        <tr>
+                            <th>ไฟล์ประกอบการร้องเรียน</th>
+                            <td>
+                                <?php if (!empty($complaint_details['complaint_file'])): ?>
+                                    <a href="<?= htmlspecialchars($complaint_details['complaint_file']) ?>" class="btn btn-download" download>ดาวน์โหลดไฟล์</a>
+                                <?php else: ?>
+                                    ไม่มีไฟล์ที่แนบมาด้วย
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                        <tr>
+                        <th>สถานะปัจจุบัน</th>
+                        <td><?= htmlspecialchars($complaint_details['status'])?></td>
+                        </tr>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>เจ้าหน้าที่เปลี่ยนสถานะล่าสุด</th>
+                            <td><?= htmlspecialchars($complaint_details['admin_name']) ?></td>
+                        </tr>
+                        <tr>
+                            <th>แผนกเจ้าหน้าที่</th>
+                            <td><?= htmlspecialchars($complaint_details['admin_department']) ?></td>
+                        </tr>
+                        <tr>
+                            <th>เวลาเปลี่ยนสถานะ</th>
+                            <td><?= htmlspecialchars($complaint_details['status_changed_at']) ?></td>
+                        </tr>
+                        <tr>
+                            <th>หมายเหตุจากเจ้าหน้าที่</th>
+                            <td>
+                                <?= !empty($complaint_details['note']) ? htmlspecialchars($complaint_details['note']) : 'ไม่มีหมายเหตุ' ?>
+                            </td>
+                        </tr>
+
+
+                    </table>
                 <?php else: ?>
-                    <p class="text-center text-danger">ไม่พบข้อมูลการร้องเรียน</p>
+                    <p>ไม่พบข้อมูลการร้องเรียนนี้.</p>
                 <?php endif; ?>
             </div>
         </div>
-
+    </div>
         <!-- Go Back Button -->
         <div class="text-center mt-4">
             <button onclick="goBackWithUserId();" class="btn btn-back">ย้อนกลับ</button>
