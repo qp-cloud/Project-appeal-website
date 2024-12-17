@@ -4,15 +4,15 @@ session_start();
 
 // Check if the user is logged in
 if (!isset($_SESSION['user']['user_id'])) {
-    header("Location: login.php");  // Redirect to login page if not logged in
+    header("Location: login.php"); // Redirect to login page if not logged in
     exit();
 }
 
 // Database connection
 $servername = "localhost";
-$username = "root";  // Your MySQL username
-$password = "";  // Your MySQL password
-$dbname = "web_appeal_db";  // Your database name
+$username = "root"; // Your MySQL username
+$password = ""; // Your MySQL password
+$dbname = "web_appeal_db"; // Your database name
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -25,7 +25,7 @@ if ($conn->connect_error) {
 // Get the complaint ID from the URL
 $complaint_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
-// Retrieve complaint details, admin details, and status change time for the given complaint_id
+// Prepare the SQL query to retrieve complaint details
 $sql = "SELECT 
             c.id, 
             c.user_id, 
@@ -44,8 +44,9 @@ $sql = "SELECT
             c.complaint_file, 
             c.submitted_at, 
             c.status, 
+            c.note,
             CONCAT(u.first_name, ' ', u.last_name) AS admin_name,
-            u.department AS admin_department, -- Admin's department
+            u.department AS admin_department,
             CONCAT(usr.first_name, ' ', usr.last_name) AS user_name,
             logs.changed_at AS status_changed_at
         FROM appeals AS c
@@ -56,22 +57,22 @@ $sql = "SELECT
         ORDER BY logs.changed_at DESC
         LIMIT 1";
 
+$complaint_details = [];
 
 if ($stmt = $conn->prepare($sql)) {
-    // Bind parameters to the prepared statement
+    // Bind the complaint ID
     $stmt->bind_param("i", $complaint_id);
-
-    // Execute the statement
     $stmt->execute();
 
     // Bind the result to variables
-    $stmt->bind_result($id, $user_id, $report_subject,$report_person, $contact_phone, $contact_location, $contact_details,
-                   $latitude, $longitude, $incident_date, $incident_time, $problem_level, $department, 
-                   $complaint_description, $complaint_file, $submitted_at, $status, $admin_name, 
-                   $admin_department, $user_name, $status_changed_at);
+    $stmt->bind_result(
+        $id, $user_id, $report_subject, $report_person, $contact_phone, $contact_location, 
+        $contact_details, $latitude, $longitude, $incident_date, $incident_time, $problem_level, 
+        $department, $complaint_description, $complaint_file, $submitted_at, $status, $note, 
+        $admin_name, $admin_department, $user_name, $status_changed_at
+    );
 
-
-    // Fetch the complaint details
+    // Fetch the data
     if ($stmt->fetch()) {
         $complaint_details = [
             'id' => $id,
@@ -92,18 +93,55 @@ if ($stmt = $conn->prepare($sql)) {
             'complaint_file' => $complaint_file,
             'submitted_at' => $submitted_at,
             'status' => $status,
+            'note' => $note,
             'admin_name' => $admin_name,
-            'admin_department' => $admin_department, // Added admin's department
+            'admin_department' => $admin_department,
             'status_changed_at' => $status_changed_at
         ];
     } else {
-        echo "Complaint not found.";
+        echo "<p class='text-center text-danger'>Complaint not found.</p>";
     }
 
     // Close the statement
     $stmt->close();
 } else {
-    echo "Error preparing the SQL query: " . $conn->error;
+    echo "<p class='text-center text-danger'>Error preparing the SQL query: " . $conn->error . "</p>";
+}
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['status'], $_POST['complaint_id'], $_POST['note'])) {
+    $new_status = $_POST['status'];
+    $note = $_POST['note'];  // Get the new note
+    $complaint_id = intval($_POST['complaint_id']);
+    $user_id = $_SESSION['user']['user_id']; // Get the logged-in user's ID
+
+    // Get the old status before updating
+    $query_old_status = "SELECT status FROM appeals WHERE id = ?";
+    $stmt_old_status = $conn->prepare($query_old_status);
+    $stmt_old_status->bind_param("i", $complaint_id);
+    $stmt_old_status->execute();
+    $result_old_status = $stmt_old_status->get_result();
+    $old_status = $result_old_status->fetch_assoc()['status'] ?? null;
+    $stmt_old_status->close();
+
+    // Update the complaint status and note
+    $update_sql = "UPDATE appeals SET status = ?, note = ? WHERE id = ?";
+    if ($stmt_update = $conn->prepare($update_sql)) {
+        $stmt_update->bind_param("ssi", $new_status, $note, $complaint_id);
+        if ($stmt_update->execute()) {
+            // Insert a log entry for the status change
+            $log_sql = "INSERT INTO status_change_logs (complaint_id, old_status, new_status, changed_by) VALUES (?, ?, ?, ?)";
+            if ($stmt_log = $conn->prepare($log_sql)) {
+                $stmt_log->bind_param("issi", $complaint_id, $old_status, $new_status, $user_id);
+                $stmt_log->execute();
+                $stmt_log->close();
+            }
+            // Redirect to the success page
+            header("Location: update_success_appeal.php");
+            exit(); // Always call exit after header redirection
+        } else {
+            echo "เกิดข้อผิดพลาดในการอัปเดตสถานะ.";
+        }
+        $stmt_update->close();
+    }
 }
 
 // Close the connection
@@ -120,11 +158,11 @@ $conn->close();
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #AFEEEE; /* Light gray background */
+            background-color: #f8f9fa;
         }
         .card {
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-            border-radius: 10px; /* Rounded corners */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
             overflow: hidden;
         }
         .card-header {
@@ -154,67 +192,132 @@ $conn->close();
             background-color: #5a6268;
             border-color: #545b62;
         }
-    </style>
+        .card-body table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .card-body table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f1f1f1;
+        }
+        </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <div class="card">
-            <div class="card-header text-center">
-                รายละเอียดการร้องเรียน
-            </div>
-            <div class="card-body">
-                <?php if (!empty($complaint_details)): ?>
-                    <h5 class="mb-4" style="font-size: 18px; color: #000; font-weight: 600; border-bottom: 2px solid #2a7cff; padding-bottom: 5px;">
-                        <strong>ชื่อเรื่อง:</strong> <?= htmlspecialchars($complaint_details['report_subject']) ?></h5>
-                    <p><strong>ชื่อผู้ส่ง:</strong> <?= htmlspecialchars($complaint_details['user_name']) ?></p>  
-                    <p><strong>บุคคล/องกรณฺที่ร้องเรียน:</strong> <?= htmlspecialchars($complaint_details['report_person']) ?></p>      
-                    <p><strong>เบอร์โทรติดต่อ:</strong> <?= htmlspecialchars($complaint_details['contact_phone']) ?></p>
-                    <p><strong>สถานที่เกิดเหตุ:</strong> <?= htmlspecialchars($complaint_details['contact_location']) ?></p>
-                    <p><strong>รายละเอียดที่ติดต่อ:</strong> <?= htmlspecialchars($complaint_details['contact_details']) ?></p>
-                    <p><strong>วันและเวลาเกิดเหตุ:</strong> <?= htmlspecialchars($complaint_details['incident_date']) ?> <?= htmlspecialchars($complaint_details['incident_time']) ?></p>
-                    <p><strong>ระดับปัญหา:</strong> <?= htmlspecialchars($complaint_details['problem_level']) ?></p>
-                    <p><strong>หน่วยงานที่เกี่ยวข้อง:</strong> <?= htmlspecialchars($complaint_details['department']) ?></p>
-                    <p><strong>คำอธิบายปัญหา:</strong> <?= htmlspecialchars($complaint_details['complaint_description']) ?></p>
-                    <p><strong>ไฟล์ประกอบการร้องเรียน:</strong> 
-                        <?php if (!empty($complaint_details['complaint_file'])): ?>
-                            <a href="<?= htmlspecialchars($complaint_details['complaint_file']) ?>" class="btn btn-download btn-sm" download>
-                                <i class="fas fa-download"></i> ดาวน์โหลดไฟล์
-                            </a>
-                        <?php else: ?>
-                            <span class="text-muted">ไม่มีไฟล์</span>
-                        <?php endif; ?>
-                    </p>
-                    <p><strong>วันที่ยื่นร้องเรียน:</strong> <?= htmlspecialchars($complaint_details['submitted_at']) ?></p>
-                    <p><strong>สถานะปัจจุบัน:</strong> 
-                        <span class="badge badge-info"><?= htmlspecialchars($complaint_details['status']) ?></span>
-                    </p>
-                    <p><strong>เจ้าหน้าที่เปลี่ยนสถานะล่าสุด:</strong> <?= htmlspecialchars($complaint_details['admin_name']) ?></p>
-                    <p><strong>แผนกเจ้าหน้าที่:</strong> <?= htmlspecialchars($complaint_details['admin_department']) ?></p>
-                    <p><strong>เวลาเปลี่ยนสถานะ:</strong> <?= htmlspecialchars($complaint_details['status_changed_at']) ?></p>
-                <?php else: ?>
-                    <p class="text-center text-danger">ไม่พบข้อมูลการร้องเรียน</p>
-                <?php endif; ?>
-            </div>
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header">
+            รายละเอียดการร้องเรียน
         </div>
+        <div class="card-body">
+            <?php if (!empty($complaint_details)): ?>
+                <table>
+                    <tr>
+                        <th>ชื่อเรื่อง</th>
+                        <td><?= htmlspecialchars($complaint_details['report_subject']) ?></td>
+                    </tr>
+                    <tr>
+                        <th>ชื่อผู้ส่ง</th>
+                        <td><?= htmlspecialchars($complaint_details['user_name']) ?></td>
+                    </tr>
+                    <tr>
+                        <th>บุคคล/องค์กรที่ร้องเรียน</th>
+                        <td><?= htmlspecialchars($complaint_details['report_person']) ?></td>
+                    </tr>
+                    <tr>
+                        <th>เบอร์โทรติดต่อ</th>
+                        <td><?= htmlspecialchars($complaint_details['contact_phone']) ?></td>
+                    </tr>
+                    <tr>
+                        <th>สถานที่เกิดเหตุ</th>
+                        <td><?= htmlspecialchars($complaint_details['contact_location']) ?></td>
+                    </tr>
+                    <tr>
+                        <th>รายละเอียดที่ติดต่อ</th>
+                        <td><?= htmlspecialchars($complaint_details['contact_details']) ?></td>
+                    </tr>
+                    <tr>
+                        <th>วันและเวลาเกิดเหตุ</th>
+                        <td><?= htmlspecialchars($complaint_details['incident_date']) ?> <?= htmlspecialchars($complaint_details['incident_time']) ?></td>
+                    </tr>
+                    <tr>
+                        <th>ระดับปัญหา</th>
+                        <td><?= htmlspecialchars($complaint_details['problem_level']) ?></td>
+                    </tr>
+                    <tr>
+                        <th>หน่วยงานที่เกี่ยวข้อง</th>
+                        <td><?= htmlspecialchars($complaint_details['department']) ?></td>
+                    </tr>
+                    <tr>
+                        <th>คำอธิบายปัญหา</th>
+                        <td><?= htmlspecialchars($complaint_details['complaint_description']) ?></td>
+                    </tr>
+                    <tr>
+                        <th>ไฟล์ประกอบการร้องเรียน</th>
+                        <td>
+                            <?php if (!empty($complaint_details['complaint_file'])): ?>
+                                <a href="<?= htmlspecialchars($complaint_details['complaint_file']) ?>" class="btn btn-download btn-sm" download>
+                                    ดาวน์โหลดไฟล์
+                                </a>
+                            <?php else: ?>
+                                <span class="text-muted">ไม่มีไฟล์</span>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>วันที่ยื่นร้องเรียน</th>
+                        <td><?= htmlspecialchars($complaint_details['submitted_at']) ?></td>
+                    </tr>
+                    <tr>
+                        <th>สถานะปัจจุบัน</th>
+                        <td><span class="badge badge-info"><?= htmlspecialchars($complaint_details['status']) ?></span></td>
+                    </tr>
 
-        <!-- Go Back Button -->
-        <div class="text-center mt-4">
-            <button onclick="goBackWithUserId();" class="btn btn-back">ย้อนกลับ</button>
+                    <tr>
+                            <th>สถานะ</th>
+                            <td>
+                                <form method="POST" class="mt-4">
+                                    <input type="hidden" name="complaint_id" value="<?= $complaint_details['id'] ?>">
+                                    <div class="form-group">
+                                        <label for="status">เปลี่ยนสถานะการร้องเรียน:</label>
+                                        <select name="status" id="status" class="form-control">
+                                            <option value="ยังไม่ดำเนินการ" <?= $complaint_details['status'] == 'ยังไม่ดำเนินการ' ? 'selected' : '' ?>>ยังไม่ดำเนินการ</option>
+                                            <option value="กำลังดำเนินการ" <?= $complaint_details['status'] == 'กำลังดำเนินการ' ? 'selected' : '' ?>>กำลังดำเนินการ</option>
+                                            <option value="ดำเนินการเสร็จสิ้น" <?= $complaint_details['status'] == 'ดำเนินการเสร็จสิ้น' ? 'selected' : '' ?>>ดำเนินการเสร็จสิ้น</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Note Textarea -->
+                                    <div class="form-group">
+                                        <label for="note">หมายเหตุ:</label>
+                                        <textarea name="note" id="note" class="form-control" rows="3"><?= !empty($complaint_details['note']) ? htmlspecialchars($complaint_details['note']) : 'ไม่มีหมายเหตุ' ?></textarea>
+                                    </div>
+
+
+                                    <button type="submit" name="update_status" class="btn btn-primary">อัปเดตสถานะ</button>
+                                </form>
+                            </td>
+                        </tr>
+                </table>
+            <?php else: ?>
+                <p class="text-center text-danger">ไม่พบข้อมูลการร้องเรียน</p>
+            <?php endif; ?>
         </div>
-
     </div>
-    <script>
-            function goBackWithUserId() {
-                // Get the user_id from PHP
-                const userId = <?= json_encode($_SESSION['user']['user_id']) ?>;
-                // Redirect to a specific page with the user_id as a query parameter
-                window.location.href = `admin_dashboard_appeal.php?user_id=${userId}`;
-            }
-        </script>
-    <!-- Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <div class="text-center mt-4">
+        <button onclick="goBackWithUserId();" class="btn btn-back">ย้อนกลับ</button>
+    </div>
+</div>
+<script>
+    function goBackWithUserId() {
+        const userId = <?= json_encode($_SESSION['user']['user_id']) ?>;
+        window.location.href = `admin_dashboard_appeal.php?user_id=${userId}`;
+    }
+</script>
 </body>
 </html>

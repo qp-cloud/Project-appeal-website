@@ -47,7 +47,8 @@ $sql = "SELECT
             CONCAT(u.first_name, ' ', u.last_name) AS admin_name,
             u.department AS admin_department, -- Admin's department
             CONCAT(usr.first_name, ' ', usr.last_name) AS user_name,
-            logs.changed_at AS status_changed_at
+            logs.changed_at AS status_changed_at,
+            c.note  -- Add note column here
         FROM appeals AS c
         LEFT JOIN status_change_logs AS logs ON c.id = logs.complaint_id
         LEFT JOIN user AS u ON logs.changed_by = u.user_id
@@ -55,7 +56,6 @@ $sql = "SELECT
         WHERE c.id = ?
         ORDER BY logs.changed_at DESC
         LIMIT 1";
-
 
 if ($stmt = $conn->prepare($sql)) {
     // Bind parameters to the prepared statement
@@ -65,11 +65,10 @@ if ($stmt = $conn->prepare($sql)) {
     $stmt->execute();
 
     // Bind the result to variables
-    $stmt->bind_result($id, $user_id, $report_subject,$report_person, $contact_phone, $contact_location, $contact_details,
-                   $latitude, $longitude, $incident_date, $incident_time, $problem_level, $department, 
-                   $complaint_description, $complaint_file, $submitted_at, $status, $admin_name, 
-                   $admin_department, $user_name, $status_changed_at);
-
+    $stmt->bind_result($id, $user_id, $report_subject, $report_person, $contact_phone, $contact_location, 
+                       $contact_details, $latitude, $longitude, $incident_date, $incident_time, 
+                       $problem_level, $department, $complaint_description, $complaint_file, $submitted_at, 
+                       $status, $admin_name, $admin_department, $user_name, $status_changed_at, $note);
 
     // Fetch the complaint details
     if ($stmt->fetch()) {
@@ -94,7 +93,8 @@ if ($stmt = $conn->prepare($sql)) {
             'status' => $status,
             'admin_name' => $admin_name,
             'admin_department' => $admin_department, // Added admin's department
-            'status_changed_at' => $status_changed_at
+            'status_changed_at' => $status_changed_at,
+            'note' => $note
         ];
     } else {
         echo "Complaint not found.";
@@ -191,6 +191,9 @@ $conn->close();
                     <p><strong>เจ้าหน้าที่เปลี่ยนสถานะล่าสุด:</strong> <?= htmlspecialchars($complaint_details['admin_name']) ?></p>
                     <p><strong>แผนกเจ้าหน้าที่:</strong> <?= htmlspecialchars($complaint_details['admin_department']) ?></p>
                     <p><strong>เวลาเปลี่ยนสถานะ:</strong> <?= htmlspecialchars($complaint_details['status_changed_at']) ?></p>
+                    <p><strong>หมายเหตุจากเจ้าหน้าที่:</strong> 
+                        <?= !empty($complaint_details['note']) ? htmlspecialchars($complaint_details['note']) : '<span class="text-muted">ไม่มีหมายเหตุ</span>' ?>
+                    </p>
                 <?php else: ?>
                     <p class="text-center text-danger">ไม่พบข้อมูลการร้องเรียน</p>
                 <?php endif; ?>

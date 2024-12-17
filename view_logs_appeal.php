@@ -22,11 +22,11 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Query the logs with complaint_subject
+// Query the appeals table to retrieve the required data
 $sql = "SELECT 
             logs.id, 
             logs.complaint_id,
-            complaint_subject, -- Fetch the title from complaints table
+            appeals.report_subject,  -- Fetch the title from the appeals table
             logs.old_status, 
             logs.new_status, 
             logs.changed_at, 
@@ -34,7 +34,7 @@ $sql = "SELECT
             user.department AS admin_department -- Fetch admin's department
         FROM status_change_logs AS logs
         JOIN user ON logs.changed_by = user.user_id
-        JOIN complaints ON logs.complaint_id = complaints.id -- Join with complaints table
+        JOIN appeals ON logs.complaint_id = appeals.id -- Join with appeals table
         ORDER BY logs.changed_at DESC";
 
 $result = $conn->query($sql);
@@ -45,7 +45,7 @@ $result = $conn->query($sql);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ประวัติการเปลี่ยนสถานะ</title>
+    <title>ประวัติการยื่นคำร้อง</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -85,7 +85,7 @@ $result = $conn->query($sql);
 
     <div class="container">
         <div class="header d-flex justify-content-between align-items-center">
-            <h2>ประวัติการเปลี่ยนสถานะ</h2>
+            <h2>ประวัติการยื่นคำร้อง</h2>
             <!-- Go Back Button -->
             <a href="#" class="btn btn-back" onclick="goBack()">ย้อนกลับ</a>
         </div>
@@ -107,7 +107,7 @@ $result = $conn->query($sql);
                         <?php while ($row = $result->fetch_assoc()): ?>
                             <tr>
                                 <td><?= htmlspecialchars($row['changed_at']) ?></td>
-                                <td><?= htmlspecialchars($row['complaint_subject']) ?></td>
+                                <td><?= htmlspecialchars($row['report_subject']) ?></td>
                                 <td><?= htmlspecialchars($row['old_status']) ?></td>
                                 <td><?= htmlspecialchars($row['new_status']) ?></td>
                                 <td><?= htmlspecialchars($row['changed_by']) ?></td>
@@ -116,7 +116,7 @@ $result = $conn->query($sql);
                         <?php endwhile; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="6" class="text-center">ไม่มีข้อมูลการเปลี่ยนสถานะ</td>
+                            <td colspan="6" class="text-center">ไม่มีข้อมูลคำร้อง</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>

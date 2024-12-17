@@ -72,56 +72,31 @@ if (isset($_POST['status']) && $_POST['status'] != '') {
     $status = $conn->real_escape_string($_POST['status']);
     $filter_conditions[] = "status = '$status'";
 }
-
+$sort_order = isset($_POST['sort_order']) && $_POST['sort_order'] == 'asc' ? 'ASC' : 'DESC';
 // Construct the SQL query with filters
 $sql = "SELECT id, report_subject, incident_date, problem_level, department , status FROM appeals";
 if (count($filter_conditions) > 0) {
     $sql .= " WHERE " . implode(" AND ", $filter_conditions);
 }
-
+$sql .= " ORDER BY submitted_at " . $sort_order;
 $result = $conn->query($sql);
 // Update status when the form is submitted
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['status'], $_POST['complaint_id'])) {
-    $new_status = $_POST['status'];
-    $appeal_id = intval($_POST['complaint_id']);
-    $user_id = $_SESSION['user']['user_id']; // Get the logged-in user's ID
-
-    // Get the old status before updating
-    $query_old_status = "SELECT status FROM appeals WHERE id = ?";
-    $stmt_old_status = $conn->prepare($query_old_status);
-    $stmt_old_status->bind_param("i", $appeal_id);
-    $stmt_old_status->execute();
-    $result_old_status = $stmt_old_status->get_result();
-    $old_status = $result_old_status->fetch_assoc()['status'] ?? null;
-    $stmt_old_status->close();
-
-    // Update the complaint status
-    $update_sql = "UPDATE appeals SET status = ? WHERE id = ?";
-    if ($stmt_update = $conn->prepare($update_sql)) {
-        $stmt_update->bind_param("si", $new_status, $appeal_id);
-        if ($stmt_update->execute()) {
-            // Insert a log entry for the status change
-            $log_sql = "INSERT INTO status_change_logs (complaint_id, old_status, new_status, changed_by) VALUES (?, ?, ?, ?)";
-            if ($stmt_log = $conn->prepare($log_sql)) {
-                $stmt_log->bind_param("issi", $appeal_id , $old_status, $new_status, $user_id);
-
-                $stmt_log->execute();
-                $stmt_log->close();
-            }
-            // Redirect to the success page
-            header("Location: update_success_appeal.php");
-            exit(); // Always call exit after header redirection
-        } else {
-            echo "เกิดข้อผิดพลาดในการอัปเดตสถานะ.";
-        }
-        $stmt_update->close();
-    }
-}
-
 
 
 // Close the connection
 $conn->close();
+function map_problem_level($level) {
+    switch ($level) {
+        case 'ต่ำ': // Low
+            return 'low';
+        case 'ปานกลาง': // Medium
+            return 'medium';
+        case 'เร่งด่วน': // Urgent (mapped to high)
+            return 'high';
+        default:
+            return 'unknown'; // Fallback for unknown levels
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -199,6 +174,26 @@ $conn->close();
         .btn-primary:hover {
             background-color: #0056b3;
         }
+         /* Add color for problem levels */
+         .problem-level.low {
+            background-color: #28a745; /* Green for low level */
+            color: white;
+        }
+
+        .problem-level.medium {
+            background-color: #ffc107; /* Yellow for medium level */
+            color: white;
+        }
+
+        .problem-level.high {
+            background-color: #dc3545; /* Red for high level */
+            color: white;
+        }
+
+        .problem-level.unknown {
+            background-color: #6c757d; /* Default gray for unknown levels */
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -207,7 +202,7 @@ $conn->close();
         <div class="header d-flex justify-content-between align-items-center">
             <h2>เรื่องราวแจ้งเบาะแสการทุจริตประพฤติมิชอบในระบบ</h2>
             <!-- Go Back Button at the top right -->
-            <a href="view_logs.php" class="btn btn-info">ดูบันทึกการเปลี่ยนแปลง</a>
+            <a href="view_logs_appeal.php" class="btn btn-info">ดูบันทึกการเปลี่ยนแปลง</a>
             <a href="admin_page.php" class="btn btn-back">ย้อนกลับ</a>
         </div>
 
@@ -274,7 +269,7 @@ $conn->close();
                         <th>หน่วยงาน</th>
                         <th>สถานะ</th>
                         <th>รายละเอียด</th>
-                        <th>จัดการ/อัพเดทสถานะ</th>
+                        
                     </tr>
                 </thead>
                 <tbody>
@@ -283,23 +278,14 @@ $conn->close();
                             <tr>
                                 <td><?= htmlspecialchars($row['report_subject']) ?></td>
                                 <td><?= htmlspecialchars($row['incident_date']) ?></td>
-                                <td><?= htmlspecialchars($row['problem_level']) ?></td>
+                                <td class="problem-level <?= strtolower(map_problem_level($row['problem_level'])) ?>">
+                                <?= htmlspecialchars($row['problem_level']) ?>
                                 <td><?= htmlspecialchars($row['department']) ?></td>
                                 <td><?= htmlspecialchars($row['status']) ?></td>
                                 <td>
                                     <a href="admin_appeal_datail.php?id=<?= urlencode($row['id']) ?>" class="btn btn-info">ดูรายละเอียด</a>
                                 </td>
-                                <td>
-                                    <form method="POST">
-                                        <input type="hidden" name="complaint_id" value="<?= $row['id'] ?>">
-                                        <select name="status" class="form-control" required>
-                                            <option value="ยังไม่ดำเนินการ" <?= $row['status'] == 'ยังไม่ดำเนินการ' ? 'selected' : '' ?>>ยังไม่ดำเนินการ</option>
-                                            <option value="กำลังดำเนินการ" <?= $row['status'] == 'กำลังดำเนินการ' ? 'selected' : '' ?>>กำลังดำเนินการ</option>
-                                            <option value="ดำเนินการเสร็จสิ้น" <?= $row['status'] == 'ดำเนินการเสร็จสิ้น' ? 'selected' : '' ?>>ดำเนินการเสร็จสิ้น</option>
-                                        </select>
-                                        <button type="submit" class="btn btn-primary mt-2">อัปเดตสถานะ</button>
-                                    </form>
-                                </td>
+                                
                             </tr>
                         <?php endwhile; ?>
                     <?php else: ?>

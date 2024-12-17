@@ -105,28 +105,40 @@ if ($stmt = $conn->prepare($sql)) {
 }
 
 // Update complaint status and note
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['status'], $_POST['complaint_id'], $_POST['note'])) {
     $new_status = $_POST['status'];
-    $new_note = $_POST['note']; // Retrieve the note from the form
+    $note = $_POST['note'];  // Get the new note
+    $complaint_id = intval($_POST['complaint_id']);
+    $user_id = $_SESSION['user']['user_id']; // Get the logged-in user's ID
 
-    // Update complaint status and note
+    // Get the old status before updating
+    $query_old_status = "SELECT status FROM complaints WHERE id = ?";
+    $stmt_old_status = $conn->prepare($query_old_status);
+    $stmt_old_status->bind_param("i", $complaint_id);
+    $stmt_old_status->execute();
+    $result_old_status = $stmt_old_status->get_result();
+    $old_status = $result_old_status->fetch_assoc()['status'] ?? null;
+    $stmt_old_status->close();
+
+    // Update the complaint status and note
     $update_sql = "UPDATE complaints SET status = ?, note = ? WHERE id = ?";
-
-    if ($stmt = $conn->prepare($update_sql)) {
-        $stmt->bind_param("ssi", $new_status, $new_note, $complaint_id);
-        if ($stmt->execute()) {
-            // Insert into status change log
-            $log_sql = "INSERT INTO status_change_logs (complaint_id, changed_by, changed_at) VALUES (?, ?, NOW())";
-            if ($log_stmt = $conn->prepare($log_sql)) {
-                $log_stmt->bind_param("ii", $complaint_id, $_SESSION['user']['user_id']);
-                $log_stmt->execute();
-                $log_stmt->close();
+    if ($stmt_update = $conn->prepare($update_sql)) {
+        $stmt_update->bind_param("ssi", $new_status, $note, $complaint_id);
+        if ($stmt_update->execute()) {
+            // Insert a log entry for the status change
+            $log_sql = "INSERT INTO status_change_logs (complaint_id, old_status, new_status, changed_by) VALUES (?, ?, ?, ?)";
+            if ($stmt_log = $conn->prepare($log_sql)) {
+                $stmt_log->bind_param("issi", $complaint_id, $old_status, $new_status, $user_id);
+                $stmt_log->execute();
+                $stmt_log->close();
             }
-            $stmt->close();
-            header("Location: complaint_details.php?id=$complaint_id");  // Refresh page to show updated status
+            // Redirect to the success page
+            header("Location: update_success.php");
+            exit(); // Always call exit after header redirection
         } else {
-            echo "Error updating status: " . $conn->error;
+            echo "เกิดข้อผิดพลาดในการอัปเดตสถานะ.";
         }
+        $stmt_update->close();
     }
 }
 
@@ -240,86 +252,68 @@ $conn->close();
                             <td><?= htmlspecialchars($complaint_details['complaint_description']) ?></td>
                         </tr>
                         <tr>
+                        <th>วันที่ยื่นร้องเรียน</th>
+                        <td><?= htmlspecialchars($complaint_details['submitted_at'])?></td>
+                        </tr>
+                        <tr>
                             <th>ไฟล์ประกอบการร้องเรียน</th>
                             <td>
                                 <?php if (!empty($complaint_details['complaint_file'])): ?>
-                                    <a href="<?= htmlspecialchars($complaint_details['complaint_file']) ?>" class="btn btn-download btn-sm" download>
-                                        <i class="fas fa-download"></i> ดาวน์โหลดไฟล์
-                                    </a>
+                                    <a href="<?= htmlspecialchars($complaint_details['complaint_file']) ?>" class="btn btn-download" download>ดาวน์โหลดไฟล์</a>
                                 <?php else: ?>
-                                    <span class="text-muted">ไม่มีไฟล์</span>
+                                    ไม่มีไฟล์ที่แนบมาด้วย
                                 <?php endif; ?>
                             </td>
                         </tr>
                         <tr>
-                            <th>วันที่ยื่นร้องเรียน</th>
-                            <td><?= htmlspecialchars($complaint_details['submitted_at']) ?></td>
-                        </tr>
-                        <tr>
-                            <th>สถานะปัจจุบัน</th>
+                            <th>สถานะ</th>
                             <td>
-                                <span class="badge badge-info"><?= htmlspecialchars($complaint_details['status']) ?></span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>เจ้าหน้าที่เปลี่ยนสถานะล่าสุด</th>
-                            <td><?= htmlspecialchars($complaint_details['admin_name']) ?></td>
-                        </tr>
-                        <tr>
-                            <th>แผนกเจ้าหน้าที่</th>
-                            <td><?= htmlspecialchars($complaint_details['admin_department']) ?></td>
-                        </tr>
-                        <tr>
-                            <th>เวลาเปลี่ยนสถานะ</th>
-                            <td><?= htmlspecialchars($complaint_details['status_changed_at']) ?></td>
-                        </tr>
-                        <tr>
-                            <th>หมายเหตุจากเจ้าหน้าที่</th>  <!-- Added row for note -->
-                            <td>
-                                <textarea name="note" rows="4" class="form-control"><?= htmlspecialchars($complaint_details['note']) ?></textarea>
+                                <form method="POST" class="mt-4">
+                                    <input type="hidden" name="complaint_id" value="<?= $complaint_details['id'] ?>">
+                                    <div class="form-group">
+                                        <label for="status">เปลี่ยนสถานะการร้องเรียน:</label>
+                                        <select name="status" id="status" class="form-control">
+                                            <option value="ยังไม่ดำเนินการ" <?= $complaint_details['status'] == 'ยังไม่ดำเนินการ' ? 'selected' : '' ?>>ยังไม่ดำเนินการ</option>
+                                            <option value="กำลังดำเนินการ" <?= $complaint_details['status'] == 'กำลังดำเนินการ' ? 'selected' : '' ?>>กำลังดำเนินการ</option>
+                                            <option value="ดำเนินการเสร็จสิ้น" <?= $complaint_details['status'] == 'ดำเนินการเสร็จสิ้น' ? 'selected' : '' ?>>ดำเนินการเสร็จสิ้น</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Note Textarea -->
+                                    <div class="form-group">
+                                        <label for="note">หมายเหตุ:</label>
+                                        <textarea name="note" id="note" class="form-control" rows="3"><?= !empty($complaint_details['note']) ? htmlspecialchars($complaint_details['note']) : 'ไม่มีหมายเหตุ' ?></textarea>
+                                    </div>
+
+
+                                    <button type="submit" name="update_status" class="btn btn-primary">อัปเดตสถานะ</button>
+                                </form>
                             </td>
                         </tr>
                     </table>
-
-                    <!-- Update Status Form -->
-                    <form method="POST" class="mt-4">
-                        <div class="form-group">
-                            <label for="status">เปลี่ยนสถานะการร้องเรียน:</label>
-                            <select name="status" id="status" class="form-control">
-                                <option value="Pending" <?= ($complaint_details['status'] == 'Pending') ? 'selected' : '' ?>>Pending</option>
-                                <option value="In Progress" <?= ($complaint_details['status'] == 'In Progress') ? 'selected' : '' ?>>In Progress</option>
-                                <option value="Resolved" <?= ($complaint_details['status'] == 'Resolved') ? 'selected' : '' ?>>Resolved</option>
-                                <option value="Closed" <?= ($complaint_details['status'] == 'Closed') ? 'selected' : '' ?>>Closed</option>
-                            </select>
-                        </div>
-                        <button type="submit" name="update_status" class="btn btn-primary">อัปเดตสถานะ</button>
-                    </form>
                 <?php else: ?>
-                    <p class="text-center text-danger">ไม่พบข้อมูลการร้องเรียน</p>
+                    <p>ไม่พบข้อมูลการร้องเรียนนี้.</p>
                 <?php endif; ?>
             </div>
         </div>
-
-        <!-- Go Back Button -->
-        <div class="text-center mt-4">
+    </div>
+    <div class="text-center mt-4">
             <button onclick="goBackWithUserId();" class="btn btn-back">ย้อนกลับ</button>
         </div>
 
     </div>
     <script>
-        function goBackWithUserId() {
-            // Get the user_id from PHP
-            const userId = <?= json_encode($_SESSION['user']['user_id']) ?>;
-            // Redirect to a specific page with the user_id as a query parameter
-            window.location.href = `admin_dashboard.php?user_id=${userId}`;
-        }
-    </script>
+            function goBackWithUserId() {
+                // Get the user_id from PHP
+                const userId = <?= json_encode($_SESSION['user']['user_id']) ?>;
+                // Redirect to a specific page with the user_id as a query parameter
+                window.location.href = `admin_dashboard.php?user_id=${userId}`;
+            }
+        </script>
 
-    <!-- Bootstrap JS -->
+    <!-- Bootstrap JS (optional) -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.0/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </body>
 </html>
-        
