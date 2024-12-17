@@ -73,13 +73,18 @@ if (isset($_POST['status']) && $_POST['status'] != '') {
     $filter_conditions[] = "status = '$status'";
 }
 
-// Construct the SQL query with filters
-$sql = "SELECT id, complaint_subject, incident_date, problem_level, department, status FROM complaints";
+// Handle sorting order (default to descending)
+$sort_order = isset($_POST['sort_order']) && $_POST['sort_order'] == 'asc' ? 'ASC' : 'DESC';
+
+// Construct the SQL query with filters and sorting by submitted_at
+$sql = "SELECT id, complaint_subject, incident_date, problem_level, department, submitted_at, status FROM complaints";
 if (count($filter_conditions) > 0) {
     $sql .= " WHERE " . implode(" AND ", $filter_conditions);
 }
+$sql .= " ORDER BY submitted_at " . $sort_order;
 
 $result = $conn->query($sql);
+
 // Update status when the form is submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['status'], $_POST['complaint_id'])) {
     $new_status = $_POST['status'];
@@ -117,10 +122,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['status'], $_POST['comp
     }
 }
 
-
-
 // Close the connection
 $conn->close();
+
+// Function to map problem levels to CSS classes
+function map_problem_level($level) {
+    switch ($level) {
+        case 'ต่ำ': // Low
+            return 'low';
+        case 'ปานกลาง': // Medium
+            return 'medium';
+        case 'เร่งด่วน': // Urgent (mapped to high)
+            return 'high';
+        default:
+            return 'unknown'; // Fallback for unknown levels
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -189,7 +206,6 @@ $conn->close();
         .btn-info:hover {
             background-color: #138496;
         }
-
         .btn-primary {
             background-color: #007bff;
             color: white;
@@ -198,10 +214,26 @@ $conn->close();
         .btn-primary:hover {
             background-color: #0056b3;
         }
-        .problem-level {
-        background-color: #f8d7da; /* สีชมพูอ่อน */
-        color: #721c24; /* สีแดงเข้มสำหรับข้อความ */
-        font-weight: bold;
+
+        /* Add color for problem levels */
+        .problem-level.low {
+            background-color: #28a745; /* Green for low level */
+            color: white;
+        }
+
+        .problem-level.medium {
+            background-color: #ffc107; /* Yellow for medium level */
+            color: white;
+        }
+
+        .problem-level.high {
+            background-color: #dc3545; /* Red for high level */
+            color: white;
+        }
+
+        .problem-level.unknown {
+            background-color: #6c757d; /* Default gray for unknown levels */
+            color: white;
         }
     </style>
 </head>
@@ -210,7 +242,6 @@ $conn->close();
     <div class="container">
         <div class="header d-flex justify-content-between align-items-center">
             <h2>เรื่องราวร้องทุกข์ในระบบ</h2>
-            <!-- Go Back Button at the top right -->
             <a href="view_logs.php" class="btn btn-info">ดูบันทึกการเปลี่ยนแปลง</a>
             <a href="admin_page.php" class="btn btn-back">ย้อนกลับ</a>
         </div>
@@ -230,11 +261,11 @@ $conn->close();
                     </select>
                 </div>
                 <div class="col-md-3" id="custom_date_range" style="display: none;">
-                    <label for="start_date">วันที่เริ่มต้น</label>
+                    <label for="start_date">จากวันที่</label>
                     <input type="date" name="start_date" id="start_date" class="form-control">
                 </div>
                 <div class="col-md-3" id="custom_date_range" style="display: none;">
-                    <label for="end_date">วันที่สิ้นสุด</label>
+                    <label for="end_date">ถึงวันที่</label>
                     <input type="date" name="end_date" id="end_date" class="form-control">
                 </div>
                 <div class="col-md-3">
@@ -255,78 +286,51 @@ $conn->close();
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label for="status">สถานะ</label>
-                    <select name="status" id="status" class="form-control">
-                        <option value="">เลือกสถานะ</option>
-                        <option value="ยังไม่ดำเนินการ">ยังไม่ดำเนินการ</option>
-                        <option value="กำลังดำเนินการ">กำลังดำเนินการ</option>
-                        <option value="ดำเนินการเสร็จสิ้น">ดำเนินการเสร็จสิ้น</option>
+                    <label for="sort_order">จัดเรียงตามวันที่</label>
+                    <select name="sort_order" id="sort_order" class="form-control">
+                        <option value="desc" <?= (isset($_POST['sort_order']) && $_POST['sort_order'] == 'desc') ? 'selected' : '' ?>>ใหม่ล่าสุด</option>
+                        <option value="asc" <?= (isset($_POST['sort_order']) && $_POST['sort_order'] == 'asc') ? 'selected' : '' ?>>เก่าสุด</option>
                     </select>
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary mt-3">กรองข้อมูล</button>
+            <button type="submit" class="btn btn-primary">กรองข้อมูล</button>
         </form>
 
         <!-- Complaint Table -->
-        <div class="table-responsive">
-            <table class="table table-bordered table-striped">
-                <thead>
-                    <tr>
-                        <th>หัวข้อการร้องเรียน</th>
-                        <th>วันที่เกิดเหตุ</th>
-                        <th class="problem-level">ระดับปัญหา</th>
-                        <th>หน่วยงาน</th>
-                        <th>สถานะ</th>
-                        <th>รายละเอียด</th>
-                        <th>จัดการ/อัพเดทสถานะ</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if ($result->num_rows > 0): ?>
-                        <?php while ($row = $result->fetch_assoc()): ?>
-                            <tr>
-                                <td><?= htmlspecialchars($row['complaint_subject']) ?></td>
-                                <td><?= htmlspecialchars($row['incident_date']) ?></td>
-                                <td class="problem-level"><?= htmlspecialchars($row['problem_level']) ?></td>
-                                <td><?= htmlspecialchars($row['department']) ?></td>
-                                <td><?= htmlspecialchars($row['status']) ?></td>
-                                <td>
-                                    <a href="admin_complant_detail.php?id=<?= urlencode($row['id']) ?>" class="btn btn-info">ดูรายละเอียด</a>
-                                </td>
-                                <td>
-                                    <form method="POST">
-                                        <input type="hidden" name="complaint_id" value="<?= $row['id'] ?>">
-                                        <select name="status" class="form-control" required>
-                                            <option value="ยังไม่ดำเนินการ" <?= $row['status'] == 'ยังไม่ดำเนินการ' ? 'selected' : '' ?>>ยังไม่ดำเนินการ</option>
-                                            <option value="กำลังดำเนินการ" <?= $row['status'] == 'กำลังดำเนินการ' ? 'selected' : '' ?>>กำลังดำเนินการ</option>
-                                            <option value="ดำเนินการเสร็จสิ้น" <?= $row['status'] == 'ดำเนินการเสร็จสิ้น' ? 'selected' : '' ?>>ดำเนินการเสร็จสิ้น</option>
-                                        </select>
-                                        <button type="submit" class="btn btn-primary mt-2">อัปเดตสถานะ</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        <?php endwhile; ?>
-                    <?php else: ?>
-                        <tr>
-                            <td colspan="6" class="text-center">ไม่มีข้อมูลการร้องเรียน</td>
-                        </tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>วันที่แจ้งเรื่อง</th>
+                    <th>หัวข้อ</th>
+                    <th>วันที่</th>
+                    <th>ระดับปัญหา</th>
+                    <th>แผนก</th>
+                    <th>สถานะ</th>
+                    <th>ดำเนินการ</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php while ($row = $result->fetch_assoc()): ?>
+                <tr>
+                    <td><?= htmlspecialchars($row['submitted_at']) ?></td>
+                    <td><?= htmlspecialchars($row['complaint_subject']) ?></td>
+                    <td><?= htmlspecialchars($row['incident_date']) ?></td>
+                    <td class="problem-level <?= strtolower(map_problem_level($row['problem_level'])) ?>">
+                        <?= htmlspecialchars($row['problem_level']) ?>
+                    </td>
+                    <td><?= htmlspecialchars($row['department']) ?></td>
+                    <td><?= htmlspecialchars($row['status']) ?></td>
+                    <td>
+                        <a href="admin_complant_detail.php?id=<?= urlencode($row['id']) ?>" class="btn btn-info">จัดการรายละเอียด</a>
+                    </td>
+                </tr>
+                <?php endwhile; ?>
+            </tbody>
+        </table>
     </div>
-    
 
-    <!-- JavaScript to show/hide custom date range fields -->
-    <script>
-        document.getElementById('date_filter').addEventListener('change', function() {
-            var customDateRange = document.getElementById('custom_date_range');
-            if (this.value === 'custom') {
-                customDateRange.style.display = 'block';
-            } else {
-                customDateRange.style.display = 'none';
-            }
-        });
-    </script>
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

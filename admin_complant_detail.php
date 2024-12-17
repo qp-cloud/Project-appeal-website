@@ -43,6 +43,7 @@ $sql = "SELECT
             c.complaint_file, 
             c.submitted_at, 
             c.status, 
+            c.note, -- Added the 'note' field
             CONCAT(u.first_name, ' ', u.last_name) AS admin_name,
             u.department AS admin_department, -- Admin's department
             CONCAT(usr.first_name, ' ', usr.last_name) AS user_name,
@@ -55,7 +56,6 @@ $sql = "SELECT
         ORDER BY logs.changed_at DESC
         LIMIT 1";
 
-
 if ($stmt = $conn->prepare($sql)) {
     // Bind parameters to the prepared statement
     $stmt->bind_param("i", $complaint_id);
@@ -66,9 +66,8 @@ if ($stmt = $conn->prepare($sql)) {
     // Bind the result to variables
     $stmt->bind_result($id, $user_id, $complaint_subject, $contact_phone, $contact_location, $contact_details,
                    $latitude, $longitude, $incident_date, $incident_time, $problem_level, $department, 
-                   $complaint_description, $complaint_file, $submitted_at, $status, $admin_name, 
-                   $admin_department, $user_name, $status_changed_at);
-
+                   $complaint_description, $complaint_file, $submitted_at, $status, $note, // Added note
+                   $admin_name, $admin_department, $user_name, $status_changed_at);
 
     // Fetch the complaint details
     if ($stmt->fetch()) {
@@ -90,8 +89,9 @@ if ($stmt = $conn->prepare($sql)) {
             'complaint_file' => $complaint_file,
             'submitted_at' => $submitted_at,
             'status' => $status,
+            'note' => $note, // Added note
             'admin_name' => $admin_name,
-            'admin_department' => $admin_department, // Added admin's department
+            'admin_department' => $admin_department, 
             'status_changed_at' => $status_changed_at
         ];
     } else {
@@ -102,6 +102,32 @@ if ($stmt = $conn->prepare($sql)) {
     $stmt->close();
 } else {
     echo "Error preparing the SQL query: " . $conn->error;
+}
+
+// Update complaint status and note
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
+    $new_status = $_POST['status'];
+    $new_note = $_POST['note']; // Retrieve the note from the form
+
+    // Update complaint status and note
+    $update_sql = "UPDATE complaints SET status = ?, note = ? WHERE id = ?";
+
+    if ($stmt = $conn->prepare($update_sql)) {
+        $stmt->bind_param("ssi", $new_status, $new_note, $complaint_id);
+        if ($stmt->execute()) {
+            // Insert into status change log
+            $log_sql = "INSERT INTO status_change_logs (complaint_id, changed_by, changed_at) VALUES (?, ?, NOW())";
+            if ($log_stmt = $conn->prepare($log_sql)) {
+                $log_stmt->bind_param("ii", $complaint_id, $_SESSION['user']['user_id']);
+                $log_stmt->execute();
+                $log_stmt->close();
+            }
+            $stmt->close();
+            header("Location: complaint_details.php?id=$complaint_id");  // Refresh page to show updated status
+        } else {
+            echo "Error updating status: " . $conn->error;
+        }
+    }
 }
 
 // Close the connection
@@ -118,11 +144,11 @@ $conn->close();
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #AFEEEE; /* Light gray background */
+            background-color: #f8f9fa;
         }
         .card {
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-            border-radius: 10px; /* Rounded corners */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
             overflow: hidden;
         }
         .card-header {
@@ -152,6 +178,20 @@ $conn->close();
             background-color: #5a6268;
             border-color: #545b62;
         }
+        .card-body table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .card-body table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f1f1f1;
+        }
     </style>
 </head>
 <body>
@@ -164,30 +204,96 @@ $conn->close();
                 <?php if (!empty($complaint_details)): ?>
                     <h5 class="mb-4" style="font-size: 18px; color: #000; font-weight: 600; border-bottom: 2px solid #2a7cff; padding-bottom: 5px;">
                         <strong>ชื่อเรื่อง:</strong> <?= htmlspecialchars($complaint_details['complaint_subject']) ?></h5>
-                    <p><strong>ชื่อผู้ส่ง:</strong> <?= htmlspecialchars($complaint_details['user_name']) ?></p>    
-                    <p><strong>เบอร์โทรติดต่อ:</strong> <?= htmlspecialchars($complaint_details['contact_phone']) ?></p>
-                    <p><strong>สถานที่เกิดเหตุ:</strong> <?= htmlspecialchars($complaint_details['contact_location']) ?></p>
-                    <p><strong>รายละเอียดที่ติดต่อ:</strong> <?= htmlspecialchars($complaint_details['contact_details']) ?></p>
-                    <p><strong>วันและเวลาเกิดเหตุ:</strong> <?= htmlspecialchars($complaint_details['incident_date']) ?> <?= htmlspecialchars($complaint_details['incident_time']) ?></p>
-                    <p><strong>ระดับปัญหา:</strong> <?= htmlspecialchars($complaint_details['problem_level']) ?></p>
-                    <p><strong>หน่วยงานที่เกี่ยวข้อง:</strong> <?= htmlspecialchars($complaint_details['department']) ?></p>
-                    <p><strong>คำอธิบายปัญหา:</strong> <?= htmlspecialchars($complaint_details['complaint_description']) ?></p>
-                    <p><strong>ไฟล์ประกอบการร้องเรียน:</strong> 
-                        <?php if (!empty($complaint_details['complaint_file'])): ?>
-                            <a href="<?= htmlspecialchars($complaint_details['complaint_file']) ?>" class="btn btn-download btn-sm" download>
-                                <i class="fas fa-download"></i> ดาวน์โหลดไฟล์
-                            </a>
-                        <?php else: ?>
-                            <span class="text-muted">ไม่มีไฟล์</span>
-                        <?php endif; ?>
-                    </p>
-                    <p><strong>วันที่ยื่นร้องเรียน:</strong> <?= htmlspecialchars($complaint_details['submitted_at']) ?></p>
-                    <p><strong>สถานะปัจจุบัน:</strong> 
-                        <span class="badge badge-info"><?= htmlspecialchars($complaint_details['status']) ?></span>
-                    </p>
-                    <p><strong>เจ้าหน้าที่เปลี่ยนสถานะล่าสุด:</strong> <?= htmlspecialchars($complaint_details['admin_name']) ?></p>
-                    <p><strong>แผนกเจ้าหน้าที่:</strong> <?= htmlspecialchars($complaint_details['admin_department']) ?></p>
-                    <p><strong>เวลาเปลี่ยนสถานะ:</strong> <?= htmlspecialchars($complaint_details['status_changed_at']) ?></p>
+                    
+                    <!-- Complaint Details Table -->
+                    <table>
+                        <tr>
+                            <th>ชื่อผู้ส่ง</th>
+                            <td><?= htmlspecialchars($complaint_details['user_name']) ?></td>
+                        </tr>
+                        <tr>
+                            <th>เบอร์โทรติดต่อ</th>
+                            <td><?= htmlspecialchars($complaint_details['contact_phone']) ?></td>
+                        </tr>
+                        <tr>
+                            <th>สถานที่เกิดเหตุ</th>
+                            <td><?= htmlspecialchars($complaint_details['contact_location']) ?></td>
+                        </tr>
+                        <tr>
+                            <th>รายละเอียดที่ติดต่อ</th>
+                            <td><?= htmlspecialchars($complaint_details['contact_details']) ?></td>
+                        </tr>
+                        <tr>
+                            <th>วันและเวลาเกิดเหตุ</th>
+                            <td><?= htmlspecialchars($complaint_details['incident_date']) ?> <?= htmlspecialchars($complaint_details['incident_time']) ?></td>
+                        </tr>
+                        <tr>
+                            <th>ระดับปัญหา</th>
+                            <td><?= htmlspecialchars($complaint_details['problem_level']) ?></td>
+                        </tr>
+                        <tr>
+                            <th>หน่วยงานที่เกี่ยวข้อง</th>
+                            <td><?= htmlspecialchars($complaint_details['department']) ?></td>
+                        </tr>
+                        <tr>
+                            <th>คำอธิบายปัญหา</th>
+                            <td><?= htmlspecialchars($complaint_details['complaint_description']) ?></td>
+                        </tr>
+                        <tr>
+                            <th>ไฟล์ประกอบการร้องเรียน</th>
+                            <td>
+                                <?php if (!empty($complaint_details['complaint_file'])): ?>
+                                    <a href="<?= htmlspecialchars($complaint_details['complaint_file']) ?>" class="btn btn-download btn-sm" download>
+                                        <i class="fas fa-download"></i> ดาวน์โหลดไฟล์
+                                    </a>
+                                <?php else: ?>
+                                    <span class="text-muted">ไม่มีไฟล์</span>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>วันที่ยื่นร้องเรียน</th>
+                            <td><?= htmlspecialchars($complaint_details['submitted_at']) ?></td>
+                        </tr>
+                        <tr>
+                            <th>สถานะปัจจุบัน</th>
+                            <td>
+                                <span class="badge badge-info"><?= htmlspecialchars($complaint_details['status']) ?></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>เจ้าหน้าที่เปลี่ยนสถานะล่าสุด</th>
+                            <td><?= htmlspecialchars($complaint_details['admin_name']) ?></td>
+                        </tr>
+                        <tr>
+                            <th>แผนกเจ้าหน้าที่</th>
+                            <td><?= htmlspecialchars($complaint_details['admin_department']) ?></td>
+                        </tr>
+                        <tr>
+                            <th>เวลาเปลี่ยนสถานะ</th>
+                            <td><?= htmlspecialchars($complaint_details['status_changed_at']) ?></td>
+                        </tr>
+                        <tr>
+                            <th>หมายเหตุจากเจ้าหน้าที่</th>  <!-- Added row for note -->
+                            <td>
+                                <textarea name="note" rows="4" class="form-control"><?= htmlspecialchars($complaint_details['note']) ?></textarea>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Update Status Form -->
+                    <form method="POST" class="mt-4">
+                        <div class="form-group">
+                            <label for="status">เปลี่ยนสถานะการร้องเรียน:</label>
+                            <select name="status" id="status" class="form-control">
+                                <option value="Pending" <?= ($complaint_details['status'] == 'Pending') ? 'selected' : '' ?>>Pending</option>
+                                <option value="In Progress" <?= ($complaint_details['status'] == 'In Progress') ? 'selected' : '' ?>>In Progress</option>
+                                <option value="Resolved" <?= ($complaint_details['status'] == 'Resolved') ? 'selected' : '' ?>>Resolved</option>
+                                <option value="Closed" <?= ($complaint_details['status'] == 'Closed') ? 'selected' : '' ?>>Closed</option>
+                            </select>
+                        </div>
+                        <button type="submit" name="update_status" class="btn btn-primary">อัปเดตสถานะ</button>
+                    </form>
                 <?php else: ?>
                     <p class="text-center text-danger">ไม่พบข้อมูลการร้องเรียน</p>
                 <?php endif; ?>
@@ -201,13 +307,14 @@ $conn->close();
 
     </div>
     <script>
-            function goBackWithUserId() {
-                // Get the user_id from PHP
-                const userId = <?= json_encode($_SESSION['user']['user_id']) ?>;
-                // Redirect to a specific page with the user_id as a query parameter
-                window.location.href = `admin_dashboard.php?user_id=${userId}`;
-            }
-        </script>
+        function goBackWithUserId() {
+            // Get the user_id from PHP
+            const userId = <?= json_encode($_SESSION['user']['user_id']) ?>;
+            // Redirect to a specific page with the user_id as a query parameter
+            window.location.href = `admin_dashboard.php?user_id=${userId}`;
+        }
+    </script>
+
     <!-- Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
@@ -215,3 +322,4 @@ $conn->close();
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </body>
 </html>
+        

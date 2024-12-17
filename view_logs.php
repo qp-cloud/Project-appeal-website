@@ -22,10 +22,11 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Query the logs
+// Query the logs with complaint_subject
 $sql = "SELECT 
             logs.id, 
             logs.complaint_id, 
+            complaint_subject, -- Fetch the title from complaints table
             logs.old_status, 
             logs.new_status, 
             logs.changed_at, 
@@ -33,8 +34,8 @@ $sql = "SELECT
             user.department AS admin_department -- Fetch admin's department
         FROM status_change_logs AS logs
         JOIN user ON logs.changed_by = user.user_id
+        JOIN complaints ON logs.complaint_id = complaints.id -- Join with complaints table
         ORDER BY logs.changed_at DESC";
-
 
 $result = $conn->query($sql);
 ?>
@@ -87,41 +88,35 @@ $result = $conn->query($sql);
             <h2>ประวัติการเปลี่ยนสถานะ</h2>
             <!-- Go Back Button -->
             <a href="#" class="btn btn-back" onclick="goBack()">ย้อนกลับ</a>
-
-
         </div>
 
         <div class="table-responsive mt-4">
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
-                        <th>#</th>
-                        <th>รหัสร้องเรียน</th>
+                        <th>วันที่เปลี่ยน</th>
+                        <th>ชื่อเรื่องร้องเรียน</th>
                         <th>สถานะเดิม</th>
                         <th>สถานะใหม่</th>
                         <th>เปลี่ยนโดย</th>
                         <th>หน่วยงาน</th>
-                        <th>วันที่เปลี่ยน</th>
-                        
                     </tr>
                 </thead>
                 <tbody>
                     <?php if ($result->num_rows > 0): ?>
                         <?php while ($row = $result->fetch_assoc()): ?>
                             <tr>
-                                <td><?= htmlspecialchars($row['id']) ?></td>
-                                <td><?= htmlspecialchars($row['complaint_id']) ?></td>
+                                <td><?= htmlspecialchars($row['changed_at']) ?></td>
+                                <td><?= htmlspecialchars($row['complaint_subject']) ?></td>
                                 <td><?= htmlspecialchars($row['old_status']) ?></td>
                                 <td><?= htmlspecialchars($row['new_status']) ?></td>
                                 <td><?= htmlspecialchars($row['changed_by']) ?></td>
                                 <td><?= htmlspecialchars($row['admin_department']) ?></td>
-                                <td><?= htmlspecialchars($row['changed_at']) ?></td>
                             </tr>
                         <?php endwhile; ?>
                     <?php else: ?>
                         <tr>
                             <td colspan="6" class="text-center">ไม่มีข้อมูลการเปลี่ยนสถานะ</td>
-                            <td colspan="7" class="text-center">ไม่มีข้อมูลการเปลี่ยนสถานะ</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
@@ -132,7 +127,7 @@ $result = $conn->query($sql);
     function goBack() {
         window.history.back(); // Goes to the previous page in the history
     }
-</script>
+    </script>
 </body>
 </html>
 
