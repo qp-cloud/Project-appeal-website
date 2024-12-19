@@ -575,7 +575,7 @@ $conn->close();
             
         // Initialize the map
         function initMap() {
-            const geolocation = { lat: 13.7367, lon: 100.5231 }; // Default location (Bangkok)
+            const geolocation = { lat: 13.811046841299785, lon: 99.87560507925443 }; // Default location (Bangkok)
             map = new longdo.Map({
                 placeholder: document.getElementById('map')
         });
