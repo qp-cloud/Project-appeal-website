@@ -136,8 +136,11 @@ $conn->close();
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #f4f6f9;
+            background-image: url('img/BACK2.png');
+            background-size: cover;
             font-family: 'Arial', sans-serif;
+            background-attachment: fixed;
+            background-position: center;
         }
 
         .container {

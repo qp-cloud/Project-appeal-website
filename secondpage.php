@@ -35,7 +35,7 @@ if (isset($_SESSION['user'])) {
       font-family: 'Arial', sans-serif;
       margin: 0;
       padding: 0;
-      background-image: url('img/bg.png');
+      background-image: url('img/bgmain.jpg');
       background-size: cover;
       background-attachment: fixed;
       color: #333;

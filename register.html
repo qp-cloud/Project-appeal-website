@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <style>
     body {
-      background-image: url('img/bg.png');
+      background-image: url('img/bgmain.jpg');
       background-size: cover;
       font-family: 'Arial', sans-serif;
       min-height: 100vh;
@@ -21,7 +21,7 @@
     .container {
       max-width: 600px;
       padding: 30px;
-      background-color: rgba(255, 255, 255, 0.8); /* เบลอพื้นหลังให้โปร่งแสง */
+      background-color: rgba(68, 66, 71, 0.8); /* เบลอพื้นหลังให้โปร่งแสง */
       border-radius: 15px;
       box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
     }
@@ -32,6 +32,8 @@
       font-weight: 700;
       margin-bottom: 20px;
       color: #007bff;
+    }.form-group {
+      color: #ffffff;
     }
 
     .form-group input, .form-group select, .form-group textarea {
@@ -67,24 +69,6 @@
       background-color: #0056b3;
     }
 
-    .modal-content {
-      border-radius: 10px;
-    }
-
-    .modal-header {
-      border-bottom: none;
-    }
-
-    .modal-title {
-      font-size: 20px;
-      font-weight: 700;
-      color: #007bff;
-    }
-
-    .modal-footer {
-      border-top: none;
-    }
-
     .text-center a {
       text-decoration: none;
       font-size: 16px;
@@ -97,14 +81,17 @@
 
     .text-center a:hover {
       background-color: #007bff;
-      color: rgb(0, 0, 0);
+      color: rgb(255, 255, 255);
     }
 
     .form-title, .form-group label {
-      color: #343a40;
+      color: #ffffff;
     }
     .required {
       color: red;
+    }
+    .custom-column {
+      flex: 1; /* ช่องมีขนาดเท่ากัน */
     }
   </style>
 </head>
@@ -152,18 +139,10 @@
         <div class="invalid-feedback">กรุณาเลือกเพศ</div>
       </div>
     
-      <div class="form-group col-md-6">
+      <div class="form-group custom-column">
         <label for="birth_date">วันเดือนปีเกิด:<span class="required">*</span></label>
-        <input 
-          type="text" 
-          id="birth_date" 
-          name="birth_date" 
-          class="form-control" 
-          required 
-          placeholder="วัน/เดือน/ปี (พ.ศ.)"
-          onfocus="showThaiCalendar(this)"
-        >
-        <div class="invalid-feedback">กรุณาเลือกวันเกิด</div>
+        <input type="date" id="birth_date" name="birth_date" class="form-control">
+        <div id="birth_date_error" class="invalid-feedback">กรุณาเลือกวันเกิด</div>
       </div>
     </div>
     
@@ -339,45 +318,6 @@
       return true;
   }
   </script>
-
-<script>
-  function showThaiCalendar(element) {
-    $(element).datepicker({
-      format: 'dd/mm/yyyy', // รูปแบบวัน/เดือน/ปี
-      language: 'th', // ใช้ภาษาไทย
-      autoclose: true,
-      todayHighlight: true,
-      orientation: "bottom auto",
-      clearBtn: true,
-      startView: 2, // เริ่มที่มุมมองปี
-      thaiyear: true, // ใช้ปีพุทธศักราช
-      templates: {
-        leftArrow: '&lt;', // เปลี่ยนปุ่มลูกศรซ้าย
-        rightArrow: '&gt;' // เปลี่ยนปุ่มลูกศรขวา
-      }
-    }).on('changeDate', function(e) {
-      // แปลงปี ค.ศ. เป็น พ.ศ. เมื่อเลือกวันที่
-      const date = e.date;
-      const year = date.getFullYear();
-      if (year < 2400) {
-        date.setFullYear(year + 543); // แปลง ค.ศ. เป็น พ.ศ.
-        $(element).datepicker('update', date);
-      }
-    });
-
-    // แปลงปีเริ่มต้นเป็น พ.ศ.
-    const currentDate = $(element).datepicker('getDate');
-    if (currentDate) {
-      const currentYear = currentDate.getFullYear();
-      if (currentYear < 2400) {
-        currentDate.setFullYear(currentYear + 543); // แปลง ค.ศ. เป็น พ.ศ.
-        $(element).datepicker('update', currentDate);
-      }
-    }
-
-    $(element).datepicker('show');
-  }
-</script>
 
 <script>
   document.getElementById("registerForm").addEventListener("submit", function(event) {

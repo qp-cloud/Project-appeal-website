@@ -82,6 +82,8 @@ $appeals_completed = isset($appeals_data[$selected_year]['ดำเนินก�
       padding: 0;
       color: #333;
       background-image: url('img/adminbg.jpg');
+      background-size: cover;
+      background-attachment: fixed;
     }
     .container {
       padding: 40px 30px;
@@ -90,7 +92,7 @@ $appeals_completed = isset($appeals_data[$selected_year]['ดำเนินก�
       text-align: center;
     }
     h1 {
-      background-color: #f8f8f8;
+      background-color:rgba(218, 205, 30, 0.81);
       font-size: 36px;
       color:rgb(0, 0, 0);
       margin-bottom: 40px;
@@ -127,14 +129,14 @@ $appeals_completed = isset($appeals_data[$selected_year]['ดำเนินก�
     .footer {
       margin-top: 50px;
       font-size: 14px;
-      color: #888;
+      color:rgb(0, 0, 0);
       text-align: center;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>ข้อมูลการร้องเรียนและการทุจริตตามปี</h1>
+    <h1>ข้อมูลการร้องเรียนและการแจ้งเบาะแสการทุจริตตามปี</h1>
 
     <!-- Year Select Dropdown -->
     <form method="GET" action="">
@@ -154,7 +156,7 @@ $appeals_completed = isset($appeals_data[$selected_year]['ดำเนินก�
     <button class="go-back-btn" onclick="window.location.href='admin_page.php';">ย้อนกลับ</button>
 
     <div class="footer">
-      <p>แสดงข้อมูลการร้องเรียนและการทุจริตตามสถานะในแต่ละปี</p>
+      <p>แสดงข้อมูลการร้องเรียนและการแจ้งเบาะแสการทุจริตตามสถานะในแต่ละปี</p>
     </div>
   </div>
 

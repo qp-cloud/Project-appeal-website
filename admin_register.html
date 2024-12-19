@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ลงทะเบียนเจ้าหน้าที่ - เทศบาลอำเภอบ้านโป่ง</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -51,11 +52,10 @@
     }
     .container {
       max-width: 600px;
-      margin: 50px auto;
-      padding: 20px;
-      background: #333;
+      padding: 30px;
+      background-color: rgba(24, 6, 6, 0.664); /* เบลอพื้นหลังให้โปร่งแสง */
       border-radius: 15px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
     }
     h1 {
       text-align: center;
@@ -92,27 +92,71 @@
     button:hover {
       background-color: #0056b3;
     }
-    .error-message {
-      color: red;
-      font-size: 12px;
-      margin-top: 5px;
+    .form-title {
+      text-align: center;
+      font-size: 30px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: #007bff;
+    }
+
+    .form-group input, .form-group select, .form-group textarea {
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+
+    .invalid-feedback {
+      color: #dc3545;
+      font-size: 14px;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      background-color: #007bff;
+      color: white;
+      font-size: 18px;
+      transition: background-color 0.3s;
+    }
+
+    .btn-primary:hover {
+      background-color: #0056b3;
+    }
+
+    .text-center a {
+      text-decoration: none;
+      font-size: 16px;
+      color: #ffffff;
+      border-radius: 5px;
+      padding: 10px 20px;
+      border: 1px solid #007bff;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .text-center a:hover {
+      background-color: #007bff;
+      color: rgb(255, 255, 255);
+    }
+
+    .form-title{
+      color: #ffffff;
+    }
+    .form-group label {
+      color: white;
+      font-weight: bold;
     }
     .required {
       color: red;
-    }
-    .cancel-button {
-      background-color: #ccc;
-      color: #333;
-      font-size: 18px;
-      padding: 10px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-      margin-top: 15px;
-    }
-    .cancel-button:hover {
-      background-color: #888;
     }
     .header-nav a {
       color: #fff;
@@ -144,10 +188,6 @@
       padding: 8px;
       box-sizing: border-box;
     }
-    .error-message {
-      color: red;
-      font-size: 12px;
-    }
   </style>
 </head>
 <body>
@@ -163,57 +203,55 @@
   </div>
 
   <div class="container">
-    <h1>ลงทะเบียนเจ้าหน้าที่</h1>
-    <form id="registerForm" action="register_admin.php" method="POST" onsubmit="return validateForm()">
+    <div class="form-title">ลงทะเบียนเจ้าหน้าที่</div>
+    <form action="register_admin.php" method="POST" id="registerForm" novalidate>
+      <div class="form-group">
+        <label for="first_name">ชื่อจริง:<span class="required">*</span></label>
+        <input type="text" name="first_name" class="form-control" placeholder="กรอกชื่อจริง" required>
+        <div class="invalid-feedback">กรุณากรอกชื่อ</div>
+      </div>
       
-      <label for="first_name">ชื่อ:<span class="required">*</span></label>
-      <input type="text" id="first_name" name="first_name" placeholder="กรอกชื่อจริง">
-      <div id="first_name_error" class="error-message"></div>
-    
-      <label for="last_name">นามสกุล:<span class="required">*</span></label>
-      <input type="text" id="last_name" name="last_name" placeholder="กรอกนามสกุล">
-      <div id="last_name_error" class="error-message"></div>
-    
-      <label for="id_number">เลขประจำตัวประชาชน:<span class="required">*</span></label>
-      <input type="text" name="id_number" class="form-control" placeholder="กรอกรหัสบัตรประจำตัวประชาชน 13 หลัก" required maxlength="13" oninput="this.value = this.value.replace(/\D/g, '')">
-      <div id="id_number_error" class="error-message"></div>
-
-      <!-- จัด row เพศและวันเกิดให้อยู่บรรทัดเดียวกัน -->
-      <div class="form-row custom-row">
-        <div class="form-group custom-column">
+      <div class="form-group">
+        <label for="last_name">นามสกุล:<span class="required">*</span></label>
+        <input type="text" name="last_name" class="form-control" placeholder="กรอกนามสกุล" required>
+        <div class="invalid-feedback">กรุณากรอกนามสกุล</div>
+      </div>
+      
+      <div class="form-group">
+        <label for="id_number">หมายเลขบัตรประจำตัวประชาชน:<span class="required">*</span></label>
+        <input 
+          type="text" 
+          id="id_number" 
+          name="id_number" 
+          class="form-control" 
+          placeholder="กรอกรหัสบัตรประจำตัวประชาชน 13 หลัก" 
+          required 
+          maxlength="13" 
+          oninput="this.value = this.value.replace(/\D/g, '')"
+          onchange="validateThaiID(this)">
+        <div class="invalid-feedback">กรุณากรอกหมายเลขบัตรประชาชน 13 หลักให้ถูกต้อง</div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group col-md-6">
           <label for="gender">เพศ:<span class="required">*</span></label>
-          <select id="gender" name="gender" class="form-control">
+          <select name="gender" class="form-control" required>
             <option value="">กรุณาเลือกเพศ</option>
             <option value="male">ชาย</option>
             <option value="female">หญิง</option>
-            <option value="other">อื่น ๆ</option>
+            <option value="other">อื่นๆ</option>
           </select>
-          <div id="gender_error" class="error-message">กรุณาเลือกเพศ</div>
+          <div class="invalid-feedback">กรุณาเลือกเพศ</div>
         </div>
-
+      
         <div class="form-group custom-column">
           <label for="birth_date">วันเดือนปีเกิด:<span class="required">*</span></label>
           <input type="date" id="birth_date" name="birth_date" class="form-control">
-          <div id="birth_date_error" class="error-message">กรุณาเลือกวันเกิด</div>
         </div>
       </div>
-      <label for="occupation">ตำแหน่งงาน:<span class="required">*</span></label>
-      <input type="text" id="occupation" name="occupation" placeholder="ระบุตำแหน่งงาน">
-      <div id="occupation_error" class="error-message"></div>
-    
-      <label for="phone">เบอร์โทร:<span class="required">*</span></label>
-      <input type="text" name="phone" class="form-control" placeholder="กรอกเบอร์โทรศัพท์" required maxlength="10" oninput="this.value = this.value.replace(/\D/g, '')">
-      <div id="phone_error" class="error-message"></div>
-    
-      <label for="email">อีเมล์:<span class="required">*</span></label>
-      <input type="email" id="email" name="email" placeholder="กรอกอีเมล์">
-      <div id="email_error" class="error-message"></div>
-    
-      <label for="address">ที่อยู่:<span class="required">*</span></label>
-      <textarea id="address" name="address" rows="3" placeholder="กรอกที่อยู่"></textarea>
-      <div id="address_error" class="error-message"></div>
-    
-      <label for="department">แผนก:<span class="required">*</span></label>
+      
+      <div class="form-group">
+      <label for="department">หน่วยงาน:<span class="required">*</span></label>
       <select id="department" name="department">
         <option value="เทศบาลเมือง">เทศบาลเมือง</option>
         <option value="สำนักปลัดเทศบาลเมือง">สำนักปลัดเทศบาลเมือง</option>
@@ -225,104 +263,216 @@
         <option value="กองยุทธศาสตร์">กองยุทธศาสตร์</option>
         <option value="กองการเจ้าหน้าที่">กองการเจ้าหน้าที่</option>
         <option value="หน่วยตรวจสอบภายใน">หน่วยตรวจสอบภายใน</option>
-        <option value="หน่วยงานอื่นๆ">หน่วยงานอื่นๆ</option>
+        <option value="หน่วยงานอื่นๆ">หน่วยงาน อื่นๆ</option>
       </select>
       <div id="department_error" class="error-message"></div>
-    
-      <label for="username" style="color: rgb(0, 204, 255);">ชื่อผู้ใช้:<span class="required">*</span></label>
-      <input type="text" id="username" name="username" placeholder="กรอกชื่อผู้ใช้">
-      <div id="username_error" class="error-message"></div>
-    
-      <label for="password" style="color: rgb(51, 255, 0);">รหัสผ่าน:<span class="required">*</span></label>
-      <input type="password" id="password" name="password" placeholder="กรอกรหัสผ่าน">
-      <div id="password_error" class="error-message"></div>
+      </div>
 
-      <label for="confirm_password" style="color: rgb(51, 255, 0);">ยืนยันรหัสผ่าน:<span class="required">*</span></label>
-      <input type="password" id="password" name="confirm_password" placeholder="ยืนยันรหัสผ่าน">
-      <div id="password_error" class="error-message"></div>
-    
-      <button type="submit">ลงทะเบียน</button>
+      <div class="form-group">
+        <label for="occupation">ตำแหน่ง:<span class="required">*</span></label>
+        <input type="text" name="occupation" class="form-control" placeholder="ระบุอาชีพ" required>
+        <div class="invalid-feedback">กรุณากรอกตำแหน่ง</div>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">หมายเลขโทรศัพท์:<span class="required">*</span></label>
+        <input type="text" name="phone" class="form-control" placeholder="กรอกเบอร์โทรศัพท์" required maxlength="10" oninput="this.value = this.value.replace(/\D/g, '')">
+        <div class="invalid-feedback">กรุณากรอกหมายเลขโทรศัพท์ 10 หลัก</div>
+      </div>
       
-      <!-- Cancel Button -->
-      <button type="button" class="cancel-button" onclick="window.location.href='admin_page.php';">ยกเลิก</button>
+      <div class="form-group">
+        <label for="email">อีเมล:<span class="required">*</span></label>
+        <input type="email" name="email" class="form-control" placeholder="กรอกอีเมล" required>
+        <div class="invalid-feedback">กรุณากรอกอีเมลที่ถูกต้อง</div>
+      </div>
+      
+      <div class="form-group">
+        <label for="address">ที่อยู่:<span class="required">*</span></label>
+        <textarea name="address" class="form-control" placeholder="กรอกที่อยู่ปัจจุบัน" rows="3" required></textarea>
+        <div class="invalid-feedback">กรุณากรอกที่อยู่</div>
+      </div>
+  
+      <div class="form-group">
+        <label for="username" style="color: rgb(0, 204, 255);">ชื่อผู้ใช้:<span class="required">*</span></label>
+        <input type="text" name="username" class="form-control" placeholder="กรอกชื่อผู้ใช้" required>
+      </div>
+  
+      <div class="form-group">
+        <label for="password" style="color: rgb(51, 255, 0);">
+          รหัสผ่าน:<span class="required">*</span>
+        </label>
+        <input 
+          type="password" 
+          id="password" 
+          name="password" 
+          class="form-control" 
+          placeholder="กรอกรหัสผ่าน" 
+          required 
+          pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}"
+          title="รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร, ตัวอักษรพิมพ์ใหญ่ 1 ตัว, ตัวเลข 1 ตัว และอักขระพิเศษ 1 ตัว"
+          oninput="validatePassword(this)"
+        >
+        <div class="invalid-feedback">กรุณากรอกรหัสผ่านตามรูปแบบที่กำหนด</div>
+      </div>
+      
+      <div class="form-group">
+        <label for="confirm_password" style="color: rgb(51, 255, 0);">ยืนยันรหัสผ่าน:<span class="required">*</span></label>
+        <input 
+          type="password" 
+          id="confirm_password" 
+          name="confirm_password" 
+          class="form-control" 
+          placeholder="ยืนยันรหัสผ่าน" 
+          required
+        >
+        <div class="invalid-feedback">กรุณายืนยันรหัสผ่านให้ตรงกัน</div>
+      </div>
+  
+      <button type="submit">ลงทะเบียน</button>
+
+      <div class="text-center mt-3">
+        <a class="btn btn-secondary" onclick="window.location.href='admin_page.php';">ยกเลิก</a>
+      </div>
     </form>
   </div>
   
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.th.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+
+
+
   <script>
-    // JavaScript function for validating the form
-    function validateForm() {
-      let isValid = true;
+    // ตรวจสอบรหัสผ่าน
+    function validatePassword(input) {
+      const pattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
       
-      // Clear all previous error messages
-      const errorMessages = document.querySelectorAll('.error-message');
-      errorMessages.forEach(message => message.textContent = "");
-
-      // Validate the form fields
-      const firstName = document.getElementById("first_name").value;
-      const lastName = document.getElementById("last_name").value;
-      const idNumber = document.getElementById("id_number").value;
-      const gender = document.getElementById("gender").value;
-      const birthDate = document.getElementById("birth_date").value;
-      const occupation = document.getElementById("occupation").value;
-      const phone = document.getElementById("phone").value;
-      const email = document.getElementById("email").value;
-      const address = document.getElementById("address").value;
-      const department = document.getElementById("department").value;
-      const username = document.getElementById("username").value;
+      if (pattern.test(input.value)) {
+        input.classList.remove("is-invalid");
+        input.setCustomValidity(""); // รหัสผ่านถูกต้อง
+      } else {
+        input.classList.add("is-invalid");
+        input.setCustomValidity("รหัสผ่านไม่ถูกต้อง"); // รหัสผ่านไม่ถูกต้อง
+      }
+    }
+  
+    // ตรวจสอบการยืนยันรหัสผ่านเมื่อส่งฟอร์ม
+    document.querySelector('form').addEventListener('submit', function(event) {
       const password = document.getElementById("password").value;
+      const confirmPassword = document.getElementById("confirm_password").value;
       
-      // Check if the fields are filled correctly
-      if (!firstName) {
-        document.getElementById("first_name_error").textContent = "กรุณากรอกชื่อ";
-        isValid = false;
+      if (password !== confirmPassword) {
+        event.preventDefault(); // ป้องกันการส่งฟอร์ม
+        alert("รหัสผ่านยืนยันไม่ตรงกัน กรุณากรอกข้อมูลใหม่");
+        document.getElementById("confirm_password").classList.add("is-invalid");
+        document.getElementById("confirm_password").setCustomValidity("รหัสผ่านไม่ตรงกัน");
       }
-      if (!lastName) {
-        document.getElementById("last_name_error").textContent = "กรุณากรอกนามสกุล";
-        isValid = false;
+    });
+  </script>
+  
+  <script>
+    function validateThaiID(input) {
+      const id = input.value;
+  
+      // ตรวจสอบความยาว 13 หลัก
+      if (id.length !== 13) {
+        showError(input, "เลขบัตรประชาชนต้องมี 13 หลัก");
+        return;
       }
-      if (!idNumber.match(/^\d{13}$/)) {
-        document.getElementById("id_number_error").textContent = "เลขประจำตัวประชาชนต้องมี 13 หลัก";
-        isValid = false;
+  
+      // ตรวจสอบด้วยสูตรคำนวณ
+      if (!isValidThaiID(id)) {
+        showError(input, "เลขบัตรประชาชนไม่ถูกต้อง");
+        return;
       }
-      if (!gender) {
-        document.getElementById("gender_error").textContent = "กรุณาเลือกเพศ";
-        isValid = false;
+  
+      // หากตรวจสอบผ่าน
+      clearError(input);
+    }
+  
+    function isValidThaiID(id) {
+      let sum = 0;
+      for (let i = 0; i < 12; i++) {
+        sum += parseInt(id.charAt(i)) * (13 - i);
       }
-      if (!birthDate) {
-        document.getElementById("birth_date_error").textContent = "กรุณากรอกวันเกิด";
-        isValid = false;
-      }
-      if (!occupation) {
-        document.getElementById("occupation_error").textContent = "กรุณากรอกตำแหน่งงาน";
-        isValid = false;
-      }
-      if (!phone.match(/^\d{10}$/)) {
-        document.getElementById("phone_error").textContent = "เบอร์โทรต้องมี 10 หลัก";
-        isValid = false;
-      }
-      if (!email) {
-        document.getElementById("email_error").textContent = "กรุณากรอกอีเมลให้ถูกต้อง";
-        isValid = false;
-      }
-      if (!address) {
-        document.getElementById("address_error").textContent = "กรุณากรอกที่อยู่";
-        isValid = false;
-      }
-      if (!department) {
-        document.getElementById("department_error").textContent = "กรุณาเลือกแผนก";
-        isValid = false;
-      }
-      if (!username) {
-        document.getElementById("username_error").textContent = "กรุณากรอกชื่อผู้ใช้";
-        isValid = false;
-      }
-      if (password.length < 6) {
-        document.getElementById("password_error").textContent = "รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัว";
-        isValid = false;
-      }
-
-      return isValid;
+      const checkDigit = (11 - (sum % 11)) % 10;
+      return checkDigit === parseInt(id.charAt(12));
+    }
+  
+    function showError(input, message) {
+      input.classList.add("is-invalid");
+      input.nextElementSibling.textContent = message;
+    }
+  
+    function clearError(input) {
+      input.classList.remove("is-invalid");
     }
   </script>
-</body>
-</html>
+  
+  <script>
+    // ฟังก์ชันตรวจสอบหมายเลขโทรศัพท์
+    function validatePhone() {
+        const phone = document.getElementById('phone').value;
+    
+        // ตรวจสอบว่าเบอร์โทรศัพท์ตรงกับฟอร์แมตที่กำหนดหรือไม่ (10 หลัก)
+        if (phone.length !== 10) {
+            alert('กรุณากรอกหมายเลขโทรศัพท์ 10 หลัก');
+            return false;
+        }
+    
+        // ส่งคำขอไปยังเซิร์ฟเวอร์เพื่อตรวจสอบความซ้ำของเบอร์โทรศัพท์
+        let xhr = new XMLHttpRequest();
+        xhr.open('POST', 'your_php_script.php', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                const response = xhr.responseText;
+                if (response === 'duplicate') {
+                    alert('หมายเลขโทรศัพท์นี้ถูกใช้งานแล้ว กรุณากรอกหมายเลขใหม่');
+                    return false; // ป้องกันไม่ให้ฟอร์มถูกส่ง
+                }
+            }
+        };
+        xhr.send('phone=' + phone); // ส่งหมายเลขโทรศัพท์เพื่อตรวจสอบ
+        return true;
+    }
+    </script>
+  
+  <script>
+    document.getElementById("registerForm").addEventListener("submit", function(event) {
+    var form = this;
+    var isValid = true;
+  
+    // ตรวจสอบข้อมูลในแต่ละช่อง
+    form.querySelectorAll('.form-control').forEach(function(input) {
+      var feedback = input.nextElementSibling; // ข้อความ invalid-feedback
+      if (!input.checkValidity()) {
+        input.classList.add('is-invalid');
+        if (feedback && feedback.classList.contains('invalid-feedback')) {
+          feedback.style.display = 'block';
+        }
+        isValid = false;
+      } else {
+        input.classList.remove('is-invalid');
+        if (feedback && feedback.classList.contains('invalid-feedback')) {
+          feedback.style.display = 'none';
+        }
+      }
+    });
+  
+    // หยุดการส่งฟอร์มถ้าข้อมูลไม่ถูกต้อง
+    if (!isValid) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  
+    form.classList.add('was-validated');
+  });
+  </script>
+  
+  </body>
+  </html>
