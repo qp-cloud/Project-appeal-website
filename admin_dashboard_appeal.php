@@ -72,19 +72,31 @@ if (isset($_POST['status']) && $_POST['status'] != '') {
     $status = $conn->real_escape_string($_POST['status']);
     $filter_conditions[] = "status = '$status'";
 }
+// Handle sorting order (default to descending)
 $sort_order = isset($_POST['sort_order']) && $_POST['sort_order'] == 'asc' ? 'ASC' : 'DESC';
-// Construct the SQL query with filters
-$sql = "SELECT id, report_subject, incident_date, problem_level, department , status FROM appeals";
+
+// Pagination setup
+$records_per_page = 20;
+$current_page = isset($_GET['page']) && is_numeric($_GET['page']) ? intval($_GET['page']) : 1;
+$offset = ($current_page - 1) * $records_per_page;
+
+// Count the total number of complaints
+$count_sql = "SELECT COUNT(*) as total FROM complaints";
+if (count($filter_conditions) > 0) {
+    $count_sql .= " WHERE " . implode(" AND ", $filter_conditions);
+}
+$count_result = $conn->query($count_sql);
+$total_records = $count_result->fetch_assoc()['total'];
+$total_pages = ceil($total_records / $records_per_page);
+
+// Construct the SQL query with filters, sorting, and pagination
+$sql = "SELECT id, report_subject, incident_date, problem_level, department, submitted_at, status FROM appeals";
 if (count($filter_conditions) > 0) {
     $sql .= " WHERE " . implode(" AND ", $filter_conditions);
 }
-$sql .= " ORDER BY submitted_at " . $sort_order;
+$sql .= " ORDER BY submitted_at $sort_order LIMIT $records_per_page OFFSET $offset";
+
 $result = $conn->query($sql);
-// Update status when the form is submitted
-
-
-// Close the connection
-$conn->close();
 function map_problem_level($level) {
     switch ($level) {
         case 'ต่ำ': // Low
@@ -97,6 +109,7 @@ function map_problem_level($level) {
             return 'unknown'; // Fallback for unknown levels
     }
 }
+$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -270,6 +283,7 @@ function map_problem_level($level) {
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
+                        <th>วันที่ยื่นเรื่องทุจริตประพฤติมิชอบ</th>
                         <th>หัวข้อการร้องเรียน</th>
                         <th>วันที่เกิดเหตุ</th>
                         <th>ระดับปัญหา</th>
@@ -283,6 +297,7 @@ function map_problem_level($level) {
                     <?php if ($result->num_rows > 0): ?>
                         <?php while ($row = $result->fetch_assoc()): ?>
                             <tr>
+                                <td><?= htmlspecialchars($row['submitted_at']) ?></td>
                                 <td><?= htmlspecialchars($row['report_subject']) ?></td>
                                 <td><?= htmlspecialchars($row['incident_date']) ?></td>
                                 <td class="problem-level <?= strtolower(map_problem_level($row['problem_level'])) ?>">
@@ -303,6 +318,33 @@ function map_problem_level($level) {
                 </tbody>
             </table>
         </div>
+    </div>
+  <!-- Pagination -->
+  <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                <?php if ($current_page > 1): ?>
+                    <li class="page-item">
+                        <a class="page-link" href="?page=<?= $current_page - 1 ?>" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                <?php endif; ?>
+
+                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                    <li class="page-item <?= ($i == $current_page) ? 'active' : '' ?>">
+                        <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+                    </li>
+                <?php endfor; ?>
+
+                <?php if ($current_page < $total_pages): ?>
+                    <li class="page-item">
+                        <a class="page-link" href="?page=<?= $current_page + 1 ?>" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                <?php endif; ?>
+            </ul>
+        </nav>
     </div>
 
     <!-- JavaScript to show/hide custom date range fields -->

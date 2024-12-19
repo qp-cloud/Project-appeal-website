@@ -76,18 +76,28 @@ if (isset($_POST['status']) && $_POST['status'] != '') {
 // Handle sorting order (default to descending)
 $sort_order = isset($_POST['sort_order']) && $_POST['sort_order'] == 'asc' ? 'ASC' : 'DESC';
 
-// Construct the SQL query with filters and sorting by submitted_at
+// Pagination setup
+$records_per_page = 20;
+$current_page = isset($_GET['page']) && is_numeric($_GET['page']) ? intval($_GET['page']) : 1;
+$offset = ($current_page - 1) * $records_per_page;
+
+// Count the total number of complaints
+$count_sql = "SELECT COUNT(*) as total FROM complaints";
+if (count($filter_conditions) > 0) {
+    $count_sql .= " WHERE " . implode(" AND ", $filter_conditions);
+}
+$count_result = $conn->query($count_sql);
+$total_records = $count_result->fetch_assoc()['total'];
+$total_pages = ceil($total_records / $records_per_page);
+
+// Construct the SQL query with filters, sorting, and pagination
 $sql = "SELECT id, complaint_subject, incident_date, problem_level, department, submitted_at, status FROM complaints";
 if (count($filter_conditions) > 0) {
     $sql .= " WHERE " . implode(" AND ", $filter_conditions);
 }
-$sql .= " ORDER BY submitted_at " . $sort_order;
+$sql .= " ORDER BY submitted_at $sort_order LIMIT $records_per_page OFFSET $offset";
 
 $result = $conn->query($sql);
-
-
-// Close the connection
-$conn->close();
 
 // Function to map problem levels to CSS classes
 function map_problem_level($level) {
@@ -102,6 +112,8 @@ function map_problem_level($level) {
             return 'unknown'; // Fallback for unknown levels
     }
 }
+$conn->close();
+
 ?>
 
 <!DOCTYPE html>
@@ -274,6 +286,7 @@ function map_problem_level($level) {
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
+                        <th>วันที่ยื่นร้องเรียน</th>
                         <th>หัวข้อการร้องเรียน</th>
                         <th>วันที่เกิดเหตุ</th>
                         <th class="problem-level">ระดับปัญหา</th>
@@ -287,6 +300,7 @@ function map_problem_level($level) {
                     <?php if ($result->num_rows > 0): ?>
                         <?php while ($row = $result->fetch_assoc()): ?>
                             <tr>
+                                <td><?= htmlspecialchars($row['submitted_at']) ?></td>
                                 <td><?= htmlspecialchars($row['complaint_subject']) ?></td>
                                 <td><?= htmlspecialchars($row['incident_date']) ?></td>
                                 <td class="problem-level <?= strtolower(map_problem_level($row['problem_level'])) ?>">
@@ -307,6 +321,33 @@ function map_problem_level($level) {
                 </tbody>
             </table>
         </div>
+          <!-- Pagination -->
+          <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                <?php if ($current_page > 1): ?>
+                    <li class="page-item">
+                        <a class="page-link" href="?page=<?= $current_page - 1 ?>" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                <?php endif; ?>
+
+                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                    <li class="page-item <?= ($i == $current_page) ? 'active' : '' ?>">
+                        <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+                    </li>
+                <?php endfor; ?>
+
+                <?php if ($current_page < $total_pages): ?>
+                    <li class="page-item">
+                        <a class="page-link" href="?page=<?= $current_page + 1 ?>" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                <?php endif; ?>
+            </ul>
+        </nav>
+    </div>
     <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>

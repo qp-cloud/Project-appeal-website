@@ -45,7 +45,7 @@ $sql = "
     FROM (
         SELECT 'ร้องทุกข์' AS source, status, problem_level FROM complaints WHERE status = 'ยังไม่ดำเนินการ'
         UNION ALL
-        SELECT 'การทุจริตประพฤติมิชอบ' AS source, status, problem_level FROM appeals WHERE status = 'ยังไม่ดำเนินการ'
+        SELECT 'การทุจริต' AS source, status, problem_level FROM appeals WHERE status = 'ยังไม่ดำเนินการ'
     ) AS all_data
     GROUP BY source, status, problem_level
     ORDER BY source, problem_level";
@@ -270,6 +270,26 @@ $conn->close();
   border-style: solid;
   border-color: transparent transparent #f9f9f9 transparent;
 }
+.button-dashboard {
+    background-color: #007bff; /* Bright blue background */
+    color: white; /* White text color */
+    padding: 15px 25px; /* Increase padding for a larger button */
+    font-size: 20px; /* Larger font size */
+    font-weight: bold; /* Make the text bold */
+    text-align: center; /* Center-align text */
+    border-radius: 10px; /* Rounded corners */
+    text-decoration: none; /* Remove underline */
+    display: inline-block; /* Ensures button layout */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow for depth */
+    transition: all 0.3s ease; /* Smooth transition for hover effects */
+}
+
+.button-dashboard:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+    transform: translateY(-5px); /* Slightly lift the button */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Increase shadow on hover */
+    color: #fff; /* Ensure text remains white */
+}
 
   </style>
   
@@ -287,10 +307,12 @@ $conn->close();
         <?php endforeach; ?>
       </div>
     </div>
+    <a href="view_complaints.php" class="button-dashboard">ข้อมูลการร้องเรียนและการทุจริตตามปี</a>
+
     <div class="header-nav">
       <nav>
         <ul>
-        
+          
           <span style="color: cyan;">ยินดีต้อนรับ</span>, <?= htmlspecialchars($_SESSION['user']['first_name']) ?> <?= htmlspecialchars($_SESSION['user']['last_name']) ?>
           <span style="color: green;">หน่วยงาน</span>, <?= htmlspecialchars($_SESSION['user']['department']) ?> 
           <a href="edit_account.php?username=<?= urlencode($username) ?>">แก้ไขข้อมูลบัญชี</a>

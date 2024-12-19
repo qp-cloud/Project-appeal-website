@@ -48,14 +48,15 @@ $sql = "SELECT
             u.department AS admin_department, -- Admin's department
             CONCAT(usr.first_name, ' ', usr.last_name) AS user_name,
             logs.changed_at AS status_changed_at,
+            logs.new_status,  -- New status from logs
+            logs.old_status,  -- Old status from logs
             c.note  -- Add note column here
         FROM appeals AS c
         LEFT JOIN status_change_logs AS logs ON c.id = logs.complaint_id
         LEFT JOIN user AS u ON logs.changed_by = u.user_id
         LEFT JOIN user AS usr ON c.user_id = usr.user_id
         WHERE c.id = ?
-        ORDER BY logs.changed_at DESC
-        LIMIT 1";
+        ORDER BY logs.changed_at DESC";  // Get all status changes for this complaint
 
 if ($stmt = $conn->prepare($sql)) {
     // Bind parameters to the prepared statement
@@ -68,37 +69,49 @@ if ($stmt = $conn->prepare($sql)) {
     $stmt->bind_result($id, $user_id, $report_subject, $report_person, $contact_phone, $contact_location, 
                        $contact_details, $latitude, $longitude, $incident_date, $incident_time, 
                        $problem_level, $department, $complaint_description, $complaint_file, $submitted_at, 
-                       $status, $admin_name, $admin_department, $user_name, $status_changed_at, $note);
+                       $status, $admin_name, $admin_department, $user_name, $status_changed_at, 
+                       $new_status, $old_status, $note);
 
     // Fetch the complaint details
-    if ($stmt->fetch()) {
-        $complaint_details = [
-            'id' => $id,
-            'user_id' => $user_id,
-            'user_name' => $user_name,
-            'report_subject' => $report_subject,
-            'report_person' => $report_person,
-            'contact_phone' => $contact_phone,
-            'contact_location' => $contact_location,
-            'contact_details' => $contact_details,
-            'latitude' => $latitude,
-            'longitude' => $longitude,
-            'incident_date' => $incident_date,
-            'incident_time' => $incident_time,
-            'problem_level' => $problem_level,
-            'department' => $department,
-            'complaint_description' => $complaint_description,
-            'complaint_file' => $complaint_file,
-            'submitted_at' => $submitted_at,
-            'status' => $status,
-            'admin_name' => $admin_name,
-            'admin_department' => $admin_department, // Added admin's department
-            'status_changed_at' => $status_changed_at,
-            'note' => $note
-        ];
-    } else {
-        echo "Complaint not found.";
-    }
+    $complaint_details = [];
+   // Initialize status changes array
+$status_changes = [];
+
+// Fetch complaint details and status change history
+while ($stmt->fetch()) {
+    // Store complaint details
+    $complaint_details = [
+        'id' => $id,
+        'user_id' => $user_id,
+        'user_name' => $user_name,
+        'report_subject' => $report_subject,
+        'report_person' => $report_person,
+        'contact_phone' => $contact_phone,
+        'contact_location' => $contact_location,
+        'contact_details' => $contact_details,
+        'latitude' => $latitude,
+        'longitude' => $longitude,
+        'incident_date' => $incident_date,
+        'incident_time' => $incident_time,
+        'problem_level' => $problem_level,
+        'department' => $department,
+        'complaint_description' => $complaint_description,
+        'complaint_file' => $complaint_file,
+        'submitted_at' => $submitted_at,
+        'status' => $status,
+        'admin_name' => $admin_name,
+        'admin_department' => $admin_department,
+        'note' => $note
+    ];
+
+    // Save each status change history
+    $status_changes[] = [
+        'status_changed_at' => $status_changed_at,
+        'old_status' => $old_status,
+        'new_status' => $new_status,
+        'admin_name' => $admin_name,
+    ];
+}
 
     // Close the statement
     $stmt->close();
@@ -235,6 +248,10 @@ $conn->close();
                             <td><?= htmlspecialchars($complaint_details['contact_location']) ?></td>
                         </tr>
                         <tr>
+                            <th>ค่า Latitude และ Longitude</th>
+                            <td>Latitude: <?= htmlspecialchars($complaint_details['latitude']) ?>, Longitude: <?= htmlspecialchars($complaint_details['longitude']) ?></td>
+                        </tr>
+                        <tr>
                             <th>รายละเอียดที่ติดต่อ</th>
                             <td><?= htmlspecialchars($complaint_details['contact_details']) ?></td>
                         </tr>
@@ -269,29 +286,30 @@ $conn->close();
                             </td>
                         </tr>
                         <tr>
-                        <th>สถานะปัจจุบัน</th>
-                        <td><span class="badge badge-info"><?= htmlspecialchars($complaint_details['status']) ?></span></td>
-                        </tr>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>เจ้าหน้าที่เปลี่ยนสถานะล่าสุด</th>
-                            <td><?= htmlspecialchars($complaint_details['admin_name']) ?></td>
-                        </tr>
-                        <tr>
-                            <th>แผนกเจ้าหน้าที่</th>
-                            <td><?= htmlspecialchars($complaint_details['admin_department']) ?></td>
-                        </tr>
-                        <tr>
-                            <th>เวลาเปลี่ยนสถานะ</th>
-                            <td><?= htmlspecialchars($complaint_details['status_changed_at']) ?></td>
-                        </tr>
-                        <tr>
-                            <th>หมายเหตุจากเจ้าหน้าที่</th>
-                            <td>
-                                <?= !empty($complaint_details['note']) ? htmlspecialchars($complaint_details['note']) : 'ไม่มีหมายเหตุ' ?>
-                            </td>
-                        </tr>
+    <th>สถานะการร้องเรียน (ประวัติการเปลี่ยนแปลง)</th>
+    <td>
+        <?php if (count($status_changes) > 0): ?>
+            <select id="statusChangeDropdown" class="form-control">
+                <option value="">เลือกสถานะที่ต้องการดู</option>
+                <?php foreach ($status_changes as $index => $change): ?>
+                    <option value="<?= $index ?>">
+                        สถานะที่ <?= $index + 1 ?> - <?= htmlspecialchars($change['new_status']) ?> (<?= htmlspecialchars($change['status_changed_at']) ?>)
+                    </option>
+                <?php endforeach; ?>
+            </select>
+
+            <!-- Div to display the selected status change details -->
+            <div id="statusChangeDetails" class="mt-3">
+                <!-- Default message -->
+                <p>กรุณาเลือกสถานะจาก dropdown เพื่อดูรายละเอียด.</p>
+            </div>
+        <?php else: ?>
+            <p>สถานะของการร้องเรียนนี้ไม่เคยเปลี่ยนแปลง.</p>
+        <?php endif; ?>
+    </td>
+</tr>
+
+
 
 
                     </table>
@@ -315,6 +333,28 @@ $conn->close();
                 window.location.href = `appeal_tracking.php?user_id=${userId}`;
             }
         </script>
+    
+    <script>
+        // JavaScript to handle the dropdown selection and display status change details
+        document.getElementById("statusChangeDropdown").addEventListener("change", function () {
+            var index = this.value;
+            var statusChanges = <?php echo json_encode($status_changes); ?>;
+
+            if (index !== "") {
+                var selectedChange = statusChanges[index];
+                var detailsHTML = `
+                    <h5>รายละเอียดการเปลี่ยนสถานะ</h5>
+                    <p><strong>สถานะเก่า:</strong> ${selectedChange.old_status}</p>
+                    <p><strong>สถานะใหม่:</strong> ${selectedChange.new_status}</p>
+                    <p><strong>เจ้าหน้าที่:</strong> ${selectedChange.admin_name}</p>
+                    <p><strong>เวลาเปลี่ยนสถานะ:</strong> ${selectedChange.status_changed_at}</p>
+                `;
+                document.getElementById("statusChangeDetails").innerHTML = detailsHTML;
+            } else {
+                document.getElementById("statusChangeDetails").innerHTML = "<p>กรุณาเลือกสถานะจาก dropdown เพื่อดูรายละเอียด.</p>";
+            }
+        });
+    </script> 
     <!-- Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>

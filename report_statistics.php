@@ -126,7 +126,7 @@ while ($row = $result->fetch_assoc()) {
             padding: 10px 20px;
             display: flex;
             justify-content: space-between;
-             align-items: center;
+            align-items: center;
             border: 5px solid #2a7cff;
             border-radius: 15px;
             width: 90%;
@@ -170,7 +170,7 @@ while ($row = $result->fetch_assoc()) {
         </ul>
       </nav>
     </div>
-  </div>
+</div>
 
     <div class="container mt-5">
         <h2 class="text-center mb-4">รายงานสถิติการรับแจ้งเรื่องร้องเรียน/แจ้งเบาะแส</h2>
@@ -238,25 +238,28 @@ while ($row = $result->fetch_assoc()) {
                     echo "<td>" . $total . "</td>";
                     echo "</tr>";
                 }
+
+                function getMonthName($month) {
+                    $months = [
+                        1 => 'มกราคม',
+                        2 => 'กุมภาพันธ์',
+                        3 => 'มีนาคม',
+                        4 => 'เมษายน',
+                        5 => 'พฤษภาคม',
+                        6 => 'มิถุนายน',
+                        7 => 'กรกฎาคม',
+                        8 => 'สิงหาคม',
+                        9 => 'กันยายน',
+                        10 => 'ตุลาคม',
+                        11 => 'พฤศจิกายน',
+                        12 => 'ธันวาคม'
+                    ];
+                    return $months[$month];
+                }
                 ?>
             </tbody>
         </table>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
-
-<?php
-$conn->close();
-
-function getMonthName($month) {
-    $months = [
-        1 => 'มกราคม', 2 => 'กุมภาพันธ์', 3 => 'มีนาคม', 4 => 'เมษายน', 5 => 'พฤษภาคม', 6 => 'มิถุนายน',
-        7 => 'กรกฎาคม', 8 => 'สิงหาคม', 9 => 'กันยายน', 10 => 'ตุลาคม', 11 => 'พฤศจิกายน', 12 => 'ธันวาคม'
-    ];
-    return $months[$month];
-}
-?>
