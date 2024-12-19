@@ -33,6 +33,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         die("กรุณากรอกชื่อผู้ใช้งานและรหัสผ่าน.");
     }
 
+    // ตรวจสอบว่า username หรือ id_number มีอยู่ในฐานข้อมูลแล้วหรือไม่
+    $check_user_sql = "SELECT * FROM user WHERE username = ? OR id_number = ?";
+    $stmt_check_user = $conn->prepare($check_user_sql);
+    $stmt_check_user->bind_param("ss", $username, $id_number);
+    $stmt_check_user->execute();
+    $result = $stmt_check_user->get_result();
+
+    if ($result->num_rows > 0) {
+        // ถ้าข้อมูลซ้ำ ให้แสดงข้อความแจ้งเตือน
+        echo "<script>
+                alert('ข้อมูลซ้ำ! ชื่อผู้ใช้หรือหมายเลขบัตรประชาชนมีอยู่แล้ว.');
+                window.location.href = 'register.html';
+              </script>";
+        exit();
+    }
+
     // เข้ารหัสรหัสผ่าน
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
