@@ -1,3 +1,4 @@
+
 <?php
 // Start session for user authentication
 session_start();
@@ -67,10 +68,10 @@ if ($stmt = $conn->prepare($sql)) {
 
     // Bind the result to variables
     $stmt->bind_result(
-        $id, $user_id, $report_subject, $category, $report_person, $contact_phone, $contact_location, 
+        $id, $user_id,$report_subject, $category, $report_person, $contact_phone, $contact_location, 
         $latitude, $longitude, $incident_date, $incident_time, $problem_level, 
-        $department, $complaint_description, $complaint_file, $submitted_at, $status, $note, 
-        $admin_name, $admin_department, $user_name, $status_changed_at, $video_link
+        $department, $complaint_description, $complaint_file, $submitted_at, $status, $note,  $video_link,
+        $admin_name, $admin_department,$user_name, $status_changed_at
     );
 
     // Fetch the data
@@ -221,15 +222,15 @@ $conn->close();
                 <table>
                     <tr>
                         <th>ชื่อผู้ส่ง</th>
-                        <td><?= htmlspecialchars($complaint_details['user_name']) ?></td>
+                        <td><?= htmlspecialchars($complaint_details['category']) ?></td>
                     </tr>
                     <tr>
                         <th>ชื่อเรื่อง</th>
                         <td><?= htmlspecialchars($complaint_details['report_subject']) ?></td>
                     </tr>
                     <tr>
-                        <th>หมวดหมู่การแจ้งเบาะแส</th>
-                        <td><?= htmlspecialchars($complaint_details['category']) ?></td>
+                        <th>ชื่อผู้ส่ง</th>
+                        <td><?= htmlspecialchars($complaint_details['user_name']) ?></td>
                     </tr>
                     <tr>
                         <th>บุคคล/องค์กรที่ร้องเรียน</th>

@@ -42,7 +42,7 @@ $sql = "SELECT
             c.department, 
             c.complaint_description, 
             c.complaint_file, 
-            c.submitted_at, 
+            c.submitted_at,
             c.status, 
             CONCAT(u.first_name, ' ', u.last_name) AS admin_name,
             u.department AS admin_department, -- Admin's department
@@ -69,9 +69,9 @@ if ($stmt = $conn->prepare($sql)) {
     // Bind the result to variables
     $stmt->bind_result($id, $user_id, $report_subject, $category, $report_person, $contact_phone, $contact_location, 
                        $latitude, $longitude, $incident_date, $incident_time, 
-                       $problem_level, $department, $complaint_description, $complaint_file, $submitted_at, 
+                       $problem_level, $department, $complaint_description, $complaint_file, $submitted_at,
                        $status, $admin_name, $admin_department, $user_name, $status_changed_at, 
-                       $new_status, $old_status, $note, $video_link);
+                       $new_status, $old_status, $note,$video_link);
 
     // Fetch the complaint details
     $complaint_details = [];
@@ -103,7 +103,7 @@ while ($stmt->fetch()) {
         'admin_name' => $admin_name,
         'admin_department' => $admin_department,
         'note' => $note,
-        'video_link' => $video_link
+        'video_link' => $video_link,
     ];
 
     // Save each status change history
