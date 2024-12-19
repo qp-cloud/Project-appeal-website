@@ -24,18 +24,37 @@ if ($conn->connect_error) {
 
 // Get user_id from session
 $user_id = $_SESSION['user']['user_id'];
+// Number of records per page
+$limit = 10;
 
-// Retrieve the complaints for the logged-in user
+// Get the current page from the URL (default is 1 if not set)
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $limit;
+
+// Get the total number of complaints to calculate the number of pages
+$total_sql = "SELECT COUNT(*) FROM complaints WHERE user_id = ?";
+if ($stmt = $conn->prepare($total_sql)) {
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $stmt->bind_result($total_complaints);
+    $stmt->fetch();
+    $stmt->close();
+}
+
+// Calculate total pages
+$total_pages = ceil($total_complaints / $limit);
+
+// Retrieve the complaints for the current page
 $sql = "SELECT id, complaint_subject, contact_phone, contact_location, contact_details, 
         latitude, longitude, incident_date, incident_time, problem_level, department, 
         complaint_description, complaint_file, submitted_at, status
         FROM complaints 
         WHERE user_id = ? 
-        ORDER BY submitted_at DESC";  // Fetch complaints in descending order of submission
-
+        ORDER BY submitted_at DESC
+        LIMIT ?, ?";
 if ($stmt = $conn->prepare($sql)) {
     // Bind parameters to the prepared statement
-    $stmt->bind_param("i", $user_id);  // "i" stands for integer
+    $stmt->bind_param("iii", $user_id, $offset, $limit);  // "iii" for three integers
 
     // Execute the statement
     $stmt->execute();
@@ -44,7 +63,7 @@ if ($stmt = $conn->prepare($sql)) {
     $stmt->bind_result($id, $complaint_subject, $contact_phone, $contact_location, 
                        $contact_details, $latitude, $longitude, $incident_date, $incident_time, 
                        $problem_level, $department, $complaint_description, $complaint_file, 
-                        $submitted_at,$status);
+                       $submitted_at, $status);
 
     // Fetch the complaints
     $complaints = [];
@@ -158,7 +177,46 @@ $conn->close();
                 <div class="text-center mt-4">
                     <button onclick="goBackWithUserId();" class="btn btn-back" style="background-color:rgb(221, 177, 32); color: black;">ย้อนกลับ</button>
                 </div>
+                    <div class="text-center mt-4">
+   <!-- Pagination -->
+<?php if ($total_pages > 1): ?>
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            <!-- First Page -->
+            <li class="page-item <?= $page == 1 ? 'disabled' : '' ?>">
+                <a class="page-link" href="?page=1" aria-label="First">
+                    <span aria-hidden="true">&laquo;&laquo;</span>
+                </a>
+            </li>
+            <!-- Previous Page -->
+            <li class="page-item <?= $page == 1 ? 'disabled' : '' ?>">
+                <a class="page-link" href="?page=<?= $page - 1 ?>" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
 
+            <!-- Page Number Links -->
+            <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                <li class="page-item <?= $page == $i ? 'active' : '' ?>">
+                    <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+                </li>
+            <?php endfor; ?>
+
+            <!-- Next Page -->
+            <li class="page-item <?= $page == $total_pages ? 'disabled' : '' ?>">
+                <a class="page-link" href="?page=<?= $page + 1 ?>" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+            <!-- Last Page -->
+            <li class="page-item <?= $page == $total_pages ? 'disabled' : '' ?>">
+                <a class="page-link" href="?page=<?= $total_pages ?>" aria-label="Last">
+                    <span aria-hidden="true">&raquo;&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+<?php endif; ?>
             
 
             </div>

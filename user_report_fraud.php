@@ -1,7 +1,9 @@
 <?php
 // Start session for user authentication
 session_start();
+$complaint = isset($_SESSION['complaint']) ? $_SESSION['complaint'] : null;
 
+unset($_SESSION['complaint']);
 // Database connection
 $servername = "localhost";
 $username = "root";  // Your MySQL username
@@ -89,7 +91,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bind_param("issssssssssssss", $user_id, $report_subject, $category, $report_person, $contact_phone, $contact_location, $latitude, $longitude, $incident_date, $incident_time, $problem_level, $department, $complaint_description, $complaint_file, $video_link);
 
     if ($stmt->execute()) {
-        header("Location: confirmation.php");  // Adjust URL to your confirmation page
+        header("Location: confirmation_appeals.php?user_id=" . $user_id);  // Adjust URL to your confirmation page
         exit();
     } else {
         echo "เกิดข้อผิดพลาด: " . $stmt->error;
@@ -523,27 +525,36 @@ $conn->close();
             }
         });
     </script>
-    <script>
-        // Show privacy consent popup when page loads
-        window.onload = function() {
+ <script>
+    // Check if user has already interacted with the modal when page loads
+    window.onload = function() {
+        // Check if modal has been shown and user has agreed to the terms
+        if (!sessionStorage.getItem('modalShown')) {
             document.getElementById('modal-overlay').style.display = 'block';
             document.getElementById('modal-consent').style.display = 'block';
-        };
+        } else {
+            // If modal has been shown, enable the submit button
+            document.getElementById('submit-form').disabled = false;
+        }
+    };
 
-        // Handle closing the popup
-        document.getElementById('btn-close').addEventListener('click', function() {
-            document.getElementById('modal-overlay').style.display = 'none';
-            document.getElementById('modal-consent').style.display = 'none';
-        });
+    // Handle closing the popup
+    document.getElementById('btn-close').addEventListener('click', function() {
+        document.getElementById('modal-overlay').style.display = 'none';
+        document.getElementById('modal-consent').style.display = 'none';
+    });
 
-        // Handle agreement
-        document.getElementById('btn-agree').addEventListener('click', function() {
-            document.getElementById('submit-form').disabled = false;  // Enable the submit button
-            document.getElementById('modal-overlay').style.display = 'none';
-            document.getElementById('modal-consent').style.display = 'none';
-        });
+    // Handle agreement
+    document.getElementById('btn-agree').addEventListener('click', function() {
+        document.getElementById('submit-form').disabled = false;  // Enable the submit button
+        document.getElementById('modal-overlay').style.display = 'none';
+        document.getElementById('modal-consent').style.display = 'none';
+        
+        // Store in sessionStorage to indicate that the modal has been shown
+        sessionStorage.setItem('modalShown', 'true');
+    });
+</script>
 
-    </script>
     <script>
            
             // Enable/Disable Confirm Button

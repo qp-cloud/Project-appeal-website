@@ -2,6 +2,7 @@
 // Start session for user authentication
 session_start();
 
+
 // Database connection
 $servername = "localhost";
 $username = "root";  // Your MySQL username
@@ -41,22 +42,21 @@ if ($logged_in_username) {
 
 // Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Get the form data
-    $complaint_subject = $_POST['complaint_subject'];
-    $contact_phone = $_POST['contact_phone'];
-    $contact_location = $_POST['contact_location'];
-    $contact_details = $_POST['contact_details'];
-    $latitude = $_POST['latitude'];
-    $longitude = $_POST['longitude'];
-    $incident_date = $_POST['incident_date'];
-    $incident_time = $_POST['incident_time'];
-    $problem_level = $_POST['problem_level'];
-    $department = $_POST['department'];
-    $complaint_description = $_POST['complaint_description'];
-    $video_link = $_POST['video_link'];
+    // Get the form data and sanitize inputs
+    $complaint_subject = htmlspecialchars($_POST['complaint_subject']);
+    $contact_phone = htmlspecialchars($_POST['contact_phone']);
+    $contact_location = htmlspecialchars($_POST['contact_location']);
+    $contact_details = htmlspecialchars($_POST['contact_details']);
+    $latitude = htmlspecialchars($_POST['latitude']);
+    $longitude = htmlspecialchars($_POST['longitude']);
+    $incident_date = htmlspecialchars($_POST['incident_date']);
+    $incident_time = htmlspecialchars($_POST['incident_time']);
+    $problem_level = htmlspecialchars($_POST['problem_level']);
+    $department = htmlspecialchars($_POST['department']);
+    $complaint_description = htmlspecialchars($_POST['complaint_description']);
+    $video_link = htmlspecialchars($_POST['video_link']);
     $privacy_consent = isset($_POST['privacy_consent']) ? 1 : 0;  // 1 if consent is given, 0 otherwise
-    
-    
+
     // Handle file upload
     $complaint_file = '';
     if (isset($_FILES['complaint_file']) && $_FILES['complaint_file']['error'] == 0) {
@@ -74,6 +74,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $complaint_file = $file_upload_path;
             } else {
                 echo "Error uploading file.";
+                exit();
             }
         } else {
             echo "Invalid file type or file size exceeded.";
@@ -82,13 +83,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Prepare the SQL query to insert data into the database
-    $sql = "INSERT INTO complaints (user_id, complaint_subject, contact_phone, contact_location, contact_details, latitude, longitude, incident_date, incident_time, problem_level, department, complaint_description, complaint_file, video_link )
+    $sql = "INSERT INTO complaints (user_id, complaint_subject, contact_phone, contact_location, contact_details, latitude, longitude, incident_date, incident_time, problem_level, department, complaint_description, complaint_file, video_link)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("isssssssssssss", $user_id, $complaint_subject, $contact_phone, $contact_location, $contact_details, $latitude, $longitude, $incident_date, $incident_time, $problem_level, $department, $complaint_description, $complaint_file, $video_link);
 
     if ($stmt->execute()) {
-        header("Location: confirmation.php");  // Adjust URL to your confirmation page
+        // Redirect to confirmation page
+        header("Location: confirmation_complaints.php?user_id=" . $user_id);
         exit();
     } else {
         echo "เกิดข้อผิดพลาด: " . $stmt->error;
@@ -97,12 +99,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Close statement
     $stmt->close();
 }
-
+$complaint = isset($_SESSION['complaint']) ? $_SESSION['complaint'] : null;
 // Close the connection
 $conn->close();
 ?>
-
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -565,26 +565,36 @@ $conn->close();
     </script>
     
     <script>
-        // Show privacy consent popup when page loads
-        window.onload = function() {
+    // Check if user has already interacted with the modal when page loads
+    window.onload = function() {
+        // Check if modal has been shown and user has agreed to the terms
+        if (!sessionStorage.getItem('modalShown')) {
             document.getElementById('modal-overlay').style.display = 'block';
             document.getElementById('modal-consent').style.display = 'block';
-        };
+        } else {
+            // If modal has been shown, enable the submit button
+            document.getElementById('submit-form').disabled = false;
+        }
+    };
 
-        // Handle closing the popup
-        document.getElementById('btn-close').addEventListener('click', function() {
-            document.getElementById('modal-overlay').style.display = 'none';
-            document.getElementById('modal-consent').style.display = 'none';
-        });
+    // Handle closing the popup
+    document.getElementById('btn-close').addEventListener('click', function() {
+        document.getElementById('modal-overlay').style.display = 'none';
+        document.getElementById('modal-consent').style.display = 'none';
+    });
 
-        // Handle agreement
-        document.getElementById('btn-agree').addEventListener('click', function() {
-            document.getElementById('submit-form').disabled = false;  // Enable the submit button
-            document.getElementById('modal-overlay').style.display = 'none';
-            document.getElementById('modal-consent').style.display = 'none';
-        });
-
+    // Handle agreement
+    document.getElementById('btn-agree').addEventListener('click', function() {
+        document.getElementById('submit-form').disabled = false;  // Enable the submit button
+        document.getElementById('modal-overlay').style.display = 'none';
+        document.getElementById('modal-consent').style.display = 'none';
+        
+        // Store in sessionStorage to indicate that the modal has been shown
+        sessionStorage.setItem('modalShown', 'true');
+    });
     </script>
+
+
     <script>
            
             // Enable/Disable Confirm Button
