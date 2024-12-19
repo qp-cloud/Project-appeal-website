@@ -111,7 +111,7 @@
 <body>
 
 <div class="container">
-  <div class="form-title">ลงทะเบียน</div>
+  <div class="form-title">ลงทะเบียนผู้ใช้งาน</div>
   <form action="register.php" method="POST" id="registerForm" novalidate>
     <div class="form-group">
       <label for="first_name">ชื่อจริง:<span class="required">*</span></label>
@@ -126,9 +126,18 @@
     </div>
     
     <div class="form-group">
-      <labal for="id_number">เลขประจำตัวประชาชน:<span class="required">*</span></labal>
-      <input type="text" name="id_number" class="form-control" placeholder="กรอกรหัสบัตรประจำตัวประชาชน 13 หลัก" required maxlength="13" oninput="this.value = this.value.replace(/\D/g, '')">
-      <div class="invalid-feedback">กรุณากรอกเลขบัตรประชาชน 13 หลัก</div>
+      <label for="id_number">หมายเลขบัตรประจำตัวประชาชน:<span class="required">*</span></label>
+      <input 
+        type="text" 
+        id="id_number" 
+        name="id_number" 
+        class="form-control" 
+        placeholder="กรอกรหัสบัตรประจำตัวประชาชน 13 หลัก" 
+        required 
+        maxlength="13" 
+        oninput="this.value = this.value.replace(/\D/g, '')"
+        onchange="validateThaiID(this)">
+      <div class="invalid-feedback">กรุณากรอกหมายเลขบัตรประชาชน 13 หลักให้ถูกต้อง</div>
     </div>
     
     <div class="form-row">
@@ -145,7 +154,15 @@
     
       <div class="form-group col-md-6">
         <label for="birth_date">วันเดือนปีเกิด:<span class="required">*</span></label>
-        <input type="date" name="birth_date" class="form-control" required>
+        <input 
+          type="text" 
+          id="birth_date" 
+          name="birth_date" 
+          class="form-control" 
+          required 
+          placeholder="วัน/เดือน/ปี (พ.ศ.)"
+          onfocus="showThaiCalendar(this)"
+        >
         <div class="invalid-feedback">กรุณาเลือกวันเกิด</div>
       </div>
     </div>
@@ -157,9 +174,9 @@
     </div>
     
     <div class="form-group">
-      <labal for="phone">เบอร์โทรศัพท์:<span class="required">*</span></labal>
+      <labal for="phone">หมายเลขโทรศัพท์:<span class="required">*</span></labal>
       <input type="text" name="phone" class="form-control" placeholder="กรอกเบอร์โทรศัพท์" required maxlength="10" oninput="this.value = this.value.replace(/\D/g, '')">
-      <div class="invalid-feedback">กรุณากรอกเบอร์โทรศัพท์ 10 หลัก</div>
+      <div class="invalid-feedback">กรุณากรอกหมายเลขโทรศัพท์ 10 หลัก</div>
     </div>
     
     <div class="form-group">
@@ -173,49 +190,166 @@
       <textarea name="address" class="form-control" placeholder="กรอกที่อยู่ปัจจุบัน" rows="3" required></textarea>
       <div class="invalid-feedback">กรุณากรอกที่อยู่</div>
     </div>
-    
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#usernamePasswordModal">เพิ่มข้อมูลบัญชี</button>
 
-    <!-- Modal -->
-    <div class="modal fade" id="usernamePasswordModal" tabindex="-1" role="dialog" aria-labelledby="usernamePasswordModalLabel" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="usernamePasswordModalLabel">ข้อมูลบัญชี</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <div class="form-group">
-              <labal for="username">ชื่อผู้ใช้:<span class="required">*</span></labal>
-              <input type="text" name="username" class="form-control" placeholder="กรอกชื่อผู้ใช้" required>
-            </div>
-            <div class="form-group">
-              <labal for="password">รหัสผ่าน:<span class="required">*</span></labal>
-              <input type="password" name="password" class="form-control" placeholder="กรอกรหัสผ่าน" required>
-            </div>
-            <div class="form-group">
-              <labal for="confirm_password">ยืนยันรหัสผ่าน:<span class="required">*</span></labal>
-              <input type="password" name="confirm_password" class="form-control" placeholder="ยืนยันรหัสผ่าน" required>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="submit" class="btn btn-primary">ลงทะเบียน</button>
-          </div>
-        </div>
-      </div>
+    <div class="form-group">
+      <labal for="username" style="color: rgb(0, 204, 255);">ชื่อผู้ใช้:<span class="required">*</span></labal>
+      <input type="text" name="username" class="form-control" placeholder="กรอกชื่อผู้ใช้" required>
     </div>
+
+    <div class="form-group">
+      <label for="password" style="color: rgb(51, 255, 0);">
+        รหัสผ่าน:<span class="required">*</span>
+      </label>
+      <input 
+        type="password" 
+        id="password" 
+        name="password" 
+        class="form-control" 
+        placeholder="กรอกรหัสผ่าน" 
+        required 
+        pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}"
+        title="รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร, ตัวอักษรพิมพ์ใหญ่ 1 ตัว, ตัวเลข 1 ตัว และอักขระพิเศษ 1 ตัว"
+        oninput="validatePassword(this)"
+      >
+      <div class="invalid-feedback">กรุณากรอกรหัสผ่านตามรูปแบบที่กำหนด</div>
+    </div>
+    
+    <div class="form-group">
+      <label for="confirm_password" style="color: rgb(51, 255, 0);">ยืนยันรหัสผ่าน:<span class="required">*</span></label>
+      <input 
+        type="password" 
+        id="confirm_password" 
+        name="confirm_password" 
+        class="form-control" 
+        placeholder="ยืนยันรหัสผ่าน" 
+        required
+      >
+      <div class="invalid-feedback">กรุณายืนยันรหัสผ่านให้ตรงกัน</div>
+    </div>
+    <button type="submit" class="btn btn-primary">ลงทะเบียน</button>
   </form>
 
   <div class="text-center mt-3">
-    <a href="home.html" class="btn btn-secondary">กลับไปยังหน้าแรก</a>
+    <a href="home.html" class="btn btn-secondary">ยกเลิก</a>
   </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.th.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+
+
+
+<script>
+  // ตรวจสอบรหัสผ่าน
+  function validatePassword(input) {
+    const pattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    
+    if (pattern.test(input.value)) {
+      input.classList.remove("is-invalid");
+      input.setCustomValidity(""); // รหัสผ่านถูกต้อง
+    } else {
+      input.classList.add("is-invalid");
+      input.setCustomValidity("รหัสผ่านไม่ถูกต้อง"); // รหัสผ่านไม่ถูกต้อง
+    }
+  }
+
+  // ตรวจสอบการยืนยันรหัสผ่านเมื่อส่งฟอร์ม
+  document.querySelector('form').addEventListener('submit', function(event) {
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirm_password").value;
+    
+    if (password !== confirmPassword) {
+      event.preventDefault(); // ป้องกันการส่งฟอร์ม
+      alert("รหัสผ่านยืนยันไม่ตรงกัน กรุณากรอกข้อมูลใหม่");
+      document.getElementById("confirm_password").classList.add("is-invalid");
+      document.getElementById("confirm_password").setCustomValidity("รหัสผ่านไม่ตรงกัน");
+    }
+  });
+</script>
+
+<script>
+  function validateThaiID(input) {
+    const id = input.value;
+
+    // ตรวจสอบความยาว 13 หลัก
+    if (id.length !== 13) {
+      showError(input, "เลขบัตรประชาชนต้องมี 13 หลัก");
+      return;
+    }
+
+    // ตรวจสอบด้วยสูตรคำนวณ
+    if (!isValidThaiID(id)) {
+      showError(input, "เลขบัตรประชาชนไม่ถูกต้อง");
+      return;
+    }
+
+    // หากตรวจสอบผ่าน
+    clearError(input);
+  }
+
+  function isValidThaiID(id) {
+    let sum = 0;
+    for (let i = 0; i < 12; i++) {
+      sum += parseInt(id.charAt(i)) * (13 - i);
+    }
+    const checkDigit = (11 - (sum % 11)) % 10;
+    return checkDigit === parseInt(id.charAt(12));
+  }
+
+  function showError(input, message) {
+    input.classList.add("is-invalid");
+    input.nextElementSibling.textContent = message;
+  }
+
+  function clearError(input) {
+    input.classList.remove("is-invalid");
+  }
+</script>
+
+<script>
+  function showThaiCalendar(element) {
+    $(element).datepicker({
+      format: 'dd/mm/yyyy', // รูปแบบวัน/เดือน/ปี
+      language: 'th', // ใช้ภาษาไทย
+      autoclose: true,
+      todayHighlight: true,
+      orientation: "bottom auto",
+      clearBtn: true,
+      startView: 2, // เริ่มที่มุมมองปี
+      thaiyear: true, // ใช้ปีพุทธศักราช
+      templates: {
+        leftArrow: '&lt;', // เปลี่ยนปุ่มลูกศรซ้าย
+        rightArrow: '&gt;' // เปลี่ยนปุ่มลูกศรขวา
+      }
+    }).on('changeDate', function(e) {
+      // แปลงปี ค.ศ. เป็น พ.ศ. เมื่อเลือกวันที่
+      const date = e.date;
+      const year = date.getFullYear();
+      if (year < 2400) {
+        date.setFullYear(year + 543); // แปลง ค.ศ. เป็น พ.ศ.
+        $(element).datepicker('update', date);
+      }
+    });
+
+    // แปลงปีเริ่มต้นเป็น พ.ศ.
+    const currentDate = $(element).datepicker('getDate');
+    if (currentDate) {
+      const currentYear = currentDate.getFullYear();
+      if (currentYear < 2400) {
+        currentDate.setFullYear(currentYear + 543); // แปลง ค.ศ. เป็น พ.ศ.
+        $(element).datepicker('update', currentDate);
+      }
+    }
+
+    $(element).datepicker('show');
+  }
+</script>
+
 <script>
   document.getElementById("registerForm").addEventListener("submit", function(event) {
   var form = this;
@@ -237,24 +371,6 @@
       }
     }
   });
-
-  // ตรวจสอบว่ารหัสผ่านตรงกัน
-  var password = form.querySelector('input[name="password"]');
-  var confirmPassword = form.querySelector('input[name="confirm_password"]');
-  var confirmFeedback = confirmPassword.nextElementSibling; // invalid-feedback สำหรับรหัสผ่าน
-  if (password && confirmPassword && password.value !== confirmPassword.value) {
-    confirmPassword.classList.add('is-invalid');
-    if (confirmFeedback && confirmFeedback.classList.contains('invalid-feedback')) {
-      confirmFeedback.textContent = "รหัสผ่านไม่ตรงกัน";
-      confirmFeedback.style.display = 'block';
-    }
-    isValid = false;
-  } else if (confirmPassword) {
-    confirmPassword.classList.remove('is-invalid');
-    if (confirmFeedback && confirmFeedback.classList.contains('invalid-feedback')) {
-      confirmFeedback.style.display = 'none';
-    }
-  }
 
   // หยุดการส่งฟอร์มถ้าข้อมูลไม่ถูกต้อง
   if (!isValid) {
