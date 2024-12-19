@@ -26,7 +26,7 @@ if ($conn->connect_error) {
 $user_id = $_SESSION['user']['user_id'];
 
 // Retrieve the complaints for the logged-in user
-$sql = "SELECT id, report_subject,	report_person, contact_phone, contact_location, contact_details, 
+$sql = "SELECT id, report_subject, category, report_person, contact_phone, contact_location,
         latitude, longitude, incident_date, incident_time, problem_level, department, 
         complaint_description, complaint_file, submitted_at, status
         FROM appeals 
@@ -41,8 +41,8 @@ if ($stmt = $conn->prepare($sql)) {
     $stmt->execute();
     
     // Bind the result to variables
-    $stmt->bind_result($id, $report_subject,$report_person, $contact_phone, $contact_location, 
-                       $contact_details, $latitude, $longitude, $incident_date, $incident_time, 
+    $stmt->bind_result($id, $report_subject, $category, $report_person, $contact_phone, $contact_location, 
+                       $latitude, $longitude, $incident_date, $incident_time, 
                        $problem_level, $department, $complaint_description, $complaint_file, 
                         $submitted_at,$status);
 
@@ -52,10 +52,10 @@ if ($stmt = $conn->prepare($sql)) {
         $appeals[] = [
             'id' => $id,
             'report_subject' => $report_subject,
+            'category' => $category,
             'report_person' => $report_person,
             'contact_phone' => $contact_phone,
             'contact_location' => $contact_location,
-            'contact_details' => $contact_details,
             'latitude' => $latitude,
             'longitude' => $longitude,
             'incident_date' => $incident_date,
@@ -106,6 +106,7 @@ $conn->close();
         .btn-info {
             background-color: #99FF99; /* Custom color for "Details" button */
             border-color: #000;
+            color:#000;
         }
         .btn-info:hover {
             background-color: #138496;
@@ -113,7 +114,7 @@ $conn->close();
         }
         h2 {
             font-weight: bold;
-            color: #FFDEAD;
+            color:rgb(0, 0, 0);
         }
     </style>
 </head>
@@ -121,7 +122,7 @@ $conn->close();
     <div class="container mt-5">
         <div class="card">
             <div class="card-body">
-                <h2 class="text-center mb-4">ติดตามรายงานผลการติดตามรายงานผลการทุจริตประพฤติมิชอบ</h2>
+                <h2 class="text-center mb-4">ติดตามรายงานผลการแจ้งเบาะแสการทุจริตประพฤติมิชอบ</h2>
 
                 <!-- Display complaints if available -->
                 <?php if (!empty($appeals)): ?>
@@ -129,6 +130,7 @@ $conn->close();
                         <thead>
                             <tr>
                                 <th>เรื่องร้องเรียน</th>
+                                <th>หมวดหมู่การแจ้งเบาะแส</th>
                                 <th>วันที่เกิดเหตุ</th>
                                 <th>ระดับปัญหา</th>
                                 <th>สถานะ</th>
@@ -139,6 +141,7 @@ $conn->close();
                             <?php foreach ($appeals as $appeal): ?>
                                 <tr>
                                     <td><?= htmlspecialchars($appeal['report_subject']) ?></td>
+                                    <td><?= htmlspecialchars($appeal['category']) ?></td>
                                     <td><?= htmlspecialchars($appeal['incident_date']) ?></td>
                                     <td><?= htmlspecialchars($appeal['problem_level']) ?></td>
                                     <td><?= htmlspecialchars($appeal['status']) ?></td>

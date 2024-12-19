@@ -105,6 +105,7 @@ $conn->close();
         .btn-info {
             background-color: #99FF99; /* Custom color for "Details" button */
             border-color: #000;
+            color:#000;
         }
         .btn-info:hover {
             background-color: #138496;
@@ -112,7 +113,7 @@ $conn->close();
         }
         h2 {
             font-weight: bold;
-            color: #FFDEAD;
+            color:rgb(0, 0, 0);
         }
     </style>
 </head>

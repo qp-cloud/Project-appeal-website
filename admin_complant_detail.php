@@ -43,7 +43,8 @@ $sql = "SELECT
             c.complaint_file, 
             c.submitted_at, 
             c.status, 
-            c.note, -- Added the 'note' field
+            c.note,
+            c.video_link, -- Added the 'note' field
             CONCAT(u.first_name, ' ', u.last_name) AS admin_name,
             u.department AS admin_department, -- Admin's department
             CONCAT(usr.first_name, ' ', usr.last_name) AS user_name,
@@ -66,7 +67,7 @@ if ($stmt = $conn->prepare($sql)) {
     // Bind the result to variables
     $stmt->bind_result($id, $user_id, $complaint_subject, $contact_phone, $contact_location, $contact_details,
                    $latitude, $longitude, $incident_date, $incident_time, $problem_level, $department, 
-                   $complaint_description, $complaint_file, $submitted_at, $status, $note, // Added note
+                   $complaint_description, $complaint_file, $submitted_at, $status, $note, $video_link, // Added note
                    $admin_name, $admin_department, $user_name, $status_changed_at);
 
     // Fetch the complaint details
@@ -89,10 +90,12 @@ if ($stmt = $conn->prepare($sql)) {
             'complaint_file' => $complaint_file,
             'submitted_at' => $submitted_at,
             'status' => $status,
-            'note' => $note, // Added note
+            'note' => $note,
+            'video_link' => $video_link, // Added note
             'admin_name' => $admin_name,
             'admin_department' => $admin_department, 
-            'status_changed_at' => $status_changed_at
+            'status_changed_at' => $status_changed_at,
+            
         ];
     } else {
         echo "Complaint not found.";
@@ -151,7 +154,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>รายละเอียดการร้องเรียน</title>
+    <title>รายละเอียดการร้องทุกข์</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -210,7 +213,7 @@ $conn->close();
     <div class="container mt-5">
         <div class="card">
             <div class="card-header text-center">
-                รายละเอียดการร้องเรียน
+                รายละเอียดการร้องทุกข์
             </div>
             <div class="card-body">
                 <?php if (!empty($complaint_details)): ?>
@@ -232,11 +235,15 @@ $conn->close();
                             <td><?= htmlspecialchars($complaint_details['contact_location']) ?></td>
                         </tr>
                         <tr>
-                            <th>รายละเอียดที่ติดต่อ</th>
+                            <th>ค่า Latitude และ Longitude</th>
+                            <td>Latitude: <?= htmlspecialchars($complaint_details['latitude']) ?>, Longitude: <?= htmlspecialchars($complaint_details['longitude']) ?></td>
+                        </tr>
+                        <tr>
+                            <th>รายละเอียดสถานที่</th>
                             <td><?= htmlspecialchars($complaint_details['contact_details']) ?></td>
                         </tr>
                         <tr>
-                            <th>วันและเวลาเกิดเหตุ</th>
+                            <th>วันและเวลาที่เกิดเหตุ</th>
                             <td><?= htmlspecialchars($complaint_details['incident_date']) ?> <?= htmlspecialchars($complaint_details['incident_time']) ?></td>
                         </tr>
                         <tr>
@@ -248,15 +255,15 @@ $conn->close();
                             <td><?= htmlspecialchars($complaint_details['department']) ?></td>
                         </tr>
                         <tr>
-                            <th>คำอธิบายปัญหา</th>
+                            <th>รายละเอียดเรื่องที่ร้องทุกข์</th>
                             <td><?= htmlspecialchars($complaint_details['complaint_description']) ?></td>
                         </tr>
                         <tr>
-                        <th>วันที่ยื่นร้องเรียน</th>
+                        <th>วันที่ยื่นร้องทุกข์</th>
                         <td><?= htmlspecialchars($complaint_details['submitted_at'])?></td>
                         </tr>
                         <tr>
-                            <th>ไฟล์ประกอบการร้องเรียน</th>
+                            <th>ไฟล์ประกอบการร้องทุกข์</th>
                             <td>
                                 <?php if (!empty($complaint_details['complaint_file'])): ?>
                                     <a href="<?= htmlspecialchars($complaint_details['complaint_file']) ?>" class="btn btn-download" download>ดาวน์โหลดไฟล์</a>
@@ -265,13 +272,27 @@ $conn->close();
                                 <?php endif; ?>
                             </td>
                         </tr>
+
+                        <tr>
+                            <th>ลิงก์คลิปวิดีโอประกอบ</th>
+                            <td>
+                                <?php if (!empty($complaint_details['video_link'])): ?>
+                                    <a href="<?= htmlspecialchars($complaint_details['video_link']) ?>" target="_blank">
+                                        <?= htmlspecialchars($complaint_details['video_link']) ?>
+                                    </a>
+                                <?php else: ?>
+                                    ไม่มีลิงก์วิดีโอ
+                                <?php endif; ?>
+                            </td>
+                        </tr>                    
+
                         <tr>
                             <th>สถานะ</th>
                             <td>
                                 <form method="POST" class="mt-4">
                                     <input type="hidden" name="complaint_id" value="<?= $complaint_details['id'] ?>">
                                     <div class="form-group">
-                                        <label for="status">เปลี่ยนสถานะการร้องเรียน:</label>
+                                        <label for="status">เปลี่ยนสถานะการร้องทุกข์:</label>
                                         <select name="status" id="status" class="form-control">
                                             <option value="ยังไม่ดำเนินการ" <?= $complaint_details['status'] == 'ยังไม่ดำเนินการ' ? 'selected' : '' ?>>ยังไม่ดำเนินการ</option>
                                             <option value="กำลังดำเนินการ" <?= $complaint_details['status'] == 'กำลังดำเนินการ' ? 'selected' : '' ?>>กำลังดำเนินการ</option>
@@ -292,7 +313,7 @@ $conn->close();
                         </tr>
                     </table>
                 <?php else: ?>
-                    <p>ไม่พบข้อมูลการร้องเรียนนี้.</p>
+                    <p>ไม่พบข้อมูลการร้องทุกข์นี้.</p>
                 <?php endif; ?>
             </div>
         </div>
