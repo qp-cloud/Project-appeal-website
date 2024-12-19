@@ -81,6 +81,7 @@ $appeals_completed = isset($appeals_data[$selected_year]['ดำเนินก�
       margin: 0;
       padding: 0;
       color: #333;
+      background-image: url('img/adminbg.jpg');
     }
     .container {
       padding: 40px 30px;
@@ -89,8 +90,9 @@ $appeals_completed = isset($appeals_data[$selected_year]['ดำเนินก�
       text-align: center;
     }
     h1 {
+      background-color: #f8f8f8;
       font-size: 36px;
-      color: #2a7cff;
+      color:rgb(0, 0, 0);
       margin-bottom: 40px;
     }
     .chart-container {
@@ -136,7 +138,8 @@ $appeals_completed = isset($appeals_data[$selected_year]['ดำเนินก�
 
     <!-- Year Select Dropdown -->
     <form method="GET" action="">
-      <label for="year" style="font-size: 18px;">เลือกปี: </label>
+    <label for="year" style="font-size: 18px; background-color: white; padding: 5px 10px; border-radius: 5px; display: inline-block;">เลือกปี: </label>
+
       <select id="year" name="year" onchange="this.form.submit()">
         <?php foreach ($years as $year): ?>
           <option value="<?php echo $year; ?>" <?php echo ($year == $selected_year) ? 'selected' : ''; ?>><?php echo $year; ?></option>
