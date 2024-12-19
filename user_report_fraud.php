@@ -44,9 +44,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Get the form data
     $report_subject = $_POST['report_subject'];
     $report_person = $_POST['report_person'];
+    $category = $_POST['category'];
     $contact_phone = $_POST['contact_phone'];
     $contact_location = $_POST['contact_location'];
-    $contact_details = $_POST['contact_details'];
     $latitude = $_POST['latitude'];
     $longitude = $_POST['longitude'];
     $incident_date = $_POST['incident_date'];
@@ -54,6 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $problem_level = $_POST['problem_level'];
     $department = $_POST['department'];
     $complaint_description = $_POST['complaint_description'];
+    $video_link = $_POST['video_link'];
     $privacy_consent = isset($_POST['privacy_consent']) ? 1 : 0;  // 1 if consent is given, 0 otherwise
     
     
@@ -82,10 +83,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Prepare the SQL query to insert data into the database
-    $sql = "INSERT INTO appeals (user_id, report_subject, report_person, contact_phone, contact_location, contact_details, latitude, longitude, incident_date, incident_time, problem_level, department, complaint_description, complaint_file )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO appeals (user_id, report_subject, category, report_person, contact_phone, contact_location, latitude, longitude, incident_date, incident_time, problem_level, department, complaint_description, complaint_file ,video_link)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("isssssssssssss", $user_id, $report_subject, $report_person, $contact_phone, $contact_location, $contact_details, $latitude, $longitude, $incident_date, $incident_time, $problem_level, $department, $complaint_description, $complaint_file);
+    $stmt->bind_param("issssssssssssss", $user_id, $report_subject, $category, $report_person, $contact_phone, $contact_location, $latitude, $longitude, $incident_date, $incident_time, $problem_level, $department, $complaint_description, $complaint_file, $video_link);
 
     if ($stmt->execute()) {
         header("Location: confirmation.php");  // Adjust URL to your confirmation page
@@ -317,6 +318,26 @@ $conn->close();
                 <input type="text" class="form-control" id="report-subject" name="report_subject" required>
                 <div class="invalid-feedback">กรุณากรอกเรื่องที่ต้องการแจ้งเบาะแส</div>
             </div>
+            <div class="form-group">
+                <label for="category">หมวดหมู่การแจ้งเบาะแส <span class="text-danger">*</span></label>
+                <select class="form-control" id="category" name="category" required>
+                    <option value="" disabled selected>เลือกหมวดหมู่การแจ้งเบาะแส</option>
+                    <option value="ทุจริตทางการเงิน">ทุจริตทางการเงิน</option>
+                    <option value="ทุจริตในโครงการ">ทุจริตในโครงการ</option>
+                    <option value="ใช้อำนาจหน้าที่โดยมิชอบ">ใช้อำนาจหน้าที่โดยมิชอบ</option>
+                    <option value="การเลือกปฏิบัติ">การเลือกปฏิบัติ</option>
+                    <option value="อื่นๆ">อื่นๆ</option>
+                    <option value="ไม่ทราบหมวดหมู่">ไม่ทราบหมวดหมู่</option>
+                </select>
+                <div class="invalid-feedback">กรุณาเลือกช่องทางการติดต่อ</div>
+            </div>
+            <!-- Complaint Description -->
+            <div class="form-group">
+                <label for="complaint-description">รายละเอียดการแจ้งเบาะแส</label>
+                <textarea class="form-control" id="complaint-description" name="complaint_description" rows="5" required></textarea>
+                <small class="error-message" id="complaint-description-error"></small>
+                <div class="invalid-feedback">กรุณากรอกรายละเอียดการแจ้งเบาะแส</div>
+            </div>
 
             <!-- Report Person -->
             <div class="form-group">
@@ -347,13 +368,6 @@ $conn->close();
                 <input type="text" class="form-control" id="contact-location" name="contact_location" required>
                 <div class="invalid-feedback">กรุณากรอกสถานที่</div>
             </div>
-
-            <!-- Details -->
-            <div class="form-group">
-                <label for="contact-details">รายละเอียดสถานที่</label>
-                <textarea class="form-control" id="contact-details" name="contact_details" rows="4" required></textarea>
-            </div>
-
                     
             <!-- Map container -->
             <div id="map" style="width: 100%; height: 400px;"></div>
@@ -412,14 +426,6 @@ $conn->close();
                 <div class="invalid-feedback">กรุณาเลือกหน่วยงานที่รับผิดชอบ</div>
             </div>
 
-            <!-- Complaint Description -->
-            <div class="form-group">
-                <label for="complaint-description">รายละเอียดการแจ้งเบาะแส</label>
-                <textarea class="form-control" id="complaint-description" name="complaint_description" rows="5" required></textarea>
-                <small class="error-message" id="complaint-description-error"></small>
-                <div class="invalid-feedback">กรุณากรอกรายละเอียดการแจ้งเบาะแส</div>
-            </div>
-
             <!-- File Upload -->
             <div class="form-group">
                 <label for="complaint-file">ไฟล์ที่แนบ (ถ้ามี)</label>
@@ -427,6 +433,13 @@ $conn->close();
                 <small class="form-text text-muted">รองรับไฟล์: .jpg, .jpeg, .png, .pdf, .doc, .docx (ขนาดไม่เกิน 5MB)</small>
                 <div class="invalid-feedback" id="file-error"></div>
             </div>
+
+            <div class="form-group">
+                <label for="video-link">ลิงก์ คลิปวิดีโอแนบ (ถ้ามี)</label>
+                <input type="text" class="form-control" id="video-link" name="video_link">
+                <div class="invalid-feedback" id="video-error">
+            </div>
+
             <!-- Modal Confirmation for Submit -->
             <div class="modal" tabindex="-1" role="dialog" id="confirmation-modal">
             <div class="modal-dialog" role="document">
@@ -469,7 +482,7 @@ $conn->close();
                 </div>
             </div>
         <div class="form-group text-center">
-                <button type="submit" class="btn btn-primary w-50" id="submit-form" disabled>ยืนยันการส่งข้อมูล</button>
+                <button type="submit" class="btn btn-primary btn-full-width" id="submit-form" disabled>ยืนยันการส่งข้อมูล</button>
             </div>
         </form>
     </div>

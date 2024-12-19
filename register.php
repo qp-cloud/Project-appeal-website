@@ -49,6 +49,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 
+    $check_phone_sql = "SELECT * FROM user WHERE phone = ?";
+    $stmt_check_phone = $conn->prepare($check_phone_sql);
+    $stmt_check_phone->bind_param("s", $phone);
+    $stmt_check_phone->execute();
+    $result_phone = $stmt_check_phone->get_result();
+
+    if ($result_phone->num_rows > 0) {
+        echo "<script>
+                alert('หมายเลขโทรศัพท์นี้ถูกใช้งานแล้ว กรุณากรอกหมายเลขใหม่.');
+                window.location.href = 'register.html';
+            </script>";
+        exit();
+    }
+
     // เข้ารหัสรหัสผ่าน
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 

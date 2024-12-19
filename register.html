@@ -312,6 +312,35 @@
 </script>
 
 <script>
+  // ฟังก์ชันตรวจสอบหมายเลขโทรศัพท์
+  function validatePhone() {
+      const phone = document.getElementById('phone').value;
+  
+      // ตรวจสอบว่าเบอร์โทรศัพท์ตรงกับฟอร์แมตที่กำหนดหรือไม่ (10 หลัก)
+      if (phone.length !== 10) {
+          alert('กรุณากรอกหมายเลขโทรศัพท์ 10 หลัก');
+          return false;
+      }
+  
+      // ส่งคำขอไปยังเซิร์ฟเวอร์เพื่อตรวจสอบความซ้ำของเบอร์โทรศัพท์
+      let xhr = new XMLHttpRequest();
+      xhr.open('POST', 'your_php_script.php', true);
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+      xhr.onreadystatechange = function() {
+          if (xhr.readyState === 4 && xhr.status === 200) {
+              const response = xhr.responseText;
+              if (response === 'duplicate') {
+                  alert('หมายเลขโทรศัพท์นี้ถูกใช้งานแล้ว กรุณากรอกหมายเลขใหม่');
+                  return false; // ป้องกันไม่ให้ฟอร์มถูกส่ง
+              }
+          }
+      };
+      xhr.send('phone=' + phone); // ส่งหมายเลขโทรศัพท์เพื่อตรวจสอบ
+      return true;
+  }
+  </script>
+
+<script>
   function showThaiCalendar(element) {
     $(element).datepicker({
       format: 'dd/mm/yyyy', // รูปแบบวัน/เดือน/ปี

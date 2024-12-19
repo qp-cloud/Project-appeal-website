@@ -39,7 +39,7 @@ $total_items = $row_count['total'];
 $total_pages = ceil($total_items / $items_per_page);
 
 // Query to get all contact form submissions, with optional filter for contacted_back status and pagination
-$sql = "SELECT id, name, email, phone, message, submitted_at, contacted_back FROM contact_table";
+$sql = "SELECT id, name, contact, message, submitted_at, contacted_back FROM contact_table";
 if ($filter_contacted_back !== '') {
     $sql .= " WHERE contacted_back = " . ($filter_contacted_back == '1' ? "1" : "0");
 }
@@ -87,8 +87,19 @@ $result = $conn->query($sql);
         background-color: white; /* พื้นหลังของเซลล์ */
     }
     .table-container {
+        padding: 20px;
         max-width: 70%; /* กำหนดความกว้างสูงสุดของตารางเป็น 80% ของหน้าจอ */
         margin: 0 auto; /* จัดตารางให้อยู่ตรงกลาง */
+    }.alert-container {
+        display: flex;
+        justify-content: center; /* จัดข้อความให้อยู่ตรงกลาง */
+        margin-top: 20px; /* เพิ่มระยะห่างจากด้านบน */
+    }
+    .alert {
+        max-width: 600px; /* กำหนดความกว้างสูงสุด */
+        width: 90%; /* กำหนดให้ปรับตามขนาดหน้าจอ */
+        text-align: center; /* จัดข้อความให้อยู่ตรงกลาง */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* เพิ่มเงา */
     }
 </style>
 
@@ -106,13 +117,6 @@ $result = $conn->query($sql);
         <a href="view_contact.php" class="btn btn-primary">แสดงทั้งหมด</a>
     </div>
 
-    <?php
-    // Display any session message
-    if (isset($_SESSION['message'])) {
-        echo "<div class='alert alert-success'>{$_SESSION['message']}</div>";
-        unset($_SESSION['message']);
-    }
-    ?>
 
     <!-- Table to display contact form data -->
     <div class="table-responsive table-container">
@@ -121,8 +125,7 @@ $result = $conn->query($sql);
                 <tr>
                     <th>วันเวลาที่ส่งการติดต่อ</th>
                     <th>ชื่อผู้ติดต่อ</th>
-                    <th>อีเมลของผู้ติดต่อ</th>
-                    <th>เบอร์โทรศัพท์ของผู้ติดต่อ</th>
+                    <th>ข้อมูลการติดต่อกลับ</th>
                     <th>ข้อความ</th>
                     <th>สถานะการตอบกลับ</th>
                     <th>เปลี่ยนสถานะ</th>
@@ -140,8 +143,7 @@ $result = $conn->query($sql);
                         echo "<tr>
                                 <td>{$row['submitted_at']}</td>
                                 <td>{$row['name']}</td>
-                                <td>{$row['email']}</td>
-                                <td>{$row['phone']}</td>
+                                <td>{$row['contact']}</td>
                                 <td>{$row['message']}</td>
                                 <td>{$contacted_back}</td>
                                 <td>
@@ -159,6 +161,17 @@ $result = $conn->query($sql);
             </tbody>
         </table>
     </div>
+
+    <?php
+    // Display any session message
+    if (isset($_SESSION['message'])) {
+        echo "
+        <div class='alert-container'>
+            <div class='alert alert-success'>{$_SESSION['message']}</div>
+        </div>";
+        unset($_SESSION['message']);
+    }
+    ?>
 
    <!-- Pagination Controls -->
     <div class="d-flex justify-content-center">

@@ -53,6 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $problem_level = $_POST['problem_level'];
     $department = $_POST['department'];
     $complaint_description = $_POST['complaint_description'];
+    $video_link = $_POST['video_link'];
     $privacy_consent = isset($_POST['privacy_consent']) ? 1 : 0;  // 1 if consent is given, 0 otherwise
     
     
@@ -81,10 +82,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Prepare the SQL query to insert data into the database
-    $sql = "INSERT INTO complaints (user_id, complaint_subject, contact_phone, contact_location, contact_details, latitude, longitude, incident_date, incident_time, problem_level, department, complaint_description, complaint_file )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO complaints (user_id, complaint_subject, contact_phone, contact_location, contact_details, latitude, longitude, incident_date, incident_time, problem_level, department, complaint_description, complaint_file, video_link )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("issssssssssss", $user_id, $complaint_subject, $contact_phone, $contact_location, $contact_details, $latitude, $longitude, $incident_date, $incident_time, $problem_level, $department, $complaint_description, $complaint_file);
+    $stmt->bind_param("isssssssssssss", $user_id, $complaint_subject, $contact_phone, $contact_location, $contact_details, $latitude, $longitude, $incident_date, $incident_time, $problem_level, $department, $complaint_description, $complaint_file, $video_link);
 
     if ($stmt->execute()) {
         header("Location: confirmation.php");  // Adjust URL to your confirmation page
@@ -324,6 +325,15 @@ $conn->close();
                 <div class="invalid-feedback">กรุณากรอกเรื่องที่ต้องการร้องทุกข์</div>
             </div>
 
+            <!-- Complaint Description -->
+            <div class="form-group">
+                <label for="complaint-description">รายละเอียดการร้องเรียน</label>
+                <textarea class="form-control" id="complaint-description" name="complaint_description" rows="5" required></textarea>
+                <small class="error-message" id="complaint-description-error"></small>
+                <div class="invalid-feedback">กรุณากรอกรายละเอียดการร้องเรียน</div>
+            </div>
+
+
             <div class="form-group">
                 <label for="contact">ช่องทางการติดต่อ </label>
                 <select class="form-control" id="contact" name="contact" required>
@@ -361,7 +371,7 @@ $conn->close();
             <div id="coordinates">
                 <p>Latitude: <span id="current-lat">-</span></p>
                 <p>Longitude: <span id="current-lon">-</span></p>
-                <button id="get-location-btn" type="button">Get Current Location</button>
+                <button id="get-location-btn" type="button">รับค่าตำแหน่งปัจจุบันในแผนที่</button>
             </div>
 
             <!-- Incident Date and Time -->
@@ -375,6 +385,7 @@ $conn->close();
                         <input type="time" class="form-control" id="incident-time" name="incident_time" required>
                     </div>
                 </div>
+                <small id="date-buddhist" class="form-text text-muted"></small>
             </div>
 
             <!-- Problem Level -->
@@ -410,20 +421,18 @@ $conn->close();
                 <div class="invalid-feedback">กรุณาเลือกหน่วยงานที่รับผิดชอบ</div>
             </div>
 
-            <!-- Complaint Description -->
-            <div class="form-group">
-                <label for="complaint-description">รายละเอียดการร้องเรียน</label>
-                <textarea class="form-control" id="complaint-description" name="complaint_description" rows="5" required></textarea>
-                <small class="error-message" id="complaint-description-error"></small>
-                <div class="invalid-feedback">กรุณากรอกรายละเอียดการร้องเรียน</div>
-            </div>
-
            <!-- File Upload -->
             <div class="form-group">
                 <label for="complaint-file">ไฟล์ที่แนบ (ถ้ามี)</label>
                 <input type="file" class="form-control-file" id="complaint-file" name="complaint_file" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx" onchange="validateFile()">
                 <small class="form-text text-muted">รองรับไฟล์: .jpg, .jpeg, .png, .pdf, .doc, .docx (ขนาดไม่เกิน 5MB)</small>
                 <div class="invalid-feedback" id="file-error"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="video-link">ลิงก์ คลิปวิดีโอแนบ (ถ้ามี)</label>
+                <input type="text" class="form-control" id="video-link" name="video_link">
+                <div class="invalid-feedback" id="video-error">
             </div>
 
 
@@ -475,6 +484,67 @@ $conn->close();
         </form>
     </div>
     
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.th.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+
+<script>
+  function showThaiCalendar(element) {
+    $(element).datepicker({
+      format: 'dd/mm/yyyy', // รูปแบบวัน/เดือน/ปี
+      language: 'th', // ใช้ภาษาไทย
+      autoclose: true,
+      todayHighlight: true,
+      orientation: "bottom auto",
+      clearBtn: true,
+      startView: 2, // เริ่มที่มุมมองปี
+      thaiyear: true, // ใช้ปีพุทธศักราช
+      templates: {
+        leftArrow: '&lt;', // เปลี่ยนปุ่มลูกศรซ้าย
+        rightArrow: '&gt;' // เปลี่ยนปุ่มลูกศรขวา
+      }
+    }).on('changeDate', function(e) {
+      // แปลงปี ค.ศ. เป็น พ.ศ. เมื่อเลือกวันที่
+      const date = e.date;
+      const year = date.getFullYear();
+      if (year < 2400) {
+        date.setFullYear(year + 543); // แปลง ค.ศ. เป็น พ.ศ.
+        $(element).datepicker('update', date);
+      }
+    });
+
+    // แปลงปีเริ่มต้นเป็น พ.ศ.
+    const currentDate = $(element).datepicker('getDate');
+    if (currentDate) {
+      const currentYear = currentDate.getFullYear();
+      if (currentYear < 2400) {
+        currentDate.setFullYear(currentYear + 543); // แปลง ค.ศ. เป็น พ.ศ.
+        $(element).datepicker('update', currentDate);
+      }
+    }
+
+    $(element).datepicker('show');
+  }
+</script>
+    <script>
+        // ฟังก์ชันแปลงวันที่จาก ค.ศ. เป็น พ.ศ. และแสดงผลในรูปแบบ วัน/เดือน/พ.ศ.
+        function formatDate() {
+            const input = document.getElementById("incident-date");
+            let dateValue = input.value;
+        
+            if (dateValue) {
+                let date = new Date(dateValue);  // แปลงจาก yyyy-mm-dd เป็นวันที่ใน JavaScript
+                let day = ("0" + date.getDate()).slice(-2);  // ทำให้วันที่เป็นสองหลัก
+                let month = ("0" + (date.getMonth() + 1)).slice(-2);  // ทำให้เดือนเป็นสองหลัก
+                let year = date.getFullYear() + 543;  // แปลงปีจาก ค.ศ. เป็น พ.ศ.
+
+                // แสดงวันที่ในรูปแบบ วัน/เดือน/พ.ศ.
+                input.value = `${day}/${month}/${year}`;
+            }
+        }
+    </script>
+
     <script>
         // Enable validation feedback on form submit
         const form = document.getElementById('complaint-form');

@@ -39,17 +39,38 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Query to count the number of complaints and appeals with the status "ยังไม่ดำเนินการ"
+// Get the current year
+$currentYear = date('Y');
+
+// Query to count the number of complaints and appeals with the status "ยังไม่ดำเนินการ" for the current year
 $sql = "
     SELECT source, status, problem_level, COUNT(*) AS count
     FROM (
-        SELECT 'ร้องทุกข์' AS source, status, problem_level FROM complaints WHERE status = 'ยังไม่ดำเนินการ'
+        SELECT 'ร้องทุกข์' AS source, status, problem_level 
+        FROM complaints 
+        WHERE status = 'ยังไม่ดำเนินการ' AND YEAR(submitted_at) = ?
+        
         UNION ALL
-        SELECT 'การทุจริต' AS source, status, problem_level FROM appeals WHERE status = 'ยังไม่ดำเนินการ'
+        
+        SELECT 'การทุจริต' AS source, status, problem_level 
+        FROM appeals 
+        WHERE status = 'ยังไม่ดำเนินการ' AND YEAR(submitted_at) = ?
     ) AS all_data
     GROUP BY source, status, problem_level
-    ORDER BY source, problem_level";
-$result = $conn->query($sql);
+    ORDER BY source, problem_level
+";
+
+$stmt = $conn->prepare($sql);
+
+// Check if the statement was prepared successfully
+if (!$stmt) {
+    die("SQL Error: " . $conn->error);
+}
+
+// Bind parameters and execute the query
+$stmt->bind_param("ii", $currentYear, $currentYear);
+$stmt->execute();
+$result = $stmt->get_result();
 
 // Fetch the counts into an array
 $counts = [];
@@ -298,7 +319,7 @@ $conn->close();
   <div class="header">
     <img src="logo.png" alt="Ban Pong Municipality Logo">
     <div class="dropdown">
-  <button class="dropbtn">ดูจำนวนการร้องเรียนที่ยังไม่ดำเนินการ</button>
+  <button class="dropbtn">ดูจำนวนการร้องเรียนที่ยังไม่ดำเนินการในปีนี้</button>
   <div class="dropdown-content">
         <?php foreach ($counts as $item): ?>
           <a href="#">

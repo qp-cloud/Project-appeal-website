@@ -30,10 +30,10 @@ $sql = "SELECT
             c.id, 
             c.user_id, 
             c.report_subject,
+            c.category,
             c.report_person, 
             c.contact_phone, 
             c.contact_location, 
-            c.contact_details, 
             c.latitude, 
             c.longitude, 
             c.incident_date, 
@@ -45,6 +45,7 @@ $sql = "SELECT
             c.submitted_at, 
             c.status, 
             c.note,
+            c.video_link,
             CONCAT(u.first_name, ' ', u.last_name) AS admin_name,
             u.department AS admin_department,
             CONCAT(usr.first_name, ' ', usr.last_name) AS user_name,
@@ -66,10 +67,10 @@ if ($stmt = $conn->prepare($sql)) {
 
     // Bind the result to variables
     $stmt->bind_result(
-        $id, $user_id, $report_subject, $report_person, $contact_phone, $contact_location, 
-        $contact_details, $latitude, $longitude, $incident_date, $incident_time, $problem_level, 
+        $id, $user_id, $report_subject, $category, $report_person, $contact_phone, $contact_location, 
+        $latitude, $longitude, $incident_date, $incident_time, $problem_level, 
         $department, $complaint_description, $complaint_file, $submitted_at, $status, $note, 
-        $admin_name, $admin_department, $user_name, $status_changed_at
+        $admin_name, $admin_department, $user_name, $status_changed_at, $video_link
     );
 
     // Fetch the data
@@ -79,10 +80,10 @@ if ($stmt = $conn->prepare($sql)) {
             'user_id' => $user_id,
             'user_name' => $user_name,
             'report_subject' => $report_subject,
+            'category' => $category,
             'report_person' => $report_person,
             'contact_phone' => $contact_phone,
             'contact_location' => $contact_location,
-            'contact_details' => $contact_details,
             'latitude' => $latitude,
             'longitude' => $longitude,
             'incident_date' => $incident_date,
@@ -94,6 +95,7 @@ if ($stmt = $conn->prepare($sql)) {
             'submitted_at' => $submitted_at,
             'status' => $status,
             'note' => $note,
+            'video_link' => $video_link,
             'admin_name' => $admin_name,
             'admin_department' => $admin_department,
             'status_changed_at' => $status_changed_at
@@ -153,7 +155,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>รายละเอียดการร้องเรียน</title>
+    <title>รายละเอียดการแจ้งเบาะแสทุจริตประพฤติมิชอบ</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -218,12 +220,16 @@ $conn->close();
             <?php if (!empty($complaint_details)): ?>
                 <table>
                     <tr>
+                        <th>ชื่อผู้ส่ง</th>
+                        <td><?= htmlspecialchars($complaint_details['user_name']) ?></td>
+                    </tr>
+                    <tr>
                         <th>ชื่อเรื่อง</th>
                         <td><?= htmlspecialchars($complaint_details['report_subject']) ?></td>
                     </tr>
                     <tr>
-                        <th>ชื่อผู้ส่ง</th>
-                        <td><?= htmlspecialchars($complaint_details['user_name']) ?></td>
+                        <th>หมวดหมู่การแจ้งเบาะแส</th>
+                        <td><?= htmlspecialchars($complaint_details['category']) ?></td>
                     </tr>
                     <tr>
                         <th>บุคคล/องค์กรที่ร้องเรียน</th>
@@ -238,11 +244,11 @@ $conn->close();
                         <td><?= htmlspecialchars($complaint_details['contact_location']) ?></td>
                     </tr>
                     <tr>
-                        <th>รายละเอียดที่ติดต่อ</th>
-                        <td><?= htmlspecialchars($complaint_details['contact_details']) ?></td>
+                        <th>ค่า Latitude และ Longitude</th>
+                        <td>Latitude: <?= htmlspecialchars($complaint_details['latitude']) ?>, Longitude: <?= htmlspecialchars($complaint_details['longitude']) ?></td>
                     </tr>
                     <tr>
-                        <th>วันและเวลาเกิดเหตุ</th>
+                        <th>วันและเวลาที่เกิดเหตุ</th>
                         <td><?= htmlspecialchars($complaint_details['incident_date']) ?> <?= htmlspecialchars($complaint_details['incident_time']) ?></td>
                     </tr>
                     <tr>
@@ -254,11 +260,11 @@ $conn->close();
                         <td><?= htmlspecialchars($complaint_details['department']) ?></td>
                     </tr>
                     <tr>
-                        <th>คำอธิบายปัญหา</th>
+                        <th>รายละเอียดการแจ้งเบาะแส</th>
                         <td><?= htmlspecialchars($complaint_details['complaint_description']) ?></td>
                     </tr>
                     <tr>
-                        <th>ไฟล์ประกอบการร้องเรียน</th>
+                        <th>ไฟล์ประกอบการแจ้งเบาะแส</th>
                         <td>
                             <?php if (!empty($complaint_details['complaint_file'])): ?>
                                 <a href="<?= htmlspecialchars($complaint_details['complaint_file']) ?>" class="btn btn-download btn-sm" download>
@@ -270,7 +276,19 @@ $conn->close();
                         </td>
                     </tr>
                     <tr>
-                        <th>วันที่ยื่นร้องเรียน</th>
+                        <th>ลิงก์คลิปวิดีโอประกอบ</th>
+                        <td>
+                            <?php if (!empty($complaint_details['video_link'])): ?>
+                                <a href="<?= htmlspecialchars($complaint_details['video_link']) ?>" target="_blank">
+                                    <?= htmlspecialchars($complaint_details['video_link']) ?>
+                                </a>
+                            <?php else: ?>
+                                ไม่มีลิงก์วิดีโอ
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>วันที่ยื่นแจ้งเบาะแส</th>
                         <td><?= htmlspecialchars($complaint_details['submitted_at']) ?></td>
                     </tr>
 
@@ -281,7 +299,7 @@ $conn->close();
                                 <form method="POST" class="mt-4">
                                     <input type="hidden" name="complaint_id" value="<?= $complaint_details['id'] ?>">
                                     <div class="form-group">
-                                        <label for="status">เปลี่ยนสถานะการร้องเรียน:</label>
+                                        <label for="status">เปลี่ยนสถานะการแจ้งเบาะแส:</label>
                                         <select name="status" id="status" class="form-control">
                                             <option value="ยังไม่ดำเนินการ" <?= $complaint_details['status'] == 'ยังไม่ดำเนินการ' ? 'selected' : '' ?>>ยังไม่ดำเนินการ</option>
                                             <option value="กำลังดำเนินการ" <?= $complaint_details['status'] == 'กำลังดำเนินการ' ? 'selected' : '' ?>>กำลังดำเนินการ</option>
@@ -302,7 +320,7 @@ $conn->close();
                         </tr>
                 </table>
             <?php else: ?>
-                <p class="text-center text-danger">ไม่พบข้อมูลการร้องเรียน</p>
+                <p class="text-center text-danger">ไม่พบข้อมูลการแจ้งเบาะแส</p>
             <?php endif; ?>
         </div>
     </div>

@@ -33,7 +33,7 @@ $sql = "SELECT
             c.complaint_subject, 
             c.contact_phone, 
             c.contact_location, 
-            c.contact_details, 
+            c.contact_details,
             c.latitude, 
             c.longitude, 
             c.incident_date, 
@@ -50,7 +50,8 @@ $sql = "SELECT
             logs.changed_at AS status_changed_at,
             logs.old_status,
             logs.new_status,
-            c.note
+            c.note,
+            c.video_link
         FROM complaints AS c
         LEFT JOIN status_change_logs AS logs ON c.id = logs.complaint_id
         LEFT JOIN user AS u ON logs.changed_by = u.user_id
@@ -69,7 +70,7 @@ if ($stmt = $conn->prepare($sql)) {
     $stmt->bind_result($log_id, $complaint_id, $user_id, $complaint_subject, $contact_phone, $contact_location, 
                        $contact_details, $latitude, $longitude, $incident_date, $incident_time, $problem_level, 
                        $department, $complaint_description, $complaint_file, $submitted_at, $status, $admin_name, 
-                       $admin_department, $user_name, $status_changed_at, $old_status, $new_status, $note);
+                       $admin_department, $user_name, $status_changed_at, $old_status, $new_status, $note, $video_link);
 
     // Fetch the complaint details and status changes
     $status_changes = [];
@@ -104,7 +105,8 @@ if ($stmt = $conn->prepare($sql)) {
         'status' => $status,
         'admin_name' => $admin_name,
         'admin_department' => $admin_department,
-        'note' => $note
+        'note' => $note,
+        'video_link' => $video_link
     ];
 
     // Close the statement
@@ -239,14 +241,14 @@ $conn->close();
                             <td><?= htmlspecialchars($complaint_details['contact_location']) ?></td>
                         </tr>
                         <tr>
+                            <th>รายละเอียดสถานที่</th>
+                            <td><?= htmlspecialchars($complaint_details['contact_details']) ?></td>
+                        </tr>
+                        <tr>
                             <th>ค่า Latitude และ Longitude</th>
                             <td>Latitude: <?= htmlspecialchars($complaint_details['latitude']) ?>, Longitude: <?= htmlspecialchars($complaint_details['longitude']) ?></td>
                         </tr>
 
-                        <tr>
-                            <th>รายละเอียดที่ติดต่อ</th>
-                            <td><?= htmlspecialchars($complaint_details['contact_details']) ?></td>
-                        </tr>
                         <tr>
                             <th>วันและเวลาเกิดเหตุ</th>
                             <td><?= htmlspecialchars($complaint_details['incident_date']) ?> <?= htmlspecialchars($complaint_details['incident_time']) ?></td>
@@ -274,6 +276,18 @@ $conn->close();
                                     <a href="<?= htmlspecialchars($complaint_details['complaint_file']) ?>" class="btn btn-download" download>ดาวน์โหลดไฟล์</a>
                                 <?php else: ?>
                                     ไม่มีไฟล์ที่แนบมาด้วย
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>ลิงก์คลิปวิดีโอประกอบ</th>
+                            <td>
+                                <?php if (!empty($complaint_details['video_link'])): ?>
+                                    <a href="<?= htmlspecialchars($complaint_details['video_link']) ?>" target="_blank">
+                                        <?= htmlspecialchars($complaint_details['video_link']) ?>
+                                    </a>
+                                <?php else: ?>
+                                    ไม่มีลิงก์วิดีโอ
                                 <?php endif; ?>
                             </td>
                         </tr>

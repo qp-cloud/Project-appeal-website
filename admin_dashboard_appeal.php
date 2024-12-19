@@ -22,6 +22,9 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+// Define records per page (set this value)
+$records_per_page = 20;  // Adjust as needed
+
 // Prepare filter conditions based on user input
 $filter_conditions = [];
 
@@ -72,16 +75,22 @@ if (isset($_POST['status']) && $_POST['status'] != '') {
     $status = $conn->real_escape_string($_POST['status']);
     $filter_conditions[] = "status = '$status'";
 }
+
+// Handle category filter
+if (isset($_POST['category']) && $_POST['category'] != '') {
+    $category = $conn->real_escape_string($_POST['category']);
+    $filter_conditions[] = "category = '$category'";
+}
+
 // Handle sorting order (default to descending)
 $sort_order = isset($_POST['sort_order']) && $_POST['sort_order'] == 'asc' ? 'ASC' : 'DESC';
 
 // Pagination setup
-$records_per_page = 20;
 $current_page = isset($_GET['page']) && is_numeric($_GET['page']) ? intval($_GET['page']) : 1;
 $offset = ($current_page - 1) * $records_per_page;
 
 // Count the total number of complaints
-$count_sql = "SELECT COUNT(*) as total FROM complaints";
+$count_sql = "SELECT COUNT(*) as total FROM appeals";
 if (count($filter_conditions) > 0) {
     $count_sql .= " WHERE " . implode(" AND ", $filter_conditions);
 }
@@ -90,13 +99,16 @@ $total_records = $count_result->fetch_assoc()['total'];
 $total_pages = ceil($total_records / $records_per_page);
 
 // Construct the SQL query with filters, sorting, and pagination
-$sql = "SELECT id, report_subject, incident_date, problem_level, department, submitted_at, status FROM appeals";
+$sql = "SELECT id, report_subject, category, incident_date, problem_level, department, submitted_at, status FROM appeals";
 if (count($filter_conditions) > 0) {
     $sql .= " WHERE " . implode(" AND ", $filter_conditions);
 }
 $sql .= " ORDER BY submitted_at $sort_order LIMIT $records_per_page OFFSET $offset";
 
+// Execute the query
 $result = $conn->query($sql);
+
+// Function to map problem level
 function map_problem_level($level) {
     switch ($level) {
         case 'ต่ำ': // Low
@@ -109,8 +121,10 @@ function map_problem_level($level) {
             return 'unknown'; // Fallback for unknown levels
     }
 }
+
 $conn->close();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="th">
@@ -233,6 +247,21 @@ $conn->close();
                         <option value="custom">กำหนดเอง</option>
                     </select>
                 </div>
+
+                <div class="col-md-3">
+                    <label for="category">กรองตามหมวดหมู่การแจ้งเบาะแส</label>
+                    <select class="form-control" id="category" name="category" required>
+                        <option value="" disabled selected>เลือกหมวดหมู่การแจ้งเบาะแส</option>
+                        <option value="ทุจริตทางการเงิน">ทุจริตทางการเงิน</option>
+                        <option value="ทุจริตในโครงการ">ทุจริตในโครงการ</option>
+                        <option value="ใช้อำนาจหน้าที่โดยมิชอบ">ใช้อำนาจหน้าที่โดยมิชอบ</option>
+                        <option value="การเลือกปฏิบัติ">การเลือกปฏิบัติ</option>
+                        <option value="อื่นๆ">อื่นๆ</option>
+                        <option value="ไม่ทราบหมวดหมู่">ไม่ทราบหมวดหมู่</option>
+                    </select>
+                    <div class="invalid-feedback">กรุณาเลือกช่องทางการติดต่อ</div>
+                </div>
+
                 <div class="col-md-3" id="custom_date_range" style="display: none;">
                     <label for="start_date">วันที่เริ่มต้น</label>
                     <input type="date" name="start_date" id="start_date" class="form-control">
@@ -284,7 +313,8 @@ $conn->close();
                 <thead>
                     <tr>
                         <th>วันที่ยื่นเรื่องทุจริตประพฤติมิชอบ</th>
-                        <th>หัวข้อการร้องเรียน</th>
+                        <th>หมวดหมู่การแจ้งเบาะแส</th>
+                        <th>หัวข้อการแจ้งเบาะแส</th>
                         <th>วันที่เกิดเหตุ</th>
                         <th>ระดับปัญหา</th>
                         <th>หน่วยงาน</th>
@@ -298,6 +328,7 @@ $conn->close();
                         <?php while ($row = $result->fetch_assoc()): ?>
                             <tr>
                                 <td><?= htmlspecialchars($row['submitted_at']) ?></td>
+                                <td><?= htmlspecialchars($row['category']) ?></td>
                                 <td><?= htmlspecialchars($row['report_subject']) ?></td>
                                 <td><?= htmlspecialchars($row['incident_date']) ?></td>
                                 <td class="problem-level <?= strtolower(map_problem_level($row['problem_level'])) ?>">

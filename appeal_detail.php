@@ -30,10 +30,10 @@ $sql = "SELECT
             c.id, 
             c.user_id, 
             c.report_subject,
+            c.category,
             c.report_person, 
             c.contact_phone, 
             c.contact_location, 
-            c.contact_details, 
             c.latitude, 
             c.longitude, 
             c.incident_date, 
@@ -50,7 +50,8 @@ $sql = "SELECT
             logs.changed_at AS status_changed_at,
             logs.new_status,  -- New status from logs
             logs.old_status,  -- Old status from logs
-            c.note  -- Add note column here
+            c.note,  -- Add note column here
+            c.video_link
         FROM appeals AS c
         LEFT JOIN status_change_logs AS logs ON c.id = logs.complaint_id
         LEFT JOIN user AS u ON logs.changed_by = u.user_id
@@ -66,11 +67,11 @@ if ($stmt = $conn->prepare($sql)) {
     $stmt->execute();
 
     // Bind the result to variables
-    $stmt->bind_result($id, $user_id, $report_subject, $report_person, $contact_phone, $contact_location, 
-                       $contact_details, $latitude, $longitude, $incident_date, $incident_time, 
+    $stmt->bind_result($id, $user_id, $report_subject, $category, $report_person, $contact_phone, $contact_location, 
+                       $latitude, $longitude, $incident_date, $incident_time, 
                        $problem_level, $department, $complaint_description, $complaint_file, $submitted_at, 
                        $status, $admin_name, $admin_department, $user_name, $status_changed_at, 
-                       $new_status, $old_status, $note);
+                       $new_status, $old_status, $note, $video_link);
 
     // Fetch the complaint details
     $complaint_details = [];
@@ -85,10 +86,10 @@ while ($stmt->fetch()) {
         'user_id' => $user_id,
         'user_name' => $user_name,
         'report_subject' => $report_subject,
+        'category' => $category,
         'report_person' => $report_person,
         'contact_phone' => $contact_phone,
         'contact_location' => $contact_location,
-        'contact_details' => $contact_details,
         'latitude' => $latitude,
         'longitude' => $longitude,
         'incident_date' => $incident_date,
@@ -101,7 +102,8 @@ while ($stmt->fetch()) {
         'status' => $status,
         'admin_name' => $admin_name,
         'admin_department' => $admin_department,
-        'note' => $note
+        'note' => $note,
+        'video_link' => $video_link
     ];
 
     // Save each status change history
@@ -232,6 +234,10 @@ $conn->close();
                     <!-- Complaint Details Table -->
                     <table>
                         <tr>
+                            <th>หมวดหมู่การแจ้งเบาะแส</th>
+                            <td><?= htmlspecialchars($complaint_details['category']) ?></td>
+                        </tr>
+                        <tr>
                             <th>ชื่อผู้ส่ง</th>
                             <td><?= htmlspecialchars($complaint_details['user_name']) ?></td>
                         </tr>
@@ -250,10 +256,6 @@ $conn->close();
                         <tr>
                             <th>ค่า Latitude และ Longitude</th>
                             <td>Latitude: <?= htmlspecialchars($complaint_details['latitude']) ?>, Longitude: <?= htmlspecialchars($complaint_details['longitude']) ?></td>
-                        </tr>
-                        <tr>
-                            <th>รายละเอียดที่ติดต่อ</th>
-                            <td><?= htmlspecialchars($complaint_details['contact_details']) ?></td>
                         </tr>
                         <tr>
                             <th>วันและเวลาเกิดเหตุ</th>
@@ -282,6 +284,18 @@ $conn->close();
                                     <a href="<?= htmlspecialchars($complaint_details['complaint_file']) ?>" class="btn btn-download" download>ดาวน์โหลดไฟล์</a>
                                 <?php else: ?>
                                     ไม่มีไฟล์ที่แนบมาด้วย
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>ลิงก์คลิปวิดีโอประกอบ</th>
+                            <td>
+                                <?php if (!empty($complaint_details['video_link'])): ?>
+                                    <a href="<?= htmlspecialchars($complaint_details['video_link']) ?>" target="_blank">
+                                        <?= htmlspecialchars($complaint_details['video_link']) ?>
+                                    </a>
+                                <?php else: ?>
+                                    ไม่มีลิงก์วิดีโอ
                                 <?php endif; ?>
                             </td>
                         </tr>

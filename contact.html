@@ -120,18 +120,21 @@
                 <input type="text" class="form-control" id="name" name="name" required>
                 <div class="invalid-feedback">กรุณากรอกชื่อ</div>
             </div>
-
+            
             <div class="form-group">
-                <label for="email">อีเมล <span style="color: red;">*</span></label>
-                <input type="email" class="form-control" id="email" name="email" required>
-                <div class="invalid-feedback">กรุณากรอกอีเมลที่ถูกต้อง</div>
+                <label for="contact-method">เลือกวิธีติดต่อ <span style="color: red;">*</span></label>
+                <select class="form-control" id="contact-method" name="contact-method" onchange="toggleContactFields()" required>
+                    <option value="">เลือกวิธีติดต่อ</option>
+                    <option value="email">อีเมล</option>
+                    <option value="phone">เบอร์โทรศัพท์</option>
+                </select>
+                <div class="invalid-feedback">กรุณาเลือกวิธีติดต่อ</div>
             </div>
 
             <div class="form-group">
-                <label for="phone">เบอร์โทรศัพท์ <span style="color: red;">*</span></label>
-                <input type="tel" class="form-control" id="phone" name="phone" pattern="[0-9]{10}" maxlength="10" required 
-                       oninput="this.value = this.value.replace(/[^0-9]/g, '')" placeholder="กรอก 10 หลัก">
-                <div class="invalid-feedback">กรุณากรอกเบอร์โทรศัพท์ 10 หลัก</div>
+                <label for="contact">ข้อมูลติดต่อ<span style="color: red;">*</span></label>
+                <input type="contact" class="form-control" id="contact" name="contact" required>
+                <div class="invalid-feedback">กรุณากรอกข้อมูลติดต่อที่ถูกต้อง</div>
             </div>
 
             <div class="form-group">
