@@ -161,7 +161,10 @@ $conn->close();
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #f8f9fa;
+            background-image: url('img/BACK2.png');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
         }
         .card {
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);

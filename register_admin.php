@@ -25,6 +25,43 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $hashed_password = password_hash($_POST['password'], PASSWORD_BCRYPT);
     $department = $_POST['department']; // รับค่า department
 
+
+
+     // ตรวจสอบว่าชื่อผู้ใช้หรือรหัสผ่านไม่ว่าง
+     if (empty($username) || empty($password)) {
+        die("กรุณากรอกชื่อผู้ใช้งานและรหัสผ่าน.");
+    }
+
+    // ตรวจสอบว่า username หรือ id_number มีอยู่ในฐานข้อมูลแล้วหรือไม่
+    $check_user_sql = "SELECT * FROM user WHERE username = ? OR id_number = ?";
+    $stmt_check_user = $conn->prepare($check_user_sql);
+    $stmt_check_user->bind_param("ss", $username, $id_number);
+    $stmt_check_user->execute();
+    $result = $stmt_check_user->get_result();
+
+    if ($result->num_rows > 0) {
+        // ถ้าข้อมูลซ้ำ ให้แสดงข้อความแจ้งเตือน
+        echo "<script>
+                alert('ข้อมูลซ้ำ! ชื่อผู้ใช้หรือหมายเลขบัตรประชาชนมีอยู่แล้ว.');
+                window.location.href = 'register.html';
+              </script>";
+        exit();
+    }
+
+    $check_phone_sql = "SELECT * FROM user WHERE phone = ?";
+    $stmt_check_phone = $conn->prepare($check_phone_sql);
+    $stmt_check_phone->bind_param("s", $phone);
+    $stmt_check_phone->execute();
+    $result_phone = $stmt_check_phone->get_result();
+
+    if ($result_phone->num_rows > 0) {
+        echo "<script>
+                alert('หมายเลขโทรศัพท์นี้ถูกใช้งานแล้ว กรุณากรอกหมายเลขใหม่.');
+                window.location.href = 'register.html';
+            </script>";
+        exit();
+    }
+
     // Add 'role' as admin
     $role = 'admin';
 

@@ -82,6 +82,8 @@ $appeals_completed = isset($appeals_data[$selected_year]['ดำเนินก�
       padding: 0;
       color: #333;
       background-image: url('img/adminbg.jpg');
+      background-size: cover;
+      background-attachment: fixed;
     }
     .container {
       padding: 40px 30px;
@@ -90,7 +92,7 @@ $appeals_completed = isset($appeals_data[$selected_year]['ดำเนินก�
       text-align: center;
     }
     h1 {
-      background-color: #f8f8f8;
+      background-color:rgba(218, 205, 30, 0.81);
       font-size: 36px;
       color:rgb(0, 0, 0);
       margin-bottom: 40px;
@@ -127,14 +129,14 @@ $appeals_completed = isset($appeals_data[$selected_year]['ดำเนินก�
     .footer {
       margin-top: 50px;
       font-size: 14px;
-      color: #888;
+      color:rgb(0, 0, 0);
       text-align: center;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>ข้อมูลการร้องเรียนและการทุจริตตามปี</h1>
+    <h1>ข้อมูลการร้องทุกข์และการแจ้งเบาะแสการทุจริตตามปี</h1>
 
     <!-- Year Select Dropdown -->
     <form method="GET" action="">
@@ -154,7 +156,7 @@ $appeals_completed = isset($appeals_data[$selected_year]['ดำเนินก�
     <button class="go-back-btn" onclick="window.location.href='admin_page.php';">ย้อนกลับ</button>
 
     <div class="footer">
-      <p>แสดงข้อมูลการร้องเรียนและการทุจริตตามสถานะในแต่ละปี</p>
+      <p>แสดงข้อมูลการร้องทุกข์และการแจ้งเบาะแสการทุจริตตามสถานะในแต่ละปี</p>
     </div>
   </div>
 
@@ -174,42 +176,42 @@ $appeals_completed = isset($appeals_data[$selected_year]['ดำเนินก�
             labels: [selectedYear],
             datasets: [
                 {
-                    label: 'การร้องเรียนยังไม่ดำเนินการ',
+                    label: 'การร้องทุกข์ยังไม่ดำเนินการ',
                     data: [complaintsNotStarted],
                     backgroundColor: '#ff5722',
                     borderColor: '#ff5722',
                     borderWidth: 1
                 },
                 {
-                    label: 'การร้องเรียนกำลังดำเนินการ',
+                    label: 'การร้องทุกข์กำลังดำเนินการ',
                     data: [complaintsInProgress],
                     backgroundColor: '#ff9800',
                     borderColor: '#ff9800',
                     borderWidth: 1
                 },
                 {
-                    label: 'การร้องเรียนดำเนินการเสร็จสิ้น',
+                    label: 'การร้องทุกข์ดำเนินการเสร็จสิ้น',
                     data: [complaintsCompleted],
                     backgroundColor: '#4caf50',
                     borderColor: '#4caf50',
                     borderWidth: 1
                 },
                 {
-                    label: 'การทุจริตยังไม่ดำเนินการ',
+                    label: 'การแจ้งทุจริตยังไม่ดำเนินการ',
                     data: [appealsNotStarted],
                     backgroundColor: '#ff5722',
                     borderColor: '#ff5722',
                     borderWidth: 1
                 },
                 {
-                    label: 'การทุจริตกำลังดำเนินการ',
+                    label: 'การแจ้งทุจริตกำลังดำเนินการ',
                     data: [appealsInProgress],
                     backgroundColor: '#ff9800',
                     borderColor: '#ff9800',
                     borderWidth: 1
                 },
                 {
-                    label: 'การทุจริตดำเนินการเสร็จสิ้น',
+                    label: 'การแจ้งทุจริตดำเนินการเสร็จสิ้น',
                     data: [appealsCompleted],
                     backgroundColor: '#2a7cff',
                     borderColor: '#2a7cff',

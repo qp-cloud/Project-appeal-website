@@ -47,12 +47,12 @@ $sql = "SELECT
             c.video_link, -- Added the 'note' field
             CONCAT(u.first_name, ' ', u.last_name) AS admin_name,
             u.department AS admin_department, -- Admin's department
-            CONCAT(usr.first_name, ' ', usr.last_name) AS user_name,
+            CONCAT(usr.first_name, ' ', usr.last_name) AS user_name,  -- Corrected to concatenate user first and last name
             logs.changed_at AS status_changed_at
         FROM complaints AS c
         LEFT JOIN status_change_logs AS logs ON c.id = logs.complaint_id
         LEFT JOIN user AS u ON logs.changed_by = u.user_id
-        LEFT JOIN user AS usr ON c.user_id = usr.user_id
+        LEFT JOIN user AS usr ON c.user_id = usr.user_id  -- Ensure this is correctly referencing the user who filed the complaint
         WHERE c.id = ?
         ORDER BY logs.changed_at DESC
         LIMIT 1";
@@ -67,7 +67,7 @@ if ($stmt = $conn->prepare($sql)) {
     // Bind the result to variables
     $stmt->bind_result($id, $user_id, $complaint_subject, $contact_phone, $contact_location, $contact_details,
                    $latitude, $longitude, $incident_date, $incident_time, $problem_level, $department, 
-                   $complaint_description, $complaint_file, $submitted_at, $status, $note, $video_link, // Added note
+                   $complaint_description, $complaint_file, $submitted_at, $status, $note, $video_link, 
                    $admin_name, $admin_department, $user_name, $status_changed_at);
 
     // Fetch the complaint details
@@ -75,7 +75,7 @@ if ($stmt = $conn->prepare($sql)) {
         $complaint_details = [
             'id' => $id,
             'user_id' => $user_id,
-            'user_name' => $user_name,
+            'user_name' => $user_name,  // Added user_name to the array
             'complaint_subject' => $complaint_subject,
             'contact_phone' => $contact_phone,
             'contact_location' => $contact_location,
@@ -91,11 +91,10 @@ if ($stmt = $conn->prepare($sql)) {
             'submitted_at' => $submitted_at,
             'status' => $status,
             'note' => $note,
-            'video_link' => $video_link, // Added note
+            'video_link' => $video_link,
             'admin_name' => $admin_name,
             'admin_department' => $admin_department, 
             'status_changed_at' => $status_changed_at,
-            
         ];
     } else {
         echo "Complaint not found.";
@@ -149,6 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['status'], $_POST['comp
 $conn->close();
 ?>
 
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -159,7 +159,10 @@ $conn->close();
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #f8f9fa;
+            background-image: url('img/BACK2.png');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
         }
         .card {
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
