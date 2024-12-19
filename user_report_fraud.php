@@ -570,34 +570,45 @@ $conn->close();
         });
         </script>
         <script>
-        let map;
+    let map;
 
-            
-        // Initialize the map
-        function initMap() {
-            const geolocation = { lat: 13.811046841299785, lon: 99.87560507925443 }; // Default location (Bangkok)
-            map = new longdo.Map({
-                placeholder: document.getElementById('map')
+    // Coordinates for Ban Pong District (approximate bounding box)
+    const BANPONG_LAT_MIN = 13.5;
+    const BANPONG_LAT_MAX = 13.9;
+    const BANPONG_LON_MIN = 99.7;
+    const BANPONG_LON_MAX = 100.1;
+
+    // Initialize the map
+    function initMap() {
+        const geolocation = { lat: 13.811046841299785, lon: 99.87560507925443 }; // Default location (Banpong)
+        map = new longdo.Map({
+            placeholder: document.getElementById('map')
         });
 
         map.location(geolocation);
         map.zoom(13);
 
-        // Show initial coordinates (from the map's center)
-        updateCoordinates(map.location());
-
         // Bind the Get Location button event only after the map is initialized
         document.getElementById('get-location-btn').addEventListener('click', function(event) {
             event.preventDefault(); // Prevent form submission
             const currentLocation = map.location(); // Get current map center location
-            console.log("Current Latitude: " + currentLocation.lat);
-            console.log("Current Longitude: " + currentLocation.lon);
 
-            // Update the displayed coordinates and hidden input fields
-            updateCoordinates(currentLocation);
-        }); 
-        }
-         // Update the coordinates displayed on the page and in the hidden input fields
+            // Check if the location is within Ban Pong District
+            if (isInBanPong(currentLocation.lat, currentLocation.lon)) {
+                console.log("Current Latitude: " + currentLocation.lat);
+                console.log("Current Longitude: " + currentLocation.lon);
+
+                // Update the displayed coordinates and hidden input fields
+                updateCoordinates(currentLocation);
+
+                alert("The location is within Ban Pong District.");
+            } else {
+                alert("The location is outside Ban Pong District. Action not allowed.");
+            }
+        });
+    }
+
+    // Update the coordinates displayed on the page and in the hidden input fields
     function updateCoordinates(location) {
         const lat = location.lat;
         const lon = location.lon;
@@ -609,6 +620,11 @@ $conn->close();
         // Update the hidden input fields with the new coordinates
         document.getElementById('latitude').value = lat;
         document.getElementById('longitude').value = lon;
+    }
+
+    // Check if the location is within Ban Pong District's coordinates
+    function isInBanPong(lat, lon) {
+        return lat >= BANPONG_LAT_MIN && lat <= BANPONG_LAT_MAX && lon >= BANPONG_LON_MIN && lon <= BANPONG_LON_MAX;
     }
 
     // Load the Longdo Map script and initialize the map
@@ -623,7 +639,7 @@ $conn->close();
     document.addEventListener('DOMContentLoaded', function() {
         loadLongdoMap();
     });
-    </script>
+</script>
     <script>
         document.getElementById("registerForm").addEventListener("submit", function(event) {
         var form = this;
