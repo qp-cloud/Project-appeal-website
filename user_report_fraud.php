@@ -463,8 +463,13 @@ $conn->close();
                 </div>
             </div>
         </div>
-            <!-- Privacy consent popup -->
-            <div class="custom-modal-overlay" id="modal-overlay"></div>
+        <div class="form-group text-center">
+                <button type="submit" class="btn btn-primary btn-full-width" id="submit-form" disabled>ยืนยันการส่งข้อมูล</button>
+            </div>
+        </form>
+    </div>
+ <!-- Privacy consent popup -->
+ <div class="custom-modal-overlay" id="modal-overlay"></div>
             <div class="custom-modal" id="modal-consent">
                 <h5>ข้อกำหนดและเงื่อนไข</h5>
                 <div class="modal-body">
@@ -483,11 +488,6 @@ $conn->close();
                     <button class="btn btn-agree" id="btn-agree">ยอมรับ</button>
                 </div>
             </div>
-        <div class="form-group text-center">
-                <button type="submit" class="btn btn-primary btn-full-width" id="submit-form" disabled>ยืนยันการส่งข้อมูล</button>
-            </div>
-        </form>
-    </div>
 
     <script>
         // Enable validation feedback on form submit
@@ -528,6 +528,14 @@ $conn->close();
  <script>
     // Check if user has already interacted with the modal when page loads
     window.onload = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const referrer = document.referrer;
+
+        // Check if modal should be shown (e.g., user came from 'secondpage.php')
+        if (urlParams.get('showModal') === 'true' || referrer.includes('secondpage.php')) {
+            sessionStorage.removeItem('modalShown'); // Reset modalShown for this session
+        }
+
         // Check if modal has been shown and user has agreed to the terms
         if (!sessionStorage.getItem('modalShown')) {
             document.getElementById('modal-overlay').style.display = 'block';
@@ -554,6 +562,7 @@ $conn->close();
         sessionStorage.setItem('modalShown', 'true');
     });
 </script>
+
 
     <script>
            

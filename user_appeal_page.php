@@ -434,31 +434,13 @@ $conn->close();
                 <input type="text" class="form-control" id="video-link" name="video_link">
                 <div class="invalid-feedback" id="video-error">
             </div>
-
-
-            <!-- Modal Confirmation for Submit -->
-            <div class="modal" tabindex="-1" role="dialog" id="confirmation-modal">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">ยืนยันการส่งข้อมูล</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <p>คุณต้องการยืนยันการส่งข้อมูลนี้หรือไม่?</p>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" id="cancel-submit" data-dismiss="modal">ยกเลิก</button>
-                            <button type="button" class="btn btn-primary" id="confirm-submit">ยืนยัน</button>
-                        </div>
-                    </div>
-                </div>
+            <div class="form-group text-center">
+                <button type="submit" class="btn btn-primary btn-full-width" id="submit-form" disabled>ยืนยันการส่งข้อมูล</button>
             </div>
-
-            <!-- Privacy consent popup -->
-            <div class="custom-modal-overlay" id="modal-overlay"></div>
+        </form>
+    </div>
+    <!-- Privacy consent popup -->
+    <div class="custom-modal-overlay" id="modal-overlay"></div>
             <div class="custom-modal" id="modal-consent">
                     <h5>ข้อกำหนดและเงื่อนไข</h5>
                 <div class="modal-body">
@@ -477,13 +459,6 @@ $conn->close();
                     <button class="btn btn-agree" id="btn-agree">ยอมรับ</button>
                 </div>
             </div>
-
-            <div class="form-group text-center">
-                <button type="submit" class="btn btn-primary btn-full-width" id="submit-form" disabled>ยืนยันการส่งข้อมูล</button>
-            </div>
-        </form>
-    </div>
-    
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.th.min.js"></script>
@@ -567,31 +542,20 @@ $conn->close();
     <script>
     // Check if user has already interacted with the modal when page loads
     window.onload = function() {
-        // Check if modal has been shown and user has agreed to the terms
-        if (!sessionStorage.getItem('modalShown')) {
-            document.getElementById('modal-overlay').style.display = 'block';
-            document.getElementById('modal-consent').style.display = 'block';
-        } else {
-            // If modal has been shown, enable the submit button
-            document.getElementById('submit-form').disabled = false;
-        }
-    };
+        document.getElementById('modal-overlay').style.display = 'block';
+        document.getElementById('modal-consent').style.display = 'block';
+ // Handle closing the popup
+            document.getElementById('btn-close').addEventListener('click', function() {
+            document.getElementById('modal-overlay').style.display = 'none';
+            document.getElementById('modal-consent').style.display = 'none';
+        });
 
-    // Handle closing the popup
-    document.getElementById('btn-close').addEventListener('click', function() {
-        document.getElementById('modal-overlay').style.display = 'none';
-        document.getElementById('modal-consent').style.display = 'none';
-    });
-
-    // Handle agreement
-    document.getElementById('btn-agree').addEventListener('click', function() {
-        document.getElementById('submit-form').disabled = false;  // Enable the submit button
-        document.getElementById('modal-overlay').style.display = 'none';
-        document.getElementById('modal-consent').style.display = 'none';
-        
-        // Store in sessionStorage to indicate that the modal has been shown
-        sessionStorage.setItem('modalShown', 'true');
-    });
+            document.getElementById('btn-agree').addEventListener('click', function() {
+            document.getElementById('submit-form').disabled = false;  // Enable the submit button
+            document.getElementById('modal-overlay').style.display = 'none';
+            document.getElementById('modal-consent').style.display = 'none';
+        });
+    }
     </script>
 
 
@@ -606,21 +570,7 @@ $conn->close();
                 const confirmButton = document.getElementById('confirm-submit');
                 confirmButton.disabled = !document.getElementById('privacy-consent').checked;
             }
-    
-            // Cancel Button Action
-            document.getElementById('cancel-submit').addEventListener('click', function () {
-                alert('การส่งข้อมูลถูกยกเลิก');
-                document.getElementById('report-form').reset();
-                toggleConfirmButton();
-            });
-    
-            // Confirm Button Action
-            document.getElementById('confirm-submit').addEventListener('click', function (e) {
-                e.preventDefault(); // Prevent page refresh
-                alert('ส่งข้อมูลสำเร็จ');
-                document.getElementById('report-form').reset();
-                toggleConfirmButton();
-            });
+
     </script>
     
     <script>
@@ -732,7 +682,6 @@ $conn->close();
             event.preventDefault();
             event.stopPropagation();
         }
-
         form.classList.add('was-validated');
         });
         </script>
