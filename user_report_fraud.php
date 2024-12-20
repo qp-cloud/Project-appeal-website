@@ -353,7 +353,7 @@ $conn->close();
                 <select class="form-control" id="contact" name="contact" required>
                     <option value="" disabled selected>เลือกช่องทางการติดต่อ</option>
                     <option value="อีเมล">อีเมล</option>
-                    <option value="เบอร์โทรศัพท์">เบอร์โทรศัพท์</option>
+                    <option value="เบอร์โทรศัพท์">หมายโทรศัพท์มือถือ</option>
                 </select>
                 <div class="invalid-feedback">กรุณาเลือกช่องทางการติดต่อ</div>
             </div>
