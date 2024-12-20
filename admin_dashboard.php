@@ -197,22 +197,26 @@ $conn->close();
         /* Add color for problem levels */
         .problem-level.low {
             background-color: #28a745; /* Green for low level */
-            color: white;
+            color: black;
+            font-weight: bold;
         }
 
         .problem-level.medium {
             background-color: #ffc107; /* Yellow for medium level */
-            color: white;
+            color: black;
+            font-weight: bold;
         }
 
         .problem-level.high {
             background-color: #dc3545; /* Red for high level */
-            color: white;
+            color: black;
+            font-weight: bold;
         }
 
         .problem-level.unknown {
             background-color: #6c757d; /* Default gray for unknown levels */
             color: white;
+            font-weight: bold;
         }
     </style>
 </head>

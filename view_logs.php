@@ -79,13 +79,27 @@ $result = $conn->query($sql);
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
+        .old_status {
+            background-color:rgba(214, 153, 118, 0.74);
+        }
+        .new_status {
+            background-color:rgba(133, 230, 157, 0.77);
+        }
+        .btn-info {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background-color: #138496;
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
         <div class="header d-flex justify-content-between align-items-center">
-            <h2>ประวัติการเปลี่ยนสถานะ</h2>
+            <h2>ประวัติการเปลี่ยนสถานะเรื่องร้องทุกข์</h2>
             <!-- Go Back Button -->
             <a href="#" class="btn btn-back" onclick="goBack()">ย้อนกลับ</a>
         </div>
@@ -95,11 +109,12 @@ $result = $conn->query($sql);
                 <thead>
                     <tr>
                         <th>วันที่เปลี่ยน</th>
-                        <th>ชื่อเรื่องร้องเรียน</th>
-                        <th>สถานะเดิม</th>
-                        <th>สถานะใหม่</th>
+                        <th>ชื่อเรื่องร้องทุกข์</th>
+                        <th class="old_status">สถานะเดิม</th>
+                        <th class="new_status">สถานะใหม่</th>
                         <th>เปลี่ยนโดย</th>
                         <th>หน่วยงาน</th>
+                        <th>รายละเอียด</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -108,10 +123,13 @@ $result = $conn->query($sql);
                             <tr>
                                 <td><?= htmlspecialchars($row['changed_at']) ?></td>
                                 <td><?= htmlspecialchars($row['complaint_subject']) ?></td>
-                                <td><?= htmlspecialchars($row['old_status']) ?></td>
-                                <td><?= htmlspecialchars($row['new_status']) ?></td>
+                                <td class="old_status"><?= htmlspecialchars($row['old_status']) ?></td>
+                                <td class="new_status"><?= htmlspecialchars($row['new_status']) ?></td>
                                 <td><?= htmlspecialchars($row['changed_by']) ?></td>
                                 <td><?= htmlspecialchars($row['admin_department']) ?></td>
+                                <td>
+                                    <a href="detailcomplaint_logs.php?id=<?= urlencode($row['complaint_id']) ?>" class="btn btn-info">รายละเอียดเรื่อง</a>
+                                </td>
                             </tr>
                         <?php endwhile; ?>
                     <?php else: ?>

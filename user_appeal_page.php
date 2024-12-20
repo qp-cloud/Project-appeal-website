@@ -489,62 +489,6 @@ $conn->close();
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.th.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
 
-<script>
-  function showThaiCalendar(element) {
-    $(element).datepicker({
-      format: 'dd/mm/yyyy', // รูปแบบวัน/เดือน/ปี
-      language: 'th', // ใช้ภาษาไทย
-      autoclose: true,
-      todayHighlight: true,
-      orientation: "bottom auto",
-      clearBtn: true,
-      startView: 2, // เริ่มที่มุมมองปี
-      thaiyear: true, // ใช้ปีพุทธศักราช
-      templates: {
-        leftArrow: '&lt;', // เปลี่ยนปุ่มลูกศรซ้าย
-        rightArrow: '&gt;' // เปลี่ยนปุ่มลูกศรขวา
-      }
-    }).on('changeDate', function(e) {
-      // แปลงปี ค.ศ. เป็น พ.ศ. เมื่อเลือกวันที่
-      const date = e.date;
-      const year = date.getFullYear();
-      if (year < 2400) {
-        date.setFullYear(year + 543); // แปลง ค.ศ. เป็น พ.ศ.
-        $(element).datepicker('update', date);
-      }
-    });
-
-    // แปลงปีเริ่มต้นเป็น พ.ศ.
-    const currentDate = $(element).datepicker('getDate');
-    if (currentDate) {
-      const currentYear = currentDate.getFullYear();
-      if (currentYear < 2400) {
-        currentDate.setFullYear(currentYear + 543); // แปลง ค.ศ. เป็น พ.ศ.
-        $(element).datepicker('update', currentDate);
-      }
-    }
-
-    $(element).datepicker('show');
-  }
-</script>
-    <script>
-        // ฟังก์ชันแปลงวันที่จาก ค.ศ. เป็น พ.ศ. และแสดงผลในรูปแบบ วัน/เดือน/พ.ศ.
-        function formatDate() {
-            const input = document.getElementById("incident-date");
-            let dateValue = input.value;
-        
-            if (dateValue) {
-                let date = new Date(dateValue);  // แปลงจาก yyyy-mm-dd เป็นวันที่ใน JavaScript
-                let day = ("0" + date.getDate()).slice(-2);  // ทำให้วันที่เป็นสองหลัก
-                let month = ("0" + (date.getMonth() + 1)).slice(-2);  // ทำให้เดือนเป็นสองหลัก
-                let year = date.getFullYear() + 543;  // แปลงปีจาก ค.ศ. เป็น พ.ศ.
-
-                // แสดงวันที่ในรูปแบบ วัน/เดือน/พ.ศ.
-                input.value = `${day}/${month}/${year}`;
-            }
-        }
-    </script>
-
     <script>
         // Enable validation feedback on form submit
         const form = document.getElementById('complaint-form');
