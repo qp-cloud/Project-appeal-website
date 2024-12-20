@@ -27,8 +27,7 @@ $complaint_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
 // Retrieve complaint details, admin details, and status change logs for the given complaint_id
 $sql = "SELECT 
-            logs.id AS log_id,
-            c.id AS complaint_id, 
+            c.id,
             c.user_id, 
             c.complaint_subject, 
             c.contact_phone, 
@@ -67,25 +66,16 @@ if ($stmt = $conn->prepare($sql)) {
     $stmt->execute();
 
     // Bind the result to variables
-    $stmt->bind_result($log_id, $complaint_id, $user_id, $complaint_subject, $contact_phone, $contact_location, 
+    $stmt->bind_result($id, $user_id, $complaint_subject, $contact_phone, $contact_location, 
                        $contact_details, $latitude, $longitude, $incident_date, $incident_time, $problem_level, 
                        $department, $complaint_description, $complaint_file, $submitted_at, $status, $admin_name, 
                        $admin_department, $user_name, $status_changed_at, $old_status, $new_status, $note, $video_link);
 
-    // Fetch the complaint details and status changes
-    $status_changes = [];
-    while ($stmt->fetch()) {
-        $status_changes[] = [
-            'log_id' => $log_id,
-            'old_status' => $old_status,
-            'new_status' => $new_status,
-            'admin_name' => $admin_name,
-            'status_changed_at' => $status_changed_at
-        ];
-    }
 
+    $complaint_details = [];
+    $status_changes = [];
     // Fetch the initial complaint details (first row)
-    $complaint_details = [
+    while ($stmt->fetch()) {$complaint_details = [
         'id' => $complaint_id,
         'user_id' => $user_id,
         'user_name' => $user_name,
@@ -107,7 +97,15 @@ if ($stmt = $conn->prepare($sql)) {
         'admin_department' => $admin_department,
         'note' => $note,
         'video_link' => $video_link
-    ];
+        ];
+    
+        $status_changes[] = [
+            'old_status' => $old_status,
+            'new_status' => $new_status,
+            'admin_name' => $admin_name,
+            'status_changed_at' => $status_changed_at
+        ];
+    }
 
     // Close the statement
     $stmt->close();

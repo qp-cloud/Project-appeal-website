@@ -76,7 +76,7 @@ if ($stmt = $conn->prepare($sql)) {
     // Fetch the complaint details
     $complaint_details = [];
    // Initialize status changes array
-$status_changes = [];
+    $status_changes = [];
 
 // Fetch complaint details and status change history
 while ($stmt->fetch()) {
