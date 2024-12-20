@@ -196,7 +196,15 @@ while ($row = $result->fetch_assoc()) {
                         <option value="">เลือกหน่วยงาน</option>
                         <option value="เทศบาลเมือง" <?= ($selected_department == 'เทศบาลเมือง') ? 'selected' : ''; ?>>เทศบาลเมือง</option>
                         <option value="สำนักปลัดเทศบาลเมือง" <?= ($selected_department == 'สำนักปลัดเทศบาลเมือง') ? 'selected' : ''; ?>>สำนักปลัดเทศบาลเมือง</option>
-                        <!-- ตัวเลือกอื่น ๆ คงเดิม -->
+                        <option value="กองคลัง" <?= ($selected_department == 'กองคลัง') ? 'selected' : ''; ?>>กองคลัง</option>
+                        <option value="กองช่าง" <?= ($selected_department == 'กองช่าง') ? 'selected' : ''; ?>>กองช่าง</option>
+                        <option value="กองการศึกษา" <?= ($selected_department == 'กองการศึกษา') ? 'selected' : ''; ?>>กองการศึกษา</option>
+                        <option value="กองสาธารณสุข" <?= ($selected_department == 'กองสาธารณสุข') ? 'selected' : ''; ?>>กองสาธารณสุข</option>
+                        <option value="กองสวัสดิการสังคม" <?= ($selected_department == 'กองสวัสดิการสังคม') ? 'selected' : ''; ?>>กองสวัสดิการสังคม</option>
+                        <option value="กองยุทธศาสตร์" <?= ($selected_department == 'กองยุทธศาสตร์') ? 'selected' : ''; ?>>กองยุทธศาสตร์</option>
+                        <option value="กองการเจ้าหน้าที่" <?= ($selected_department == 'กองการเจ้าหน้าที่') ? 'selected' : ''; ?>>กองการเจ้าหน้าที่</option>
+                        <option value="หน่วยตรวจสอบภายใน" <?= ($selected_department == 'หน่วยตรวจสอบภายใน') ? 'selected' : ''; ?>>หน่วยตรวจสอบภายใน</option>
+                        <option value="หน่วยงานอื่นๆ" <?= ($selected_department == 'หน่วยงานอื่นๆ') ? 'selected' : ''; ?>>หน่วยงาน อื่นๆ</option>
                     </select>
                 </div>
             </div>
