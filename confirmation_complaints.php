@@ -132,7 +132,7 @@ $conn->close();
 
 <body>
     <div class="container confirmation-container">
-        <h2>ยืนยันการส่งข้อมูล</h2>
+        <h2>ยืนยันการส่งข้อมูล การแจ้งเบาะแสทุจริตประพฤติมิชอบของท่านจะไม่สามารถแก้ไขได้โปรดตรวจสอบ</h2>
         <div class="complaint-info">
             <p><strong>ชื่อผู้ใช้:</strong> <?= htmlspecialchars($first_name) ?> <?= htmlspecialchars($last_name) ?></p>
             <p><strong>เรื่องที่ต้องการร้องทุกข์:</strong> <?= htmlspecialchars($complaint['complaint_subject']) ?></p>
