@@ -24,21 +24,7 @@ if (isset($_SESSION['user'])) {
     header("Location: login.php");
     exit();
 }
-
-// Database connection
-$servername = "localhost";
-$username_db = "root";  // Your MySQL username
-$password = "";  // Your MySQL password
-$dbname = "web_appeal_db";  // Your database name
-
-// Create connection
-$conn = new mysqli($servername, $username_db, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
+include 'db_web.php';
 // Get the current year
 $currentYear = date('Y');
 

@@ -4,19 +4,7 @@ session_start();
 $complaint = isset($_SESSION['complaint']) ? $_SESSION['complaint'] : null;
 
 unset($_SESSION['complaint']);
-// Database connection
-$servername = "localhost";
-$username = "root";  // Your MySQL username
-$password = "";  // Your MySQL password
-$dbname = "web_appeal_db";  // Your database name
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+include 'db_web.php';
 
 // Get the username from the URL
 $logged_in_username = isset($_GET['username']) ? $_GET['username'] : null;

@@ -8,19 +8,7 @@ if (!isset($_SESSION['user']['user_id']) || $_SESSION['user']['role'] != 'admin'
     exit();
 }
 
-// Database connection
-$servername = "localhost";
-$username = "root";  // Your MySQL username
-$password = "";  // Your MySQL password
-$dbname = "web_appeal_db";  // Your database name
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+include 'db_web.php';
 
 // Prepare filter conditions based on user input
 $filter_conditions = [];

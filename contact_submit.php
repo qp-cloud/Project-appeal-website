@@ -1,9 +1,6 @@
 <?php
 // Database connection settings
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "web_appeal_db";
+include 'db_web.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = isset($_POST['name']) ? htmlspecialchars(trim($_POST['name'])) : '';

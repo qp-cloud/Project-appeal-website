@@ -1,23 +1,6 @@
 <?php
 session_start();
-
-// Database connection
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "web_appeal_db";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-if (!isset($_GET['user_id'])) {
-    echo "User not found!";
-    exit();
-}
+include 'db_web.php';
 
 $user_id = $_GET['user_id'];
 

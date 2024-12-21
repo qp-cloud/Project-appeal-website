@@ -10,18 +10,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 
-    $servername = "localhost";
-    $db_username = "root";
-    $db_password = "";
-    $dbname = "web_appeal_db";
-
-    // Create connection
-    $conn = new mysqli($servername, $db_username, $db_password, $dbname);
-
-    // Check connection
-    if ($conn->connect_error) {
-        die("การเชื่อมต่อฐานข้อมูลล้มเหลว: " . $conn->connect_error);
-    }
+        include 'db_web.php';
 
     // Prepare SQL query to fetch username, password, and role
     $sql = "SELECT user_id, username, password, first_name, last_name, role FROM user WHERE username = ?";

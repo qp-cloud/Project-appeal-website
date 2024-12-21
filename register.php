@@ -1,18 +1,6 @@
 <?php
 // Database connection
-$servername = "localhost";
-$username = "root"; // ชื่อผู้ใช้งาน MySQL
-$password = "";     // รหัสผ่าน MySQL
-$dbname = "web_appeal_db"; // ชื่อฐานข้อมูล
-
-// สร้างการเชื่อมต่อ
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// ตรวจสอบการเชื่อมต่อ
-if ($conn->connect_error) {
-    die("การเชื่อมต่อล้มเหลว: " . $conn->connect_error);
-}
-
+include 'db_web.php';
 // ตรวจสอบ method ว่าเป็น POST หรือไม่
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // รับข้อมูลจากฟอร์มและกรองข้อมูล

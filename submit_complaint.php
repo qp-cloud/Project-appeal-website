@@ -1,17 +1,5 @@
 <?php
-// Database connection
-$servername = "localhost";
-$username = "root";  // Your MySQL username
-$password = "";  // Your MySQL password
-$dbname = "web_appeal_db";  // Your database name
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+include 'db_web.php';
 
 // Check if form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {

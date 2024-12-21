@@ -8,20 +8,7 @@ if (!isset($_SESSION['user']['user_id'])) {
     exit();
 }
 
-// Database connection
-$servername = "localhost";
-$username = "root";  // Your MySQL username
-$password = "";  // Your MySQL password
-$dbname = "web_appeal_db";  // Your database name
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
+include 'db_web.php';
 // Get user_id from session
 $user_id = $_SESSION['user']['user_id'];
 // Number of records per page

@@ -2,19 +2,7 @@
 // Start the session for potential login check or error handling
 session_start();
 
-// Database connection settings
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "web_appeal_db";
-
-// Connect to the database
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+include 'db_web.php';
 
 // Define items per page
 $items_per_page = 20;

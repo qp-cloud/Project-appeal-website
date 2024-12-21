@@ -8,19 +8,7 @@ if (!isset($_SESSION['user'])) {
     exit();
 }
 
-// Create a database connection
-$servername = "localhost";  // Change this to your server's address if needed
-$username = "root";         // Your MySQL username
-$password = "";             // Your MySQL password
-$dbname = "web_appeal_db";  // Your database name
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check for connection errors
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
+include 'db_web.php';
 // If username is provided in the query string, search for the user
 if (isset($_GET['username'])) {
     $search_username = $_GET['username'];

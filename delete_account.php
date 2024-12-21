@@ -7,19 +7,7 @@ if (!isset($_SESSION['user'])) {
     exit();
 }
 
-// Database connection
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "web_appeal_db";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
+include 'db_web.php';
 // Handle account deletion
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['confirm_delete'])) {

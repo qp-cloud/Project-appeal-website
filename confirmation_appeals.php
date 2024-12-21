@@ -1,23 +1,6 @@
 <?php
 session_start();
-
-// Database connection
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "web_appeal_db";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-if (!isset($_GET['user_id'])) {
-    echo "User not found!";
-    exit();
-}
+include 'db_web.php';
 
 $user_id = $_GET['user_id'];
 
@@ -132,7 +115,7 @@ $conn->close();
 
 <body>
     <div class="container confirmation-container">
-        <h2>ยืนยันการส่งข้อมูล</h2>
+        <h2>ยืนยันการส่งข้อมูล เรื่องร้องทุกข์ของท่านจะไม่สามารถแก้ไขได้โปรดตรวจสอบ</h2>
         <div class="complaint-info">
             <p><strong>ชื่อผู้ใช้:</strong> <?= htmlspecialchars($first_name) ?> <?= htmlspecialchars($last_name) ?></p>
             <p><strong>เรื่องที่ร้องเรียน:</strong> <?= htmlspecialchars($complaint['report_subject']) ?></p>

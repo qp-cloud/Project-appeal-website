@@ -1,18 +1,6 @@
 <?php
 // เชื่อมต่อฐานข้อมูล
-$servername = "localhost";
-$username = "root";  // ชื่อผู้ใช้งาน MySQL
-$password = "";      // รหัสผ่าน MySQL
-$dbname = "web_appeal_db"; // ชื่อฐานข้อมูล
-
-// สร้างการเชื่อมต่อ
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// ตรวจสอบการเชื่อมต่อ
-if ($conn->connect_error) {
-    die("การเชื่อมต่อฐานข้อมูลล้มเหลว: " . $conn->connect_error);
-}
-
+include 'db_web.php';
 // ตัวแปรสำหรับกรองข้อมูล
 $selected_department = isset($_POST['department']) ? $_POST['department'] : null;
 $selected_year = isset($_POST['year']) ? $_POST['year'] : date("Y"); // ค่าเริ่มต้นเป็นปีปัจจุบัน

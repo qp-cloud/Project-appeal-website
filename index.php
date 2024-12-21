@@ -1,19 +1,3 @@
-<?php
-// Start session to access session variables
-session_start();
-
-// Check if the user is logged in
-if (!isset($_SESSION['user'])) {
-    // If not logged in, redirect to login page
-    header("Location: home.html");
-    exit();
-}
-
-// Get user information from session
-$username = $_SESSION['user']['username'];
-$role = $_SESSION['user']['role'];
-?>
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -43,6 +27,7 @@ $role = $_SESSION['user']['role'];
 
     <div class="menu">
         <h1>เมนูหลัก</h1>
+        <a href="home.html">หน้าแรก</a>
         <a href="user_appeal_page.html">ร้องทุกข์ / ร้องเรียน</a>
         <a href="report-fraud.html">แจ้งเบาะแสการทุจริตประพฤติมิชอบ</a>
         <a href="track-complaint.html">ติดตามรายงานผลการร้องทุกข์ / ร้องเรียน</a>
