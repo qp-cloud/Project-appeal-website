@@ -1,10 +1,9 @@
 <?php
-// Start session for user authentication
 session_start();
 
 // Check if the user is logged in
 if (!isset($_SESSION['user']['user_id'])) {
-    header("Location: login.php");  // Redirect to login page if not logged in
+    header("Location: login.php");
     exit();
 }
 
@@ -13,11 +12,12 @@ include 'db_web.php';
 // Get the complaint ID from the URL
 $complaint_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
-// Retrieve complaint details, admin details, and status change logs for the given complaint_id
+// Query to get complaint details and all status changes
 $sql = "SELECT 
-            c.id,
+            logs.id AS log_id,
+            c.id, 
             c.user_id, 
-            c.complaint_subject, 
+            c.complaint_subject,
             c.contact_phone, 
             c.contact_location, 
             c.contact_details,
@@ -29,22 +29,21 @@ $sql = "SELECT
             c.department, 
             c.complaint_description, 
             c.complaint_file, 
-            c.submitted_at, 
+            c.submitted_at,
             c.status, 
             CONCAT(u.first_name, ' ', u.last_name) AS admin_name,
-            u.department AS admin_department, 
+            u.department AS admin_department, -- Admin's department
             CONCAT(usr.first_name, ' ', usr.last_name) AS user_name,
             logs.changed_at AS status_changed_at,
-            logs.old_status,
-            logs.new_status,
-            c.note,
+            logs.new_status,  -- New status from logs
+            logs.old_status,  -- Old status from logs
+            c.note,  -- Add note column here
             c.video_link
         FROM complaints AS c
         LEFT JOIN status_change_logs AS logs ON c.id = logs.complaint_id
         LEFT JOIN user AS u ON logs.changed_by = u.user_id
         LEFT JOIN user AS usr ON c.user_id = usr.user_id
-        WHERE c.id = ?
-        ORDER BY logs.changed_at DESC";
+        WHERE c.id = ? ORDER BY logs.changed_at DESC";
 
 if ($stmt = $conn->prepare($sql)) {
     // Bind parameters to the prepared statement
@@ -54,44 +53,48 @@ if ($stmt = $conn->prepare($sql)) {
     $stmt->execute();
 
     // Bind the result to variables
-    $stmt->bind_result($id, $user_id, $complaint_subject, $contact_phone, $contact_location, 
-                       $contact_details, $latitude, $longitude, $incident_date, $incident_time, $problem_level, 
-                       $department, $complaint_description, $complaint_file, $submitted_at, $status, $admin_name, 
-                       $admin_department, $user_name, $status_changed_at, $old_status, $new_status, $note, $video_link);
+    $stmt->bind_result($logs_id,$id, $user_id, $complaint_subject, $contact_phone, $contact_location, $contact_details, 
+                       $latitude, $longitude, $incident_date, $incident_time, 
+                       $problem_level, $department, $complaint_description, $complaint_file, $submitted_at,
+                       $status, $admin_name, $admin_department, $user_name, $status_changed_at, 
+                       $new_status, $old_status, $note, $video_link);
 
-
+    // Initialize arrays to store complaint details and status changes
     $complaint_details = [];
     $status_changes = [];
-    // Fetch the initial complaint details (first row)
-    while ($stmt->fetch()) {$complaint_details = [
-        'id' => $complaint_id,
-        'user_id' => $user_id,
-        'user_name' => $user_name,
-        'complaint_subject' => $complaint_subject,
-        'contact_phone' => $contact_phone,
-        'contact_location' => $contact_location,
-        'contact_details' => $contact_details,
-        'latitude' => $latitude,
-        'longitude' => $longitude,
-        'incident_date' => $incident_date,
-        'incident_time' => $incident_time,
-        'problem_level' => $problem_level,
-        'department' => $department,
-        'complaint_description' => $complaint_description,
-        'complaint_file' => $complaint_file,
-        'submitted_at' => $submitted_at,
-        'status' => $status,
-        'admin_name' => $admin_name,
-        'admin_department' => $admin_department,
-        'note' => $note,
-        'video_link' => $video_link
+
+    // Fetch complaint details and all status changes
+    while ($stmt->fetch()) {
+        $complaint_details = [
+            'id' => $id,
+            'user_id' => $user_id,
+            'user_name' => $user_name,
+            'complaint_subject' => $complaint_subject,
+            'contact_phone' => $contact_phone,
+            'contact_location' => $contact_location,
+            'contact_details' => $contact_details,
+            'latitude' => $latitude,
+            'longitude' => $longitude,
+            'incident_date' => $incident_date,
+            'incident_time' => $incident_time,
+            'problem_level' => $problem_level,
+            'department' => $department,
+            'complaint_description' => $complaint_description,
+            'complaint_file' => $complaint_file,
+            'submitted_at' => $submitted_at,
+            'status' => $status,
+            'admin_name' => $admin_name,
+            'admin_department' => $admin_department,
+            'note' => $note,
+            'video_link' => $video_link,
         ];
-    
+
+        // Store status change history
         $status_changes[] = [
+            'status_changed_at' => $status_changed_at,
             'old_status' => $old_status,
             'new_status' => $new_status,
             'admin_name' => $admin_name,
-            'status_changed_at' => $status_changed_at
         ];
     }
 
@@ -105,7 +108,6 @@ if ($stmt = $conn->prepare($sql)) {
 $conn->close();
 ?>
 
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -116,88 +118,58 @@ $conn->close();
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #AFEEEE; /* Light gray background */
+            background-color: #AFEEEE;
             font-family: 'Arial', sans-serif;
         }
-
         .card {
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-            border-radius: 10px; /* Rounded corners */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
             overflow: hidden;
         }
-
         .card-header {
             background-color: #007bff;
             color: #fff;
             font-size: 1.2rem;
             font-weight: bold;
         }
-
         .card-body p {
             margin-bottom: 10px;
             font-size: 16px;
         }
-
         .btn-download {
             background-color: #28a745;
             border-color: #28a745;
             color: #fff;
         }
-
         .btn-download:hover {
             background-color: #218838;
             border-color: #1e7e34;
         }
-
         .btn-back {
             background-color: #6c757d;
             border-color: #6c757d;
             color: #fff;
         }
-
         .btn-back:hover {
             background-color: #5a6268;
             border-color: #545b62;
         }
-
         table {
             width: 100%;
             margin-top: 20px;
-            border-spacing: 0; /* Remove the collapse between cells */
+            border-spacing: 0;
         }
-
         th, td {
             padding: 8px 12px;
-            border-right: 1px solid #ddd; /* Add right border to all cells */
+            border-right: 1px solid #ddd;
             text-align: left;
         }
-
         th {
             background-color: #f4f4f4;
             font-weight: bold;
         }
-
-        /* Remove the right border of the last cell */
         td:last-child, th:last-child {
             border-right: none;
-        }
-
-        .badge-info {
-            background-color: #17a2b8;
-        }
-        .card-body table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .card-body table, th, td {
-            border: 1px solid #ddd;
-        }
-        th, td {
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f1f1f1;
         }
     </style>
 </head>
@@ -278,26 +250,32 @@ $conn->close();
                             </td>
                         </tr>
                         <tr>
-                            <th>สถานะการร้องเรียน (ประวัติการเปลี่ยนแปลง)</th>
-                            <td>
-                                <?php if (count($status_changes) > 1): ?>
-                                    <select id="statusChangeDropdown" class="form-control">
-                                        <option value="">เลือกสถานะที่ต้องการดู</option>
-                                        <?php foreach ($status_changes as $index => $change): ?>
-                                            <option value="<?= $index ?>">สถานะที่ <?= $index + 1 ?> - <?= htmlspecialchars($change['new_status']) ?> (<?= htmlspecialchars($change['status_changed_at']) ?>)</option>
-                                        <?php endforeach; ?>
-                                    </select>
+    <th>สถานะการร้องเรียน (ประวัติการเปลี่ยนแปลง)</th>
+    <td>
+        <?php if (count($status_changes) > 0): ?>
+            <select id="statusChangeDropdown" class="form-control">
+                <option value="">เลือกสถานะที่ต้องการดู</option>
+                <?php foreach ($status_changes as $index => $change): ?>
+                    <option value="<?= $index ?>">
+                        สถานะที่ <?= $index + 1 ?> - <?= htmlspecialchars($change['new_status']) ?> (<?= htmlspecialchars($change['status_changed_at']) ?>)
+                    </option>
+                <?php endforeach; ?>
+            </select>
 
-                                    <!-- Div to display the selected status change details -->
-                                    <div id="statusChangeDetails" class="mt-3">
-                                        <!-- Default message -->
-                                        <p>กรุณาเลือกสถานะจาก dropdown เพื่อดูรายละเอียด.</p>
-                                    </div>
-                                <?php else: ?>
-                                    <p>สถานะของการร้องเรียนนี้ไม่เคยเปลี่ยนแปลง.</p>
-                                <?php endif; ?>
-                            </td>
-                        </tr>
+            <!-- Div to display the selected status change details -->
+            <div id="statusChangeDetails" class="mt-3">
+                <!-- Default message -->
+                <p>กรุณาเลือกสถานะจาก dropdown เพื่อดูรายละเอียด.</p>
+            </div>
+        <?php else: ?>
+            <p>สถานะของการร้องเรียนนี้ไม่เคยเปลี่ยนแปลง.</p>
+        <?php endif; ?>
+    </td>
+</tr>
+
+
+
+
                     </table>
                 <?php else: ?>
                     <p>ไม่พบข้อมูลการร้องเรียนนี้.</p>
@@ -305,19 +283,18 @@ $conn->close();
             </div>
         </div>
     </div>
-
-
-    <div class="text-center mt-4">
+        <!-- Go Back Button -->
+        <div class="text-center mt-4">
             <button onclick="goBack();" class="btn btn-back" style="background-color:rgb(33, 170, 180); color: white;">ย้อนกลับ</button>
         </div>
+    </div>
 
-        
     <script>
         function goBack() {
             window.history.back(); // ย้อนกลับไปยังหน้าก่อนหน้า
         }
     </script>
-
+    
     <script>
         // JavaScript to handle the dropdown selection and display status change details
         document.getElementById("statusChangeDropdown").addEventListener("change", function () {
@@ -339,7 +316,10 @@ $conn->close();
             }
         });
     </script> 
+    <!-- Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
+
