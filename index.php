@@ -3,39 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>หน้าใช้งาน - เทศบาลอำเภอบ้านโป่ง</title>
+    <title>เทศบาลอำเภอบ้านโป่ง</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; }
-        .header { background: #ffffff; padding: 10px 20px; border-bottom: 3px solid #2a7cff; }
-        .header img { height: 50px; }
-        .user-info { text-align: right; }
-        .user-info span { font-weight: bold; color: #2a7cff; margin-right: 10px; }
-        .menu { margin: 20px; }
-        .menu a { display: block; padding: 10px; margin: 10px 0; color: #fff; background: #2a7cff; text-decoration: none; border-radius: 5px; text-align: center; }
-        .menu a:hover { background: #1e60c3; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            background-image: url('img/bgmain.jpg');
+        }
+        .container {
+            text-align: center;
+            background: #ffffff;
+            padding: 30px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 90%;
+        }
+        .left-section {
+            margin-bottom: 20px;
+        }
+        .title {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #2a7cff;
+            margin-bottom: 10px;
+        }
+        .slogan {
+            font-size: 1.2em;
+            line-height: 1.8em;
+            color: #333;
+        }
+        .highlight-blue {
+            color: #2a7cff;
+            font-weight: bold;
+        }
+        a {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #2a7cff, #1e60c3);
+            color: #fff;
+            font-size: 1.2em;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        a:hover {
+            background: linear-gradient(45deg, #1e60c3, #2a7cff);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+        }
     </style>
 </head>
 <body>
-
-    <div class="header">
-        <img src="logo.png" alt="Ban Pong Municipality Logo">
-        <div class="user-info">
-            <span>ยินดีต้อนรับ, <?= htmlspecialchars($username) ?></span>
-            <a href="logout.php">ออกจากระบบ</a>
+    <div class="container">
+        <div class="left-section">
+            <div class="title">เทศบาลอำเภอบ้านโป่ง</div>
+            <div class="slogan">
+                "บริการ <span class="highlight-blue">ครอบคลุม</span><br>
+                ชุมชน <span class="highlight-blue">เข้มแข็ง</span><br>
+                บ้านเมือง <span class="highlight-blue">น่าอยู่</span><br>
+                <span class="highlight-blue">สู่คุณภาพ</span> ชีวิตที่ดี"
+            </div>
         </div>
-    </div>
-
-    <div class="menu">
-        <h1>เมนูหลัก</h1>
         <a href="home.html">หน้าแรก</a>
-        <a href="user_appeal_page.html">ร้องทุกข์ / ร้องเรียน</a>
-        <a href="report-fraud.html">แจ้งเบาะแสการทุจริตประพฤติมิชอบ</a>
-        <a href="track-complaint.html">ติดตามรายงานผลการร้องทุกข์ / ร้องเรียน</a>
-        
-        <?php if ($role === 'admin'): ?>
-            <a href="admin_dashboard.html">แผงควบคุมผู้ดูแล</a>
-        <?php endif; ?>
     </div>
-
 </body>
 </html>

@@ -546,9 +546,9 @@ $conn->close();
                 // Update the displayed coordinates and hidden input fields
                 updateCoordinates(currentLocation);
 
-                alert("The location is within Ban Pong District.");
+                alert("ตำแหน่งอยู่ในเขตอำเภอบ้านโป่ง");
             } else {
-                alert("The location is outside Ban Pong District. Action not allowed.");
+                alert("ตำแหน่งอยู่นอกเขตอำเภอบ้านโป่ง ไม่อนุญาตให้ดำเนินการ");
             }
         });
     }
