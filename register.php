@@ -1,6 +1,7 @@
 <?php
 // Database connection
 include 'db_web.php';
+
 // ตรวจสอบ method ว่าเป็น POST หรือไม่
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // รับข้อมูลจากฟอร์มและกรองข้อมูล
@@ -37,6 +38,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 
+    // ตรวจสอบว่า email มีอยู่ในฐานข้อมูลแล้วหรือไม่
+    $check_email_sql = "SELECT * FROM user WHERE email = ?";
+    $stmt_check_email = $conn->prepare($check_email_sql);
+    $stmt_check_email->bind_param("s", $email);
+    $stmt_check_email->execute();
+    $result_email = $stmt_check_email->get_result();
+
+    if ($result_email->num_rows > 0) {
+        // ถ้า email ซ้ำ ให้แสดงข้อความแจ้งเตือน
+        echo "<script>
+                alert('อีเมลนี้ถูกใช้งานแล้ว กรุณากรอกอีเมลใหม่.');
+                window.location.href = 'register.html';
+              </script>";
+        exit();
+    }
+
+    // ตรวจสอบว่า phone มีอยู่ในฐานข้อมูลแล้วหรือไม่
     $check_phone_sql = "SELECT * FROM user WHERE phone = ?";
     $stmt_check_phone = $conn->prepare($check_phone_sql);
     $stmt_check_phone->bind_param("s", $phone);
@@ -50,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </script>";
         exit();
     }
-
+    
     // เข้ารหัสรหัสผ่าน
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
