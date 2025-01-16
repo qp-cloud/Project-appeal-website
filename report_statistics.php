@@ -181,7 +181,7 @@ while ($row = $result->fetch_assoc()) {
                 <div class="form-group col-md-6">
                     <label for="department">หน่วยงาน</label>
                     <select class="form-control" name="department" id="department">
-                        <option value="">เลือกหน่วยงาน</option>
+                        <option value="">ทุกหน่วยงาน</option>
                         <option value="เทศบาลเมือง" <?= ($selected_department == 'เทศบาลเมือง') ? 'selected' : ''; ?>>เทศบาลเมือง</option>
                         <option value="สำนักปลัดเทศบาลเมือง" <?= ($selected_department == 'สำนักปลัดเทศบาลเมือง') ? 'selected' : ''; ?>>สำนักปลัดเทศบาลเมือง</option>
                         <option value="กองคลัง" <?= ($selected_department == 'กองคลัง') ? 'selected' : ''; ?>>กองคลัง</option>
