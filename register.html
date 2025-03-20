@@ -284,15 +284,25 @@
     clearError(input);
   }
 
-  // สูตรคำนวณหลักตรวจสอบ (หลักที่ 13)
   function isValidCheckDigit(id) {
+    // ตรวจสอบว่ามีตัวเลข 13 หลักหรือไม่
+    if (!/^\d{13}$/.test(id)) return false;
+
     let sum = 0;
+
+    // คำนวณผลรวมของ 12 หลักแรก โดยใช้ค่าน้ำหนัก 13 → 2
     for (let i = 0; i < 12; i++) {
-      sum += parseInt(id[i]) * (13 - (i + 1));
+        sum += parseInt(id[i]) * (13 - i); // Weight: 13, 12, 11, ..., 2
     }
+
+    // คำนวณเลขตรวจสอบ (หลักที่ 13)
     const checkDigit = (11 - (sum % 11)) % 10;
+
+    // ตรวจสอบว่าตรงกับหลักสุดท้ายของเลขที่ป้อนมา
     return checkDigit === parseInt(id[12]);
-  }
+}
+
+
 
   // ระบบแสดงข้อผิดพลาด
   function showError(input, message) {
