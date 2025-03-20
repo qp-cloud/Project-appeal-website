@@ -11,11 +11,12 @@ include 'db_web.php';
 
 // Fetch all activity logs
 $search = isset($_GET['search']) ? $conn->real_escape_string($_GET['search']) : '';
-$sql = "SELECT al.*, u.username AS performed_by_username 
+$sql = "SELECT al.*, u.first_name, u.last_name 
         FROM activity_logs al
         LEFT JOIN user u ON al.performed_by = u.user_id
-        WHERE (al.user_id LIKE '%$search%' OR al.action LIKE '%$search%' OR u.username LIKE '%$search%')
+        WHERE (al.user_id LIKE '%$search%' OR al.action LIKE '%$search%' OR u.first_name LIKE '%$search%' OR u.last_name LIKE '%$search%')
         ORDER BY al.timestamp DESC";
+
 $result = $conn->query($sql);
 
 $conn->close();
@@ -107,7 +108,8 @@ $conn->close();
                                     <tr>
                                         <td><?= htmlspecialchars($row['user_id']) ?></td>
                                         <td><?= htmlspecialchars($row['action']) ?></td>
-                                        <td><?= htmlspecialchars($row['performed_by_username']) ?></td>
+                                        <td><?= htmlspecialchars($row['first_name'] . ' ' . $row['last_name']) ?></td>
+
                                         <td><?= htmlspecialchars($row['timestamp']) ?></td>
                                     </tr>
                                 <?php endwhile; ?>
