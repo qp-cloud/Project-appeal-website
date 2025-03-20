@@ -344,6 +344,7 @@ $conn->close();
       <a href="admin_dashboard_appeal.php" class="button-dashboard">แดชบอร์ดแจ้งเบาะแสทุจริตประพฤติมิชอบ</a>
       <a href="admin_register.html" class="button-manage">ลงทะเบียนเจ้าหน้าที่</a>
       <a href="view_contact.php" class="button-contact">ดูการติดต่อ</a>
+      <a href="manage_users.php" class="button-contact">จัดการผู้ใช้</a>
     </div>
 
     <!-- Dropdown to select status "ยังไม่ดำเนินการ" counts -->

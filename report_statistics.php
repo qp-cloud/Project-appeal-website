@@ -181,7 +181,7 @@ while ($row = $result->fetch_assoc()) {
                 <div class="form-group col-md-6">
                     <label for="department">หน่วยงาน</label>
                     <select class="form-control" name="department" id="department">
-                        <option value="">ทุกหน่วยงาน</option>
+                        <option value="">เลือกทุกหน่วยงาน</option>
                         <option value="เทศบาลเมือง" <?= ($selected_department == 'เทศบาลเมือง') ? 'selected' : ''; ?>>เทศบาลเมือง</option>
                         <option value="สำนักปลัดเทศบาลเมือง" <?= ($selected_department == 'สำนักปลัดเทศบาลเมือง') ? 'selected' : ''; ?>>สำนักปลัดเทศบาลเมือง</option>
                         <option value="กองคลัง" <?= ($selected_department == 'กองคลัง') ? 'selected' : ''; ?>>กองคลัง</option>
@@ -205,7 +205,12 @@ while ($row = $result->fetch_assoc()) {
 
         <!-- แสดงปีที่กำลังแสดง -->
         <h4 class="text-center">กำลังแสดงข้อมูลสำหรับปี: <?= $selected_year ?></h4>
-
+        <div class="form-group col-md-6">
+    <label class="d-inline-block me-2"><strong>หน่วยงานที่เลือก:</strong></label>
+    <div class="form-control-static d-inline-block">
+        <?= !empty($selected_department) ? htmlspecialchars($selected_department) : 'ทุกหน่วยงาน' ?>
+    </div>
+</div>
         <!-- แสดงผลรวมตามเดือนและสถานะ -->
         <h4>ผลรวมตามเดือนและสถานะ</h4>
         <table class="table table-bordered">

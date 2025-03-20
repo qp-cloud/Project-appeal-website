@@ -1,46 +1,35 @@
 <?php
-// Start the session for potential login check or error handling
 session_start();
-
 include 'db_web.php';
-// Check if 'id' is set in the POST request
-if (isset($_POST['id'])) {
+
+// Check if form data is submitted
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id = $_POST['id'];
-    
-    // Get the current 'contacted_back' status
-    $sql = "SELECT contacted_back FROM contact_table WHERE id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        $new_status = $row['contacted_back'] == 1 ? 0 : 1; // Toggle the status (1 to 0 or 0 to 1)
+    $responded_by = $_POST['responded_by'];
 
-        // Update the 'contacted_back' status
-        $update_sql = "UPDATE contact_table SET contacted_back = ? WHERE id = ?";
-        $update_stmt = $conn->prepare($update_sql);
-        $update_stmt->bind_param("ii", $new_status, $id);
-        $update_stmt->execute();
+    // Check if the 'contacted_back' is already set to 1 (i.e., already responded)
+    $sql_check = "SELECT contacted_back FROM contact_table WHERE id = $id";
+    $result_check = $conn->query($sql_check);
+    $row_check = $result_check->fetch_assoc();
 
-        // Set a session message
-        $_SESSION['message'] = "สถานะการตอบกลับของผู้ติดต่อได้ถูกอัพเดตแล้ว";
-
-        // Redirect back to the view contact page
-        header("Location: view_contact.php");
-        exit();
+    if ($row_check['contacted_back'] == 1) {
+        // If already contacted back, prevent updating again
+        $_SESSION['message'] = "ไม่สามารถตอบกลับได้อีกครั้ง";
     } else {
-        $_SESSION['message'] = "ไม่พบข้อมูลผู้ติดต่อ";
-        header("Location: view_contact.php");
-        exit();
+        // If not yet responded, mark as contacted back
+        $sql_update = "UPDATE contact_table SET contacted_back = 1, responded_by = ?, responded_at = NOW() WHERE id = ?";
+        $stmt = $conn->prepare($sql_update);
+        $stmt->bind_param('si', $responded_by, $id);
+        
+        if ($stmt->execute()) {
+            $_SESSION['message'] = "ตอบกลับสำเร็จ";
+        } else {
+            $_SESSION['message'] = "เกิดข้อผิดพลาดในการอัพเดต";
+        }
     }
-} else {
-    $_SESSION['message'] = "ข้อมูลไม่ถูกต้อง";
-    header("Location: view_contact.php");
-    exit();
 }
 
-// Close the database connection
-$conn->close();
+// Redirect back to the contact form submissions page
+header('Location: view_contact.php');
+exit;
 ?>

@@ -23,16 +23,16 @@ $result_count = $conn->query($sql_count);
 $row_count = $result_count->fetch_assoc();
 $total_items = $row_count['total'];
 
-// Calculate total pages
-$total_pages = ceil($total_items / $items_per_page);
-
 // Query to get all contact form submissions, with optional filter for contacted_back status and pagination
-$sql = "SELECT id, name, contact, message, submitted_at, contacted_back FROM contact_table";
+$sql = "SELECT id, name, contact, message, submitted_at, contacted_back, responded_by, responded_at FROM contact_table";
 if ($filter_contacted_back !== '') {
     $sql .= " WHERE contacted_back = " . ($filter_contacted_back == '1' ? "1" : "0");
 }
 $sql .= " ORDER BY submitted_at DESC LIMIT $items_per_page OFFSET $offset";
 $result = $conn->query($sql);
+
+// Calculate total pages
+$total_pages = ceil($total_items / $items_per_page);
 ?>
 
 <!DOCTYPE html>
@@ -78,7 +78,8 @@ $result = $conn->query($sql);
         padding: 20px;
         max-width: 70%; /* กำหนดความกว้างสูงสุดของตารางเป็น 80% ของหน้าจอ */
         margin: 0 auto; /* จัดตารางให้อยู่ตรงกลาง */
-    }.alert-container {
+    }
+    .alert-container {
         display: flex;
         justify-content: center; /* จัดข้อความให้อยู่ตรงกลาง */
         margin-top: 20px; /* เพิ่มระยะห่างจากด้านบน */
@@ -105,7 +106,6 @@ $result = $conn->query($sql);
         <a href="view_contact.php" class="btn btn-primary">แสดงทั้งหมด</a>
     </div>
 
-
     <!-- Table to display contact form data -->
     <div class="table-responsive table-container">
         <table class="table table-striped table-bordered">
@@ -116,36 +116,43 @@ $result = $conn->query($sql);
                     <th>ข้อมูลการติดต่อกลับ</th>
                     <th>ข้อความ</th>
                     <th>สถานะการตอบกลับ</th>
+                    <th>ผู้ตอบกลับ</th>  <!-- Add this column -->
+                    <th>วันเวลาที่ตอบกลับ</th>  <!-- Add this column -->
                     <th>เปลี่ยนสถานะ</th>
                 </tr>
             </thead>
             <tbody>
-                <?php
-                // Check if there are any rows returned
-                if ($result->num_rows > 0) {
-                    // Output data of each row
-                    while ($row = $result->fetch_assoc()) {
-                        $contacted_back = $row['contacted_back'] ? 'ตอบกลับแล้ว' : 'ยังไม่ตอบกลับ';
-                        $button_text = $row['contacted_back'] ? 'ยกเลิกการตอบกลับ' : 'ทำเครื่องหมายว่าตอบกลับแล้ว';
-                        $button_class = $row['contacted_back'] ? 'btn-warning' : 'btn-success';
-                        echo "<tr>
-                                <td>{$row['submitted_at']}</td>
-                                <td>{$row['name']}</td>
-                                <td>{$row['contact']}</td>
-                                <td>{$row['message']}</td>
-                                <td>{$contacted_back}</td>
-                                <td>
-                                    <form method='POST' action='update_contacted_status.php'>
-                                        <input type='hidden' name='id' value='{$row['id']}'>
-                                        <button type='submit' class='btn $button_class'>$button_text</button>
-                                    </form>
-                                </td>
-                            </tr>";
-                    }
-                } else {
-                    echo "<tr><td colspan='7'>ไม่พบข้อมูลการส่งการติดต่อ</td></tr>";
+            <?php
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $contacted_back = $row['contacted_back'] ? 'ตอบกลับแล้ว' : 'ยังไม่ตอบกลับ';
+                    $button_text = $row['contacted_back'] ? 'ยกเลิกการตอบกลับ' : 'ทำเครื่องหมายว่าตอบกลับแล้ว';
+                    $button_class = $row['contacted_back'] ? 'btn-warning' : 'btn-success';
+                    $responded_by = $row['responded_by'] ?? '-';  // Show '-' if not respondedก
+                    $responded_at = $row['responded_at'] ?? '-';  // Show '-' if not responded
+                    $disabled = ($row['contacted_back'] == 1) ? 'disabled' : '';
+
+                    echo "<tr>
+                            <td>{$row['submitted_at']}</td>
+                            <td>{$row['name']}</td>
+                            <td>{$row['contact']}</td>
+                            <td>{$row['message']}</td>
+                            <td>{$contacted_back}</td>
+                            <td>{$responded_by}</td>  <!-- Display responded_by -->
+                            <td>{$responded_at}</td>  <!-- Display responded_at -->
+                            <td>
+                                <form method='POST' action='update_contacted_status.php'>
+                                    <input type='hidden' name='id' value='{$row['id']}'>
+                                    <input type='text' name='responded_by' class='form-control' placeholder='ชื่อผู้ตอบกลับ' required>
+                                    <button type='submit' class='btn $button_class' $disabled>$button_text</button>
+                                </form>
+                            </td>
+                        </tr>";
                 }
-                ?>
+            } else {
+                echo "<tr><td colspan='8'>ไม่พบข้อมูลการส่งการติดต่อ</td></tr>";
+            }
+            ?>
             </tbody>
         </table>
     </div>
@@ -161,7 +168,7 @@ $result = $conn->query($sql);
     }
     ?>
 
-   <!-- Pagination Controls -->
+    <!-- Pagination Controls -->
     <div class="d-flex justify-content-center">
         <ul class="pagination">
             <?php if ($page > 1): ?>
@@ -177,7 +184,6 @@ $result = $conn->query($sql);
             <?php endif; ?>
         </ul>
     </div>
-
 
     <div class="text-center mt-4">
         <a href="admin_page.php" class="btn btn-primary">ย้อนกลับ</a>
